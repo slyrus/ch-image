@@ -1,0 +1,4 @@
+*.dfsl
+fasl
+openmcl-fasl
+sbcl-fasl
