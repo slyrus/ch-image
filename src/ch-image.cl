@@ -37,7 +37,7 @@
    )
   (:documentation "abstract image class"))
 
-(defmethod image ((width integer) (height integer)
+(defmethod image ((width fixnum) (height fixnum)
 		  &key (initial-element))
   (let ((img (make-instance 'image)))
     (setf (image-width img) width)
@@ -65,13 +65,23 @@
 	(setf (image-b img) (make-instance 'unsigned-byte-matrix :rows width :cols height))
 	(setf (image-data img) (list (image-a img) (image-r img) (image-g img) (image-b img))))))
 
+(defmethod pad-image ((img argb-8888-image))
+  (setf (image-a img) (pad-matrix (image-a img)))
+  (setf (image-r img) (pad-matrix (image-r img)))
+  (setf (image-g img) (pad-matrix (image-g img)))
+  (setf (image-b img) (pad-matrix (image-b img)))
+  (setf (image-data img) (list (image-a img) (image-r img) (image-g img) (image-b img)))
+  (setf (image-width img) (rows (image-r img)))
+  (setf (image-height img) (cols (image-r img)))
+  img)
+  
 (defmethod set-argb-values ((img argb-image)
 			    (x fixnum)
 			    (y fixnum)
-			    (a integer)
-			    (r integer)
-			    (g integer)
-			    (b integer))
+			    (a fixnum)
+			    (r fixnum)
+			    (g fixnum)
+			    (b fixnum))
   "Sets the alpha, red, green and blue values at x, y"
   (matrix::%set-val (image-a img) x y a)
   (matrix::%set-val (image-r img) x y r)
@@ -86,47 +96,26 @@
 	  (val (image-g img) x y)
 	  (val (image-b img) x y)))
 
-(defclass gray-image (image unsigned-byte-matrix) ()
+(defclass gray-image (image) ()
   (:documentation "Grayscale 8-bit image class"))
 
-(defmethod shared-initialize :around
-    ((img gray-image) slot-names &rest initargs &key &allow-other-keys)
-  (let ((rows) (cols) (width) (height))
-    (labels ((parse-init-args (alist)
-	       (let ((arg (pop alist))
-		     (val (pop alist)))
-		 (cond
-		   ((equal arg :width) (setf rows val))
-		   ((equal arg :height) (setf cols val))
-		   )
-		 (when alist (parse-init-args alist)))))
-      (parse-init-args initargs))
-    (if (not (getf initargs :width))
-	(setf width (getf initargs :rows)))
-    (if (not (getf initargs :height))
-	(setf height (getf initargs :cols)))
-    
-    (apply #'call-next-method img slot-names (append initargs
-						     (if rows (list :rows rows))
-						     (if cols (list :cols cols))
-						     (if width (list :width width))
-						     (if height (list :height height))
-						     ))))
-  
 (defmethod shared-initialize :after
     ((img gray-image) slot-names &rest initargs &key &allow-other-keys)
   (if (and (slot-boundp img 'width)
 	   (slot-boundp img 'height))
       (let ((width (slot-value img 'width))
 	    (height (slot-value img 'height)))
-	(setf (image-data img) img))))
-;	      (make-instance 'unsigned-byte-matrix :rows width :cols height)))))
+	(setf (image-data img)
+	      (make-instance 'unsigned-byte-matrix :rows width :cols height)))))
 
-(defmethod get-gray-value ((img gray-image) (x integer) (y integer))
+(defmethod pad-image ((img gray-image))
+  (set-image-data img (pad-matrix (image-data img))))
+
+(defmethod get-gray-value ((img gray-image) (x fixnum) (y fixnum))
   "Gets the grayscale value at x, y"
   (val (image-data img) x y))
 
-(defmethod set-gray-value ((img gray-image) (x integer) (y integer) (v integer))
+(defmethod set-gray-value ((img gray-image) (x fixnum) (y fixnum) (v fixnum))
   "Sets the grayscale value at x, y to v"
   (matrix::set-val-fit (image-data img) x y v))
 
@@ -139,7 +128,9 @@
 
 (defun map-pixels (f img)
   (dotimes (y (image-height img))
+    (declare (dynamic-extent y) (fixnum y))
     (dotimes (x (image-width img))
+      (declare (dynamic-extent x) (fixnum x))
       (funcall f img x y)))
   img)
 
@@ -169,14 +160,56 @@
     (list a r g b)))
 
 (defun rgb-to-gray-pixel (r g b)
+  (declare (dynamic-extent r g b) (fixnum r g b))
   (floor (/ (+ r g b) 3)))
 
 (defmethod argb-image-to-gray-image ((src argb-image))
   (let ((dest (make-instance 'gray-image :width (image-width src) :height (image-height src))))
     (map-pixels #'(lambda (img x y)
+		    (declare (dynamic-extent x y) (fixnum x y))
 		    (destructuring-bind (a r g b) (get-pixel img x y)
+		      (declare (dynamic-extent a r g b) (fixnum a r g b))
 		      (declare (ignore a))
 		      (set-pixel dest x y (rgb-to-gray-pixel r g b))))
 		src)
     dest))
+
+(defclass matrix-gray-image (gray-image unsigned-byte-matrix)
+  ((rows :initarg :width :accessor image-width)
+   (cols :initarg :height :accessor image-height)
+   )
+  (:documentation "Grayscale 8-bit image class that is also a matrix"))
+
+;(defmethod shared-initialize :around
+;    ((img matrix-gray-image) slot-names &rest initargs &key &allow-other-keys)
+;  (let ((rows) (cols) (width) (height))
+;    (labels ((parse-init-args (alist)
+;	       (let ((arg (pop alist))
+;		     (val (pop alist)))
+;		 (cond
+;		   ((equal arg :width) (setf rows val))
+;		   ((equal arg :height) (setf cols val))
+;		   )
+;		 (when alist (parse-init-args alist)))))
+;      (parse-init-args initargs))
+;    (if (not (getf initargs :width))
+;	(setf width (getf initargs :rows)))
+;    (if (not (getf initargs :height))
+;	(setf height (getf initargs :cols)))
+;    
+;    (apply #'call-next-method img slot-names (append initargs
+;						     (if rows (list :rows rows))
+;						     (if cols (list :cols cols))
+;						     (if width (list :width width))
+;						     (if height (list :height height))
+;						     ))))
+
+(defmethod shared-initialize :after
+    ((img matrix-gray-image) slot-names &rest initargs &key &allow-other-keys)
+  (if (and (slot-boundp img 'width)
+	   (slot-boundp img 'height))
+      (let ((width (slot-value img 'width))
+	    (height (slot-value img 'height)))
+	(setf (image-data img) img))))
+;	      (make-instance 'unsigned-byte-matrix :rows width :cols height)))))
 

@@ -16,7 +16,7 @@
 	   #:get-argb-values
 	   #:set-argb-values
 	   #:gray-image
-	   #:gray-8-image
+	   #:matrix-gray-image
 	   #:get-gray-value
 	   #:set-gray-value
 	   #:set-image-data
@@ -27,6 +27,8 @@
 	   #:*masked-pixel*
 	   #:mask-image
 	   #:flip-image
+
+	   #:argb-image-to-blue-image
 
 	   ))
 
