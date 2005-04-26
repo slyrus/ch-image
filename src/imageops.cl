@@ -55,7 +55,7 @@
   (let ((dest (make-instance 'gray-image :width (image-width src) :height (image-height src))))
     (map-pixels #'(lambda (img x y)
 		    (destructuring-bind (a r g b) (get-pixel img x y)
-		      (declare (ignore a))
+		      (declare (ignore a r g))
 		      (set-pixel dest x y b)))
 		src)
     dest))
