@@ -31,14 +31,9 @@
    (width :accessor image-width :initarg :width)
    (height :accessor image-height :initarg :height)
    (channels :accessor image-channels :initform 1)
-   (initial-element :accessor initial-element
-		    :initarg :initial-element
-		    :initform (coerce 0 'unsigned-byte))
    )
   (:documentation "abstract image class"))
-
-(defmethod image ((width fixnum) (height fixnum)
-		  &key (initial-element))
+(defmethod image ((width fixnum) (height fixnum))
   (let ((img (make-instance 'image)))
     (setf (image-width img) width)
     (setf (image-height img) height)
@@ -55,6 +50,7 @@
 
 (defmethod shared-initialize :after
     ((img argb-8888-image) slot-names &rest initargs &key &allow-other-keys)
+  (declare (ignore initargs))
   (if (and (slot-boundp img 'width)
 	   (slot-boundp img 'height))
       (let ((width (slot-value img 'width))
@@ -101,6 +97,7 @@
 
 (defmethod shared-initialize :after
     ((img gray-image) slot-names &rest initargs &key &allow-other-keys)
+  (declare (ignore initargs))
   (if (and (slot-boundp img 'width)
 	   (slot-boundp img 'height))
       (let ((width (slot-value img 'width))
@@ -139,7 +136,7 @@
   (print "set-pixel not implemented for generic image class"))
 
 (defmethod get-pixel ((img image) x y)
-  (declare (ignore x y val))
+  (declare (ignore x y))
   (print "set-pixel not implemented for generic image class"))
 
 (defmethod set-pixel ((img gray-image) x y val)
@@ -175,9 +172,11 @@
     dest))
 
 (defclass matrix-gray-image (gray-image unsigned-byte-matrix)
-  ((rows :initarg :width :accessor image-width)
-   (cols :initarg :height :accessor image-height)
-   )
+  ((matrix:rows :initarg :width :accessor image-width)
+   (matrix:cols :initarg :height :accessor image-height)
+   (matrix::initial-element :accessor initial-element
+			    :initarg :initial-element
+			    :initform (coerce 0 'unsigned-byte)))
   (:documentation "Grayscale 8-bit image class that is also a matrix"))
 
 ;(defmethod shared-initialize :around
@@ -206,10 +205,6 @@
 
 (defmethod shared-initialize :after
     ((img matrix-gray-image) slot-names &rest initargs &key &allow-other-keys)
-  (if (and (slot-boundp img 'width)
-	   (slot-boundp img 'height))
-      (let ((width (slot-value img 'width))
-	    (height (slot-value img 'height)))
-	(setf (image-data img) img))))
-;	      (make-instance 'unsigned-byte-matrix :rows width :cols height)))))
+  (declare (ignore initargs))
+  (setf (image-data img) img))
 
