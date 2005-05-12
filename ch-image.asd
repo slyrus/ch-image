@@ -12,11 +12,11 @@
 			asdf:*central-registry* :test 'equal)
 	 (add-registry-paths (cdr paths)))))
 
-(add-registry-paths '("util" "matrix"))
+(add-registry-paths '("util" "clem"))
 
 (defsystem :image
   :version "20040704.1"
-  :depends-on (util matrix)
+  :depends-on (util clem)
   :components
   ((:module :src
 	    :components
