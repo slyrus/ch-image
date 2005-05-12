@@ -1,7 +1,7 @@
 
 (in-package #:cl-user)
 
-(defpackage #:image (:use #:cl #:asdf #:util #:matrix)
+(defpackage #:image (:use #:cl #:asdf #:util #:clem)
   (:export #:image
 	   #:image-data
 	   #:image-width
@@ -10,6 +10,10 @@
 	   #:map-pixels
 	   #:set-pixel
 	   #:get-pixel
+
+	   #:rgb-image
+	   #:rgb-888-image
+	   #:rgb-www-image
 
 	   #:argb-image
 	   #:argb-8888-image
