@@ -153,25 +153,25 @@
   img)
   
 (defmethod set-argb-values ((img argb-image)
-			    (x fixnum)
-			    (y fixnum)
+			    (row fixnum)
+			    (col fixnum)
 			    (a fixnum)
 			    (r fixnum)
 			    (g fixnum)
 			    (b fixnum))
   "Sets the alpha, red, green and blue values at x, y"
-  (setf (clem::mref (image-a img) x y) a)
-  (setf (clem::mref (image-r img) x y) r)
-  (setf (clem::mref (image-g img) x y) g)
-  (setf (clem::mref (image-b img) x y) b)
+  (setf (clem::mref (image-a img) row col) a)
+  (setf (clem::mref (image-r img) row col) r)
+  (setf (clem::mref (image-g img) row col) g)
+  (setf (clem::mref (image-b img) row col) b)
   )
 
-(defmethod get-argb-values ((img argb-image) (x fixnum) (y fixnum))
+(defmethod get-argb-values ((img argb-image) (row fixnum) (col fixnum))
   "Gets the alpha, red, green and blue values at x, y"
-  (values (val (image-a img) x y)
-	  (val (image-r img) x y)
-	  (val (image-g img) x y)
-	  (val (image-b img) x y)))
+  (values (val (image-a img) row col)
+	  (val (image-r img) row col)
+	  (val (image-g img) row col)
+	  (val (image-b img) row col)))
 
 (defclass gray-image (image) ()
   (:documentation "Grayscale 8-bit image class"))
@@ -189,14 +189,14 @@
 (defmethod pad-image ((img gray-image))
   (set-image-data img (pad-matrix (image-data img))))
 
-(defmethod get-gray-value ((img gray-image) (x fixnum) (y fixnum))
-  "Gets the grayscale value at x, y"
-  (val (image-data img) x y))
+(defmethod get-gray-value ((img gray-image) (row fixnum) (col fixnum))
+  "Gets the grayscale value at row, col"
+  (val (image-data img) row col))
 
-(defmethod set-gray-value ((img gray-image) (x fixnum) (y fixnum) (v fixnum))
-  "Sets the grayscale value at x, y to v"
+(defmethod set-gray-value ((img gray-image) (row fixnum) (col fixnum) (v fixnum))
+  "Sets the grayscale value at row, col to v"
   (let ((m (image-data img)))
-    (setf (clem::mref m x y) (clem::fit m v))))
+    (setf (clem::mref m row col) (clem::fit m v))))
 
 (defmethod set-image-data ((img gray-image) (m matrix))
   "Sets the gray-image data to the matrix m and updates image-width and image-height"
@@ -206,36 +206,36 @@
     (setf (image-data img) m)))
 
 (defun map-pixels (f img)
-  (dotimes (y (image-height img))
-    (declare (dynamic-extent y) (fixnum y))
-    (dotimes (x (image-width img))
-      (declare (dynamic-extent x) (fixnum x))
-      (funcall f img x y)))
+  (dotimes (row (image-height img))
+    (declare (dynamic-extent row) (fixnum row))
+    (dotimes (col (image-width img))
+      (declare (dynamic-extent col) (fixnum col))
+      (funcall f img row col)))
   img)
 
-(defmethod set-pixel ((img image) x y val)
-  (declare (ignore x y val))
+(defmethod set-pixel ((img image) row col val)
+  (declare (ignore row col val))
   (print "set-pixel not implemented for generic image class"))
 
-(defmethod get-pixel ((img image) x y)
-  (declare (ignore x y))
+(defmethod get-pixel ((img image) row col)
+  (declare (ignore row col))
   (print "set-pixel not implemented for generic image class"))
 
-(defmethod set-pixel ((img gray-image) x y val)
-  (set-gray-value img x y val))
+(defmethod set-pixel ((img gray-image) row col val)
+  (set-gray-value img row col val))
 
-(defmethod get-pixel ((img gray-image) x y)
-  (get-gray-value img x y))
+(defmethod get-pixel ((img gray-image) row col)
+  (get-gray-value img row col))
 
-(defmethod set-pixel ((img argb-image) x y val)
-  (set-argb-values img x y
+(defmethod set-pixel ((img argb-image) row col val)
+  (set-argb-values img row col
 		   (car val)
 		   (cadr val)
 		   (caddr val)
 		   (cadddr val)))
 
-(defmethod get-pixel ((img argb-image) x y)
-  (multiple-value-bind (a r g b) (get-argb-values img x y)
+(defmethod get-pixel ((img argb-image) row col)
+  (multiple-value-bind (a r g b) (get-argb-values img row col)
     (list a r g b)))
 
 (defun rgb-to-gray-pixel (r g b)
@@ -244,12 +244,12 @@
 
 (defmethod argb-image-to-gray-image ((src argb-image))
   (let ((dest (make-instance 'gray-image :width (image-width src) :height (image-height src))))
-    (map-pixels #'(lambda (img x y)
-		    (declare (dynamic-extent x y) (fixnum x y))
-		    (destructuring-bind (a r g b) (get-pixel img x y)
+    (map-pixels #'(lambda (img row col)
+		    (declare (dynamic-extent row col) (fixnum row col))
+		    (destructuring-bind (a r g b) (get-pixel img row col)
 		      (declare (dynamic-extent a r g b) (fixnum a r g b))
 		      (declare (ignore a))
-		      (set-pixel dest x y (rgb-to-gray-pixel r g b))))
+		      (set-pixel dest row col (rgb-to-gray-pixel r g b))))
 		src)
     dest))
 

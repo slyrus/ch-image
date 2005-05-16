@@ -8,7 +8,7 @@
        (img (make-instance 'argb-8888-image :width width :height height)))
     (dotimes (i height)
       (dotimes (j width)
-	(set-argb-values img j i 255 127 63 63)
+	(set-argb-values img i j 255 127 63 63)
 	)))
   t)
 
@@ -20,7 +20,7 @@
     (describe img)
     (dotimes (i height)
       (dotimes (j width)
-	(set-gray-value img j i 63)
+	(set-gray-value img i j 63)
 	)))
   t)
 
@@ -32,7 +32,7 @@
     (describe img)
     (dotimes (i height)
       (dotimes (j width)
-	(set-gray-value img j i 63)
+	(set-gray-value img i j 63)
 	)))
   t)
 
