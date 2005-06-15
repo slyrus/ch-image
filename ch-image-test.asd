@@ -2,27 +2,26 @@
 (defpackage #:image-test-system (:use #:asdf #:cl))
 (in-package #:image-test-system)
 
-;;; begin asdf fasl and filename hackery
+;;;;
+;;;; The following section customizes asdf to work with filenames
+;;;; with a .cl extension and to put fasl files in a separate
+;;;; directory.
+;;;;
+;;;; To enable this behvior, use asdf component type
+;;;;  :image-test-cl-source-file
+;;;;
 (defclass image-test-cl-source-file (cl-source-file) ())
 
 (defparameter *fasl-directory*
-  (make-pathname :directory '(:relative
-			      #+sbcl "sbcl-fasl"
+  (make-pathname :directory '(:relative #+sbcl "sbcl-fasl"
 			      #+openmcl "openmcl-fasl"
 			      #-(or sbcl openmcl) "fasl")))
 
 (defmethod source-file-type ((c image-test-cl-source-file) (s module)) "cl")
 
-(defmethod asdf::output-fasl-files ((operation compile-op) (c image-test-cl-source-file)
-				    (s module))
+(defmethod asdf::output-files :around ((operation compile-op) (c image-test-cl-source-file))
   (list (merge-pathnames *fasl-directory* (compile-file-pathname (component-pathname c)))))
 
-(defmethod asdf::output-files :around ((operation compile-op) (c image-test-cl-source-file))
-  (let ((m (compute-applicable-methods #'asdf::output-fasl-files (list operation c (component-system c)))))
-    (if m
-	(asdf::output-fasl-files operation c (component-system c))
-	(call-next-method operation c))))
-;;; end asdf hackery
 
 (defsystem :image-test
   :version "20040618.1"
