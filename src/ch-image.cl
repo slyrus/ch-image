@@ -63,9 +63,9 @@
   (if (and (slot-boundp img 'width)
 	   (slot-boundp img 'height))
       (with-slots (width height) img
-	(setf (image-r img) (make-instance 'unsigned-byte-matrix :rows height :cols width))
-	(setf (image-g img) (make-instance 'unsigned-byte-matrix :rows height :cols width))
-	(setf (image-b img) (make-instance 'unsigned-byte-matrix :rows height :cols width))
+	(setf (image-r img) (make-instance 'ub8-matrix :rows height :cols width))
+	(setf (image-g img) (make-instance 'ub8-matrix :rows height :cols width))
+	(setf (image-b img) (make-instance 'ub8-matrix :rows height :cols width))
 	(setf (image-data img) (list (image-r img) (image-g img) (image-b img))))))
 
 (defclass rgb-www-image (rgb-image) ())
@@ -76,9 +76,9 @@
   (if (and (slot-boundp img 'width)
 	   (slot-boundp img 'height))
       (with-slots (width height) img
-	(setf (image-r img) (make-instance 'unsigned-word-matrix :rows height :cols width))
-	(setf (image-g img) (make-instance 'unsigned-word-matrix :rows height :cols width))
-	(setf (image-b img) (make-instance 'unsigned-word-matrix :rows height :cols width))
+	(setf (image-r img) (make-instance 'ub16-matrix :rows height :cols width))
+	(setf (image-g img) (make-instance 'ub16-matrix :rows height :cols width))
+	(setf (image-b img) (make-instance 'ub16-matrix :rows height :cols width))
 	(setf (image-data img) (list (image-r img) (image-g img) (image-b img))))))
 
 (defgeneric copy-image (img))
@@ -115,9 +115,9 @@
   (if (and (slot-boundp img 'width)
 	   (slot-boundp img 'height))
       (with-slots (width height) img
-	(setf (image-r img) (make-instance 'unsigned-float-matrix :rows height :cols width))
-	(setf (image-g img) (make-instance 'unsigned-float-matrix :rows height :cols width))
-	(setf (image-b img) (make-instance 'unsigned-float-matrix :rows height :cols width))
+	(setf (image-r img) (make-instance 'double-float-matrix :rows height :cols width))
+	(setf (image-g img) (make-instance 'double-float-matrix :rows height :cols width))
+	(setf (image-b img) (make-instance 'double-float-matrix :rows height :cols width))
 	(setf (image-data img) (list (image-r img) (image-g img) (image-b img))))))
 
 (defclass argb-image (image)
@@ -136,10 +136,10 @@
 	   (slot-boundp img 'height))
       (let ((width (slot-value img 'width))
 	    (height (slot-value img 'height)))
-	(setf (image-a img) (make-instance 'unsigned-byte-matrix :rows height :cols width))
-	(setf (image-r img) (make-instance 'unsigned-byte-matrix :rows height :cols width))
-	(setf (image-g img) (make-instance 'unsigned-byte-matrix :rows height :cols width))
-	(setf (image-b img) (make-instance 'unsigned-byte-matrix :rows height :cols width))
+	(setf (image-a img) (make-instance 'ub8-matrix :rows height :cols width))
+	(setf (image-r img) (make-instance 'ub8-matrix :rows height :cols width))
+	(setf (image-g img) (make-instance 'ub8-matrix :rows height :cols width))
+	(setf (image-b img) (make-instance 'ub8-matrix :rows height :cols width))
 	(setf (image-data img) (list (image-a img) (image-r img) (image-g img) (image-b img))))))
 
 (defmethod pad-image ((img argb-8888-image))
@@ -184,7 +184,7 @@
       (let ((width (slot-value img 'width))
 	    (height (slot-value img 'height)))
 	(setf (image-data img)
-	      (make-instance 'unsigned-byte-matrix :rows height :cols width)))))
+	      (make-instance 'ub8-matrix :rows height :cols width)))))
 
 (defmethod pad-image ((img gray-image))
   (set-image-data img (pad-matrix (image-data img))))
@@ -253,7 +253,7 @@
 		src)
     dest))
 
-(defclass matrix-gray-image (gray-image unsigned-byte-matrix)
+(defclass matrix-gray-image (gray-image ub8-matrix)
   ((clem:rows :initarg :width :accessor image-width)
    (clem:cols :initarg :height :accessor image-height)
    (clem::initial-element :accessor initial-element
