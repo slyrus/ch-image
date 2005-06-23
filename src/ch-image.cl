@@ -200,9 +200,9 @@
 
 (defmethod set-image-data ((img gray-image) (m matrix))
   "Sets the gray-image data to the matrix m and updates image-width and image-height"
-  (destructuring-bind (w h) (dim m)
-    (setf (image-width img) w)
+  (destructuring-bind (h w) (dim m)
     (setf (image-height img) h)
+    (setf (image-width img) w)
     (setf (image-data img) m)))
 
 (defun map-pixels (f img)
