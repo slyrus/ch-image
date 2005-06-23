@@ -29,6 +29,6 @@
   :components
   ((:module :test
 	    :components
-	    ((:file "defpackage")
-	     (:file "test-image"))
+	    ((:image-test-cl-source-file "defpackage")
+	     (:image-test-cl-source-file "test-image"))
 	    :serial t)))
