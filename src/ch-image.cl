@@ -1,5 +1,5 @@
 ;;
-;; file: image.cl
+;; file: ch-image.cl
 ;; author: cyrus harmon
 ;; time-stamp: Fri Apr 23 12:19:55 EDT 2004
 ;;
@@ -33,7 +33,7 @@
 ;;; F - single float
 ;;; D - double float
 
-(in-package :image)
+(in-package :ch-image)
 
 (defclass image ()
   ((data :accessor image-data)

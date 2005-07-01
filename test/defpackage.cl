@@ -1,8 +1,8 @@
 
 (in-package #:cl-user)
 
-(defpackage #:image-test
-  (:use #:cl #:asdf #:image)
+(defpackage #:ch-image-test
+  (:use #:cl #:asdf #:ch-image)
   (:export #:run-tests
 	   ))
 

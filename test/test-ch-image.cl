@@ -1,5 +1,5 @@
 
-(in-package :image-test)
+(in-package :ch-image-test)
 
 (defun imgtest1 ()
   (let*

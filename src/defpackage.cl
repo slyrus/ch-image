@@ -1,7 +1,7 @@
 
 (in-package #:cl-user)
 
-(defpackage #:image (:use #:cl #:asdf #:util #:clem)
+(defpackage #:ch-image (:use #:cl #:asdf #:ch-util #:clem)
   (:export #:image
 	   #:image-data
 	   #:image-width

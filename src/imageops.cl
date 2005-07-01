@@ -4,7 +4,7 @@
 ;; time-stamp: Tue Jul  6 17:03:39 PDT 2004
 ;;
 
-(in-package :image)
+(in-package :ch-image)
 
 (defparameter *masked-pixel* '(255 0 0 0))
 
