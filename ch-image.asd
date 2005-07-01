@@ -43,7 +43,11 @@
 	'("ch-util" "clem"))
 
 (defsystem :ch-image
+  :name "ch-image"
+  :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
+  :licence "BSD"
   :version "0.1.0-20050701"
+  :description "image representation and processing"
   :depends-on (ch-util clem)
   :components
   ((:module
@@ -53,5 +57,7 @@
      (:ch-image-cl-source-file "ch-image" :depends-on ("defpackage"))
      (:ch-image-cl-source-file "imageops"  :depends-on ("defpackage" "ch-image"))))
    (:static-file "Makefile")
+   (:static-file "README")
+   (:static-file "LICENSE")
    (:static-file "bootstrap" :pathname #p"bootstrap.cl")))
 
