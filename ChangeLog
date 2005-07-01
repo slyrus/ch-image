@@ -1,0 +1,70 @@
+2005-07-01  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* bootstrap.cl, ch-image-test.asd, ch-image.asd, src/ch-image.cl, src/defpackage.cl, src/imageops.cl, test/defpackage.cl, test/test-ch-image.cl:
+	image package -> ch-image
+
+2005-06-23  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/ch-image.cl: set-image-data had mixed up rows and cols
+
+	* ch-image-test.asd: syncing up package changes
+	   ... matrix -> clem
+	   ... tiff went away, replaced by imageio and tiff-uffi
+
+2005-06-15  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ch-image.asd, ch-image-test.asd: more asdf cleanup
+
+	cleaning up the local file path thingy. We used to do it relative to
+	  the *load-truename*, now we cache the *load-truename* of the .asd
+	  file in a special variable in the tiff-uffi-system package. Then we
+	  build our file paths relative to that.
+
+	* src/ch-image.cl: * The big unsigned-byte -> ub8 and friends rename.
+	  ... Now use ub32-matrix instead of unsigned-long matrix.
+	      Some folks might hate the numbers, but word and long were
+	      just too vague and all of those unsigned ints are in fact
+	      bytes to lisp anyway!
+
+2005-06-14  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ch-image.asd, ch-image-test.asd:
+	cleaned up asdf file logic a bit. Now there's a piece of code that
+	  needs to go in each .asd file, but we don't get screwy behavior
+	  based on partial overriding of asdf methods. Now each system gets
+	  its own subclass of cl-source-file type and components are specified
+	  as :clem-cl-source-file, for instance, instead of :file. Files
+	  usually have .cl as the suffix, but this is easily changeable on a
+	  per-system basis and fasls go in a separate directory.
+
+2005-05-16  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/ch-image.cl, test/test-ch-image.cl:
+	ok, all the images are now in row-major order.
+
+2005-05-12  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/defpackage.cl: use clem instead of matrix.
+
+	* src/ch-image.cl: use clem instead of matrix.
+	use row-major indexing.
+
+	* ch-image.asd: now depends on clem instead of matrix.
+
+2005-04-26  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/imageops.cl: fixed an ignore declaration
+
+	* src/ch-image.cl: cleaned up initargs stuff.
+
+2004-10-25  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/ch-image.cl, src/defpackage.cl, src/imageops.cl, test/test-ch-image.cl:
+	first (real) version of pipeline works now for both manual and auto-seg stuff.
+	trying to resolve how to deal with image/matrix split. works for now.
+
+2004-10-20  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* .cvsignore, bootstrap.cl, ch-image-test.asd, ch-image.asd, src/.cvsignore, src/ch-image.cl, src/defpackage.cl, src/imageops.cl, test/.cvsignore, test/defpackage.cl, test/test-ch-image.cl:
+	moving to new home.
+
