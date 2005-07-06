@@ -254,8 +254,8 @@
     dest))
 
 (defclass matrix-gray-image (gray-image ub8-matrix)
-  ((clem:rows :initarg :width :accessor image-width)
-   (clem:cols :initarg :height :accessor image-height)
+  ((clem:rows :initarg :height :accessor image-height)
+   (clem:cols :initarg :width :accessor image-width)
    (clem::initial-element :accessor initial-element
 			    :initarg :initial-element
 			    :initform (coerce 0 'unsigned-byte)))
