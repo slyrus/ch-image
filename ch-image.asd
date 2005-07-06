@@ -23,30 +23,11 @@
   (list (merge-pathnames *fasl-directory* (compile-file-pathname (component-pathname c)))))
 
 
-(defvar *registry-directories*
-  (list (make-pathname :directory "/usr/local/share/lisp")
-        (make-pathname :directory "/bobo/share/lisp")
-	(merge-pathnames
-	 (make-pathname :directory (list :relative :up))
-	 (make-pathname :directory (pathname-directory *load-truename*)))))
-
-(defun add-registry-path (path)
-  (dolist (dir *registry-directories*)
-    (let ((p (merge-pathnames
-              (make-pathname :directory (cons :relative (if (not (listp path)) (list path) path)))
-              dir)))
-      (when (probe-file p)
-        (pushnew p asdf:*central-registry* :test 'equal)
-        (return-from add-registry-path p)))))
-
-(mapcar #'(lambda (x) (add-registry-path x))
-	'("ch-util" "clem"))
-
 (defsystem :ch-image
   :name "ch-image"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
   :licence "BSD"
-  :version "0.1.0-20050701"
+  :version "0.1.1-20050701"
   :description "image representation and processing"
   :depends-on (ch-util clem)
   :components
