@@ -39,8 +39,7 @@
   ((data :accessor image-data)
    (width :accessor image-width :initarg :width)
    (height :accessor image-height :initarg :height)
-   (channels :accessor image-channels :initform 1)
-   )
+   (channels :accessor image-channels :initform 1))
   (:documentation "abstract image class"))
 
 (defmethod image ((width fixnum) (height fixnum))
@@ -54,6 +53,9 @@
    (g :accessor image-g)
    (b :accessor image-b))
   (:documentation "RGB (Red/Green/Blue) image class"))
+
+(defmethod get-channels ((img rgb-image))
+  (list (image-r img) (image-g img) (image-b img)))
 
 (defclass rgb-888-image (rgb-image) ())
 
@@ -127,6 +129,9 @@
    (b :accessor image-b))
   (:documentation "ARGB (Alpha/Red/Green/Blue) image class"))
 
+(defmethod get-channels ((img argb-image))
+  (list (image-a img) (image-r img) (image-g img) (image-b img)))
+
 (defclass argb-8888-image (argb-image) ())
 
 (defmethod shared-initialize :after
@@ -175,6 +180,9 @@
 
 (defclass gray-image (image) ()
   (:documentation "Grayscale 8-bit image class"))
+
+(defmethod get-channels ((img gray-image))
+  (list (image-data img)))
 
 (defmethod shared-initialize :after
     ((img gray-image) slot-names &rest initargs &key &allow-other-keys)

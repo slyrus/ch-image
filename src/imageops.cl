@@ -60,3 +60,20 @@
 		src)
     dest))
 
+(defgeneric affine-transform-image (img xfrm &key interpolation background))
+(defmethod affine-transform-image
+    ((img image)
+     (xfrm clem:affine-transformation)
+     &key
+     (interpolation nil interpolation-supplied-p)
+     (background nil background-supplied-p))
+  (let ((m (clem:mat-copy-proto (image-r img))))
+    (mapcar #'(lambda (channel)
+                (apply #'clem:transform-matrix channel m xfrm
+                       (append
+                        (when background-supplied-p
+                          (list :background background))
+                        (when interpolation-supplied-p
+                          (list :interpolation interpolation))))
+                (clem:matrix-move m channel))
+            (get-channels img))))

@@ -7,6 +7,8 @@
 	   #:image-width
 	   #:image-height
 
+           #:get-channels
+
 	   #:map-pixels
 	   #:set-pixel
 	   #:get-pixel
@@ -34,5 +36,6 @@
 
 	   #:argb-image-to-blue-image
 
+           #:affine-transform-image
 	   ))
 
