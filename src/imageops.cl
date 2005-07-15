@@ -77,3 +77,23 @@
                           (list :interpolation interpolation))))
                 (clem:matrix-move m channel))
             (get-channels img))))
+
+(defun gaussian-blur-image (img &key (k 2) (sigma 1) (truncate nil))
+  (declare (ignore truncate))
+  (let* ((hr (clem::gaussian-kernel-1d k sigma))
+         (hc (transpose hr)))
+    (let ((mr (image-height img)) (mc (image-width img)) (hrows (rows hr)) (hcols (cols hc)))
+      (let ((z1r mr) (z1c (+ mc hcols -1))
+            (z2r (+ mr hrows -1)) (z2c (+ mc hcols -1))
+            (matrix-class (class-of (car (get-channels img)))))
+        (let ((z1 (make-instance matrix-class :rows z1r :cols z1c)))
+          (set-channels
+           img
+           (mapcar #'(lambda (channel)
+                       (let ((z2 (make-instance matrix-class :rows z2r :cols z2c)))
+                         (clem::%separable-discrete-convolve channel hr hc z1 z2 :norm-v nil)))
+                   (get-channels img)))
+          (setf (image-height img) (clem:rows (ch-image::image-r img)))
+          (setf (image-width img) (clem:cols (ch-image::image-r img)))))))
+  img)
+
