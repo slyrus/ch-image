@@ -57,6 +57,12 @@
 (defmethod get-channels ((img rgb-image))
   (list (image-r img) (image-g img) (image-b img)))
 
+(defmethod set-channels ((img rgb-image) channels)
+  (setf (image-r img) (second channels))
+  (setf (image-g img) (third channels))
+  (setf (image-b img) (fourth channels)))
+
+
 (defclass rgb-888-image (rgb-image) ())
 
 (defmethod shared-initialize :after
@@ -189,6 +195,9 @@
 
 (defmethod get-channels ((img gray-image))
   (list (image-data img)))
+
+(defmethod set-channels ((img gray-image) channels)
+  (setf (image-data img) (first channels)))
 
 (defmethod shared-initialize :after
     ((img gray-image) slot-names &rest initargs &key &allow-other-keys)
