@@ -132,6 +132,12 @@
 (defmethod get-channels ((img argb-image))
   (list (image-a img) (image-r img) (image-g img) (image-b img)))
 
+(defmethod set-channels ((img argb-image) channels)
+  (setf (image-a img) (first channels))
+  (setf (image-r img) (second channels))
+  (setf (image-g img) (third channels))
+  (setf (image-b img) (fourth channels)))
+
 (defclass argb-8888-image (argb-image) ())
 
 (defmethod shared-initialize :after
