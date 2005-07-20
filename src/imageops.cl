@@ -60,23 +60,54 @@
 		src)
     dest))
 
-(defgeneric affine-transform-image (img xfrm &key interpolation background))
+(defgeneric affine-transform-image (img xfrm &key u v x y interpolation background))
 (defmethod affine-transform-image
     ((img image)
      (xfrm clem:affine-transformation)
      &key
+     u v x y
      (interpolation nil interpolation-supplied-p)
      (background nil background-supplied-p))
-  (let ((m (clem:mat-copy-proto (image-r img))))
-    (mapcar #'(lambda (channel)
-                (apply #'clem:transform-matrix channel m xfrm
-                       (append
-                        (when background-supplied-p
-                          (list :background background))
-                        (when interpolation-supplied-p
-                          (list :interpolation interpolation))))
-                (clem:matrix-move m channel))
-            (get-channels img))))
+  (unless u
+    (setf u (cons 0 (image-width img))))
+  (unless v
+    (setf v (cons 0 (image-height img)))) 
+  (multiple-value-bind (x1 y1 x2 y2)
+      (clem::compute-bounds (car u) (car v) (cdr u) (cdr v) xfrm)
+    (unless x
+      (setf x (cons (floor x1) (ceiling x2))))
+    (unless y
+      (setf y (cons (floor y1) (ceiling y2)))))
+  (let ((rows (if y
+                  (- (cdr y) (car y))
+                  (rows (image-r img))))
+        (cols  (if x
+                   (- (cdr x) (car x))
+                   (cols (image-r img)))))
+    (print (cons 'dims (cons rows cols)))
+    (set-channels
+     img
+     (mapcar #'(lambda (channel)
+                 (let ((m (make-instance (class-of (image-r img))
+                                         :rows rows
+                                         :cols cols
+                                         :initial-element
+                                         (coerce 0 (clem::element-type (class-of (image-r img)))))))
+                   (apply #'clem:transform-matrix channel m xfrm
+                          (append
+                           (when u (list :u u))
+                           (when v (list :v v))
+                           (when x (list :x x))
+                           (when y (list :y y))
+                           (when background-supplied-p
+                             (list :background background))
+                           (when interpolation-supplied-p
+                             (list :interpolation interpolation))))
+                   m))
+             (get-channels img)))
+    (setf (image-height img) rows)
+    (setf (image-width img) cols))
+  img)
 
 (defun gaussian-blur-image (img &key (k 2) (sigma 1) (truncate nil))
   (declare (ignore truncate))
