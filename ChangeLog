@@ -1,3 +1,45 @@
+2005-07-20  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/imageops.cl:
+	compute a default region for the transform if none is given now
+
+2005-07-15  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/ch-image.cl: added more set-channels methods
+
+	* src/imageops.cl: added gaussian-blur-image
+
+	* src/ch-image.cl: added set-channels method
+
+2005-07-13  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/imageops.cl, src/defpackage.cl, src/ch-image.cl:
+	added get-channels method and impls
+	added affine-transform-image method
+	exported a couple symbols
+
+2005-07-06  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ch-image.asd: removed registry stuff.
+
+	* test/test-ch-image.cl: removed describe calls
+	util -> ch-util
+
+	* src/ch-image.cl:
+	make matrix-gray-image use height for rows and width for cols
+	instead of vice versa.
+
+2005-07-01  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* Makefile: adding makefile
+
+	* LICENSE, README, ch-image.asd: added LICENSE and README
+
+	* ChangeLog: added ChangeLog
+
+	* bootstrap.cl, ch-image-test.asd, ch-image.asd, src/ch-image.cl, src/defpackage.cl, src/imageops.cl, test/defpackage.cl, test/test-ch-image.cl:
+	image package -> ch-image
+
 2005-07-01  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* bootstrap.cl, ch-image-test.asd, ch-image.asd, src/ch-image.cl, src/defpackage.cl, src/imageops.cl, test/defpackage.cl, test/test-ch-image.cl:
