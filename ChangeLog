@@ -1,6 +1,19 @@
 2005-07-20  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* src/imageops.cl:
+	transform-image now returns a copy of the image instead of messing up
+	the original image. This is probably the right thing to do since we
+	needed to copy the image data anyway. Might as well leave the original
+	untouched.
+
+	* ChangeLog: updating changelogs
+
+	* src/imageops.cl:
+	compute a default region for the transform if none is given now
+
+2005-07-20  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/imageops.cl:
 	compute a default region for the transform if none is given now
 
 2005-07-15  Cyrus Harmon  <cyrus@bobobeach.com>

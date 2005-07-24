@@ -27,7 +27,7 @@
   :name "ch-image"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
   :licence "BSD"
-  :version "0.1.1-20050701"
+  :version "0.1.2-20050724"
   :description "image representation and processing"
   :depends-on (ch-util clem)
   :components

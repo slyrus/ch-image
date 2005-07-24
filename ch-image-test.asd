@@ -44,7 +44,7 @@
 
 
 (defsystem :ch-image-test
-  :version "0.1.0-20050701"
+  :version "0.1.2-20050724"
   :depends-on (ch-util ch-image)
   :components
   ((:module
