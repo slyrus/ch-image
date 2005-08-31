@@ -48,7 +48,9 @@
     (setf (image-height img) height)
     img))
 
-(defclass rgb-image (image)
+(defclass multichannel-image (image) ())
+
+(defclass rgb-image (multichannel-image)
   ((r :accessor image-r)
    (g :accessor image-g)
    (b :accessor image-b))
@@ -128,7 +130,7 @@
 	(setf (image-b img) (make-instance 'double-float-matrix :rows height :cols width))
 	(setf (image-data img) (list (image-r img) (image-g img) (image-b img))))))
 
-(defclass argb-image (image)
+(defclass argb-image (multichannel-image)
   ((a :accessor image-a)
    (r :accessor image-r)
    (g :accessor image-g)
@@ -190,17 +192,17 @@
 	  (val (image-g img) row col)
 	  (val (image-b img) row col)))
 
-(defclass gray-image (image) ()
-  (:documentation "Grayscale 8-bit image class"))
+(defclass image-channel (image) ()
+  (:documentation "base class for a single channel image"))
 
-(defmethod get-channels ((img gray-image))
+(defmethod get-channels ((img image-channel))
   (list (image-data img)))
 
-(defmethod set-channels ((img gray-image) channels)
+(defmethod set-channels ((img image-channel) channels)
   (setf (image-data img) (first channels)))
 
 (defmethod shared-initialize :after
-    ((img gray-image) slot-names &rest initargs &key &allow-other-keys)
+    ((img image-channel) slot-names &rest initargs &key &allow-other-keys)
   (declare (ignore initargs))
   (if (and (slot-boundp img 'width)
 	   (slot-boundp img 'height))
@@ -209,20 +211,22 @@
 	(setf (image-data img)
 	      (make-instance 'ub8-matrix :rows height :cols width)))))
 
-(defmethod pad-image ((img gray-image))
+(defmethod pad-image ((img image-channel))
   (set-image-data img (pad-matrix (image-data img))))
 
-(defmethod get-gray-value ((img gray-image) (row fixnum) (col fixnum))
-  "Gets the grayscale value at row, col"
+(defgeneric get-channel-value (img row col))
+(defmethod get-channel-value ((img image-channel) (row fixnum) (col fixnum))
+  "Gets the value at row, col"
   (val (image-data img) row col))
 
-(defmethod set-gray-value ((img gray-image) (row fixnum) (col fixnum) (v fixnum))
-  "Sets the grayscale value at row, col to v"
+(defgeneric set-channel-value (img row col v))
+(defmethod set-channel-value ((img image-channel) (row fixnum) (col fixnum) (v fixnum))
+  "Sets the value at row, col to v"
   (let ((m (image-data img)))
     (setf (clem::mref m row col) (clem::fit m v))))
 
-(defmethod set-image-data ((img gray-image) (m matrix))
-  "Sets the gray-image data to the matrix m and updates image-width and image-height"
+(defmethod set-image-data ((img image-channel) (m matrix))
+  "Sets the image-channel data to the matrix m and updates image-width and image-height"
   (destructuring-bind (h w) (dim m)
     (setf (image-height img) h)
     (setf (image-width img) w)
@@ -244,11 +248,11 @@
   (declare (ignore row col))
   (print "set-pixel not implemented for generic image class"))
 
-(defmethod set-pixel ((img gray-image) row col val)
-  (set-gray-value img row col val))
+(defmethod set-pixel ((img image-channel) row col val)
+  (set-channel-value img row col val))
 
-(defmethod get-pixel ((img gray-image) row col)
-  (get-gray-value img row col))
+(defmethod get-pixel ((img image-channel) row col)
+  (get-channel-value img row col))
 
 (defmethod set-pixel ((img argb-image) row col val)
   (set-argb-values img row col
@@ -260,6 +264,15 @@
 (defmethod get-pixel ((img argb-image) row col)
   (multiple-value-bind (a r g b) (get-argb-values img row col)
     (list a r g b)))
+
+(defclass gray-image (image-channel) ()
+  (:documentation "Grayscale 8-bit image class"))
+
+(defmethod set-gray-value ((img gray-image) (row fixnum) (col fixnum) value)
+  (set-channel-value img row col value))
+
+(defmethod get-gray-value ((img gray-image) (row fixnum) (col fixnum))
+  (get-channel-value img row col))
 
 (defun rgb-to-gray-pixel (r g b)
   (declare (dynamic-extent r g b) (fixnum r g b))
@@ -276,12 +289,20 @@
 		src)
     dest))
 
-(defclass matrix-gray-image (gray-image ub8-matrix)
+(defclass matrix-image-channel (image-channel ub8-matrix)
   ((clem:rows :initarg :height :accessor image-height)
    (clem:cols :initarg :width :accessor image-width)
    (clem::initial-element :accessor initial-element
 			    :initarg :initial-element
 			    :initform (coerce 0 'unsigned-byte)))
+  (:metaclass clem::standard-matrix-class)
+  (:element-type (unsigned-byte 8))
+  (:documentation "8-bit image channel class that is also a matrix"))
+
+(defclass ub8-matrix-image-channel (matrix-image-channel) ())
+
+(defclass matrix-gray-image (matrix-image-channel gray-image)
+  ()
   (:metaclass clem::standard-matrix-class)
   (:element-type (unsigned-byte 8))
   (:documentation "Grayscale 8-bit image class that is also a matrix"))
@@ -314,4 +335,14 @@
     ((img matrix-gray-image) slot-names &rest initargs &key &allow-other-keys)
   (declare (ignore initargs))
   (setf (image-data img) img))
+
+(defclass ub8-matrix-gray-image (matrix-gray-image) ())
+
+(defmethod set-channel-value ((img ub8-matrix-gray-image) (row fixnum) (col fixnum) (v fixnum))
+  "Sets the grayscale value at row, col to v"
+  (declare (type fixnum row col v))
+  (let ((m (image-data img)))
+    (let ((a (clem::matrix-vals m)))
+      (declare (type (simple-array (unsigned-byte 8) (* *)) a))
+      (setf (aref a row col) (clem::fit m v)))))
 

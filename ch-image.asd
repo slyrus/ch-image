@@ -36,7 +36,8 @@
     :components
     ((:ch-image-cl-source-file "defpackage")
      (:ch-image-cl-source-file "ch-image" :depends-on ("defpackage"))
-     (:ch-image-cl-source-file "imageops"  :depends-on ("defpackage" "ch-image"))))
+     (:ch-image-cl-source-file "imageops"  :depends-on ("defpackage" "ch-image"))
+     (:ch-image-cl-source-file "shapes"  :depends-on ("defpackage" "ch-image"))))
    (:static-file "Makefile")
    (:static-file "README")
    (:static-file "LICENSE")

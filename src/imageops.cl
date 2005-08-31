@@ -1,7 +1,6 @@
 ;;
 ;; file: imageops.cl
 ;; author: cyrus harmon
-;; time-stamp: Tue Jul  6 17:03:39 PDT 2004
 ;;
 
 (in-package :ch-image)
