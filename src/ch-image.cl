@@ -220,10 +220,10 @@
   (val (image-data img) row col))
 
 (defgeneric set-channel-value (img row col v))
-(defmethod set-channel-value ((img image-channel) (row fixnum) (col fixnum) (v fixnum))
+(defmethod set-channel-value ((img image-channel) (row fixnum) (col fixnum) v)
   "Sets the value at row, col to v"
   (let ((m (image-data img)))
-    (setf (clem::mref m row col) (clem::fit m v))))
+    (setf (clem::mref m row col) v)))
 
 (defmethod set-image-data ((img image-channel) (m matrix))
   "Sets the image-channel data to the matrix m and updates image-width and image-height"
@@ -289,17 +289,35 @@
 		src)
     dest))
 
-(defclass matrix-image-channel (image-channel ub8-matrix)
+(defclass matrix-image-channel (image-channel matrix)
   ((clem:rows :initarg :height :accessor image-height)
    (clem:cols :initarg :width :accessor image-width)
    (clem::initial-element :accessor initial-element
 			    :initarg :initial-element
 			    :initform (coerce 0 'unsigned-byte)))
   (:metaclass clem::standard-matrix-class)
+  (:documentation "image channel class that is also a matrix"))
+
+(defclass ub8-matrix-image-channel (matrix-image-channel) ()
+  (:metaclass clem::standard-matrix-class)
   (:element-type (unsigned-byte 8))
   (:documentation "8-bit image channel class that is also a matrix"))
 
-(defclass ub8-matrix-image-channel (matrix-image-channel) ())
+(defclass complex-matrix-image-channel (matrix-image-channel complex-matrix) ()
+  (:metaclass clem::standard-matrix-class)
+  (:element-type complex)
+  (:documentation "complex image channel class that is also a matrix"))
+
+(defmethod shared-initialize :after
+    ((img complex-matrix-image-channel) slot-names &rest initargs &key &allow-other-keys)
+  (declare (ignore initargs))
+  (setf (image-data img) img))
+
+
+(defclass complex-matrix-image (complex-matrix-image-channel gray-image) ()
+  (:metaclass clem::standard-matrix-class)
+  (:element-type complex)
+  (:documentation "complex image channel class that is also a matrix"))
 
 (defclass matrix-gray-image (matrix-image-channel gray-image)
   ()
@@ -336,7 +354,10 @@
   (declare (ignore initargs))
   (setf (image-data img) img))
 
-(defclass ub8-matrix-gray-image (matrix-gray-image) ())
+(defclass ub8-matrix-gray-image (matrix-gray-image ub8-matrix) ()
+  (:metaclass clem::standard-matrix-class)
+  (:element-type (unsigned-byte 8))
+  (:documentation "Grayscale 8-bit image class that is also a matrix"))
 
 (defmethod set-channel-value ((img ub8-matrix-gray-image) (row fixnum) (col fixnum) (v fixnum))
   "Sets the grayscale value at row, col to v"
