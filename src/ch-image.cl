@@ -298,14 +298,12 @@
   (:metaclass clem::standard-matrix-class)
   (:documentation "image channel class that is also a matrix"))
 
-(defclass ub8-matrix-image-channel (matrix-image-channel) ()
+(defclass ub8-matrix-image-channel (ub8-matrix matrix-image-channel) ()
   (:metaclass clem::standard-matrix-class)
-  (:element-type (unsigned-byte 8))
   (:documentation "8-bit image channel class that is also a matrix"))
 
-(defclass complex-matrix-image-channel (matrix-image-channel complex-matrix) ()
+(defclass complex-matrix-image-channel (complex-matrix matrix-image-channel) ()
   (:metaclass clem::standard-matrix-class)
-  (:element-type complex)
   (:documentation "complex image channel class that is also a matrix"))
 
 (defmethod shared-initialize :after
@@ -316,11 +314,9 @@
 
 (defclass complex-matrix-image (complex-matrix-image-channel gray-image) ()
   (:metaclass clem::standard-matrix-class)
-  (:element-type complex)
   (:documentation "complex image channel class that is also a matrix"))
 
-(defclass matrix-gray-image (matrix-image-channel gray-image)
-  ()
+(defclass matrix-gray-image (matrix-image-channel gray-image) ()
   (:metaclass clem::standard-matrix-class)
   (:element-type (unsigned-byte 8))
   (:documentation "Grayscale 8-bit image class that is also a matrix"))
@@ -354,9 +350,8 @@
   (declare (ignore initargs))
   (setf (image-data img) img))
 
-(defclass ub8-matrix-gray-image (matrix-gray-image ub8-matrix) ()
+(defclass ub8-matrix-gray-image (ub8-matrix matrix-gray-image) ()
   (:metaclass clem::standard-matrix-class)
-  (:element-type (unsigned-byte 8))
   (:documentation "Grayscale 8-bit image class that is also a matrix"))
 
 (defmethod set-channel-value ((img ub8-matrix-gray-image) (row fixnum) (col fixnum) (v fixnum))
@@ -366,4 +361,25 @@
     (let ((a (clem::matrix-vals m)))
       (declare (type (simple-array (unsigned-byte 8) (* *)) a))
       (setf (aref a row col) (clem::fit m v)))))
+
+(defclass bit-matrix-image-channel (bit-matrix matrix-image-channel) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "1-bit image channel class that is also a matrix"))
+
+(defclass bit-matrix-image (bit-matrix-image-channel matrix-gray-image) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "1-bit image class that is also a matrix"))
+
+(defclass sb8-matrix-image-channel (sb8-matrix matrix-image-channel) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "8-signed-bit image channel class that is also a matrix"))
+
+(defclass sb8-matrix-image (sb8-matrix matrix-gray-image) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "8-signed-bit image class that is also a matrix"))
+
+
+(defclass sb8-matrix-image-3 (sb8-matrix matrix-gray-image) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "8-signed-bit image class that is also a matrix"))
 
