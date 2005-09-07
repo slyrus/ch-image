@@ -5,19 +5,31 @@
 
 (in-package :ch-image)
 
+(defgeneric in-clip-region (clip-region y x))
+
+(defmethod in-clip-region ((clip-rect clip-rect) y x)
+  (and (and (>= y (y1 clip-rect))
+            (< y (y2 clip-rect)))
+       (and (>= x (x1 clip-rect))
+            (< x (x2 clip-rect)))))
+
+(defmethod clip-set-pixel ((img image) y x value)
+  (when (in-clip-region (clip-region img) y x)
+    (set-pixel img y x value)))
+
 (defgeneric horiz-line (img y x0 x1 value))
 
 (defmethod horiz-line ((img image) y x0 x1 value)
   (declare (type fixnum y x0 x1))
   (loop for x fixnum from x0 to x1
-     do (set-pixel img y x value)))
+     do (clip-set-pixel img y x value)))
 
 (defgeneric vert-line (img y0 y1 x value))
 
 (defmethod vert-line ((img image) y0 y1 x value)
   (declare (type fixnum y0 y1 x))
   (loop for y fixnum from y0 to y1
-     do (set-pixel img y x value)))
+     do (clip-set-pixel img y x value)))
 
 (defgeneric draw-line (img y0 x0 y1 x1 value))
 
@@ -38,7 +50,7 @@
                   (x x0)
                   (y y0))
               (declare (type fixnum d incr-e incr-ne x y))
-              (set-pixel img y x value)
+              (clip-set-pixel img y x value)
               (dotimes (i absdx)
                 (cond
                   ((<= d 0)
@@ -48,14 +60,14 @@
                    (incf d incr-ne)
                    (incf x xstep)
                    (incf y ystep)))
-                (set-pixel img y x value)))
+                (clip-set-pixel img y x value)))
             (let ((d (- (* 2 absdy) absdx))
                   (incr-n (* 2 absdx))
                   (incr-ne (* 2 (- absdx absdy)))
                   (x x0)
                   (y y0))
               (declare (type fixnum d incr-n incr-ne x y))
-              (set-pixel img y x value)
+              (clip-set-pixel img y x value)
               (dotimes (i absdy)
                 (cond
                   ((<= d 0)
@@ -65,7 +77,7 @@
                    (incf d incr-ne)
                    (incf y ystep)
                    (incf x xstep)))
-                (set-pixel img y x value))))))))
+                (clip-set-pixel img y x value))))))))
               
 (defgeneric draw-circle (img center-y center-x radius value))
 
@@ -73,14 +85,14 @@
   "draws a circle centered at (x, y) with radius r on a image."
   (declare (type fixnum center-y center-x radius))
   (flet ((circle-points (y x value)
-           (set-pixel img (+ center-y y) (+ center-x x) value) 
-           (set-pixel img (+ center-y x) (+ center-x y) value) 
-           (set-pixel img (- center-y x) (+ center-x y) value) 
-           (set-pixel img (- center-y y) (+ center-x x) value) 
-           (set-pixel img (- center-y y) (- center-x x) value) 
-           (set-pixel img (- center-y x) (- center-x y) value) 
-           (set-pixel img (+ center-y x) (- center-x y) value) 
-           (set-pixel img (+ center-y y) (- center-x x) value)))
+           (clip-set-pixel img (+ center-y y) (+ center-x x) value) 
+           (clip-set-pixel img (+ center-y x) (+ center-x y) value) 
+           (clip-set-pixel img (- center-y x) (+ center-x y) value) 
+           (clip-set-pixel img (- center-y y) (+ center-x x) value) 
+           (clip-set-pixel img (- center-y y) (- center-x x) value) 
+           (clip-set-pixel img (- center-y x) (- center-x y) value) 
+           (clip-set-pixel img (+ center-y x) (- center-x y) value) 
+           (clip-set-pixel img (+ center-y y) (- center-x x) value)))
     (let ((x 0)
           (y radius)
           (d (- 1 radius))
