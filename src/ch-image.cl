@@ -35,12 +35,29 @@
 
 (in-package :ch-image)
 
+(defclass clip-region () ())
+
+(defclass clip-rect (clip-region)
+  ((y1 :accessor y1 :initarg :y1)
+   (x1 :accessor x1 :initarg :x1)
+   (y2 :accessor y2 :initarg :y2)
+   (x2 :accessor x2 :initarg :x2)))
+
 (defclass image ()
   ((data :accessor image-data)
    (width :accessor image-width :initarg :width)
    (height :accessor image-height :initarg :height)
-   (channels :accessor image-channels :initform 1))
+   (channels :accessor image-channels :initform 1)
+   (clip-region :accessor clip-region :initarg :clip-region))
   (:documentation "abstract image class"))
+
+(defmethod shared-initialize :after
+    ((img image) slot-names &rest initargs &key &allow-other-keys)
+  (declare (ignore slot-names initargs))
+  (when (and (slot-boundp img 'width)
+             (slot-boundp img 'height))
+    (setf (clip-region img) (make-instance 'clip-rect
+                                           :y1 0 :x1 0 :y2 (image-height img) :x2 (image-width img)))))
 
 (defmethod image ((width fixnum) (height fixnum))
   (let ((img (make-instance 'image)))
@@ -298,6 +315,14 @@
   (:metaclass clem::standard-matrix-class)
   (:documentation "image channel class that is also a matrix"))
 
+(defmethod shared-initialize :after
+    ((img matrix-image-channel) slot-names &rest initargs &key &allow-other-keys)
+  (declare (ignore slot-names initargs))
+  (when (and (slot-boundp img 'clem:rows)
+             (slot-boundp img 'clem:cols))
+    (setf (clip-region img) (make-instance 'clip-rect
+                                           :y1 0 :x1 0 :y2 (clem:rows img) :x2 (clem:cols img)))))
+
 (defclass ub8-matrix-image-channel (ub8-matrix matrix-image-channel) ()
   (:metaclass clem::standard-matrix-class)
   (:documentation "8-bit image channel class that is also a matrix"))
@@ -362,6 +387,22 @@
       (declare (type (simple-array (unsigned-byte 8) (* *)) a))
       (setf (aref a row col) (clem::fit m v)))))
 
+(defclass ub16-matrix-image-channel (ub16-matrix matrix-image-channel) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "16-unsigned-bit image channel class that is also a matrix"))
+
+(defclass ub16-matrix-image (ub16-matrix matrix-gray-image) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "16-unsigned-bit image class that is also a matrix"))
+
+(defclass ub32-matrix-image-channel (ub32-matrix matrix-image-channel) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "32-unsigned-bit image channel class that is also a matrix"))
+
+(defclass ub32-matrix-image (ub32-matrix matrix-gray-image) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "32-unsigned-bit image class that is also a matrix"))
+
 (defclass bit-matrix-image-channel (bit-matrix matrix-image-channel) ()
   (:metaclass clem::standard-matrix-class)
   (:documentation "1-bit image channel class that is also a matrix"))
@@ -378,8 +419,35 @@
   (:metaclass clem::standard-matrix-class)
   (:documentation "8-signed-bit image class that is also a matrix"))
 
-
-(defclass sb8-matrix-image-3 (sb8-matrix matrix-gray-image) ()
+(defclass sb16-matrix-image-channel (sb16-matrix matrix-image-channel) ()
   (:metaclass clem::standard-matrix-class)
-  (:documentation "8-signed-bit image class that is also a matrix"))
+  (:documentation "16-signed-bit image channel class that is also a matrix"))
+
+(defclass sb16-matrix-image (sb16-matrix matrix-gray-image) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "16-signed-bit image class that is also a matrix"))
+
+(defclass sb32-matrix-image-channel (sb32-matrix matrix-image-channel) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "32-signed-bit image channel class that is also a matrix"))
+
+(defclass sb32-matrix-image (sb32-matrix matrix-gray-image) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "32-signed-bit image class that is also a matrix"))
+
+(defclass double-float-matrix-image-channel (double-float-matrix matrix-image-channel) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "double-float image channel class that is also a matrix"))
+
+(defclass double-float-matrix-image (double-float-matrix matrix-gray-image) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "double-float image class that is also a matrix"))
+
+(defclass single-float-matrix-image-channel (single-float-matrix matrix-image-channel) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "single-float image channel class that is also a matrix"))
+
+(defclass single-float-matrix-image (single-float-matrix matrix-gray-image) ()
+  (:metaclass clem::standard-matrix-class)
+  (:documentation "single-float image class that is also a matrix"))
 
