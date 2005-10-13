@@ -375,11 +375,11 @@
   (declare (ignore initargs))
   (setf (image-data img) img))
 
-(defclass ub8-matrix-gray-image (ub8-matrix matrix-gray-image) ()
+(defclass ub8-matrix-image (ub8-matrix matrix-gray-image) ()
   (:metaclass clem::standard-matrix-class)
   (:documentation "Grayscale 8-bit image class that is also a matrix"))
 
-(defmethod set-channel-value ((img ub8-matrix-gray-image) (row fixnum) (col fixnum) (v fixnum))
+(defmethod set-channel-value ((img ub8-matrix-image) (row fixnum) (col fixnum) (v fixnum))
   "Sets the grayscale value at row, col to v"
   (declare (type fixnum row col v))
   (let ((m (image-data img)))
