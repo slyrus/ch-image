@@ -26,8 +26,8 @@
 	(declare (dynamic-extent i) (fixnum i))
 	(dotimes (j (image-width img))
 	  (declare (dynamic-extent j) (fixnum j))
-	  (set-pixel fimg (- w j 1) i
-		     (get-pixel img j i))))
+	  (set-pixel fimg i (- w j 1)
+		     (get-pixel img i j))))
       fimg)))
 
 (defmethod get-gray-image-levels ((img gray-image))
