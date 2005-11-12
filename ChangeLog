@@ -1,3 +1,61 @@
+2005-11-12  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/ch-image.cl: much more efficient argb-image-to-gray-image
+
+2005-11-11  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/imageops.cl:
+	flip-image was calling (xxx-pixel col row) instead of (xxx-pixel row col)
+
+2005-10-13  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* test/test-ch-image.cl, src/defpackage.cl, src/ch-image.cl:
+	ub8-matrix-gray-image -> ub8-matrix-image
+	added exports for the other typed matrices
+
+2005-09-07  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/shapes.cl: added in-clip-region and clip-set-pixel
+
+	* src/ch-image.cl: added clip-region and more image classes
+
+2005-09-03  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/ch-image.cl: more type heirarchy cleanup
+
+2005-09-01  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/ch-image.cl: added complex-image
+	fixing up the image heirarchy a bit
+
+2005-08-31  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* test/test-ch-image.cl, src/shapes.cl, src/imageops.cl, src/ch-image.cl, ch-image.asd, ch-image-test.asd:
+	  added ch-imageio to test depends-on
+	  added shapes.cl and added it to ch-image.asd
+	  restructured the image class heirarchy a bit and some intermediate
+	    classes
+	  removed timestemp from imageops.cl
+	  added new tests for shapes
+
+2005-07-24  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ch-image.asd, ch-image-test.asd, ChangeLog:
+	fixing version numbers and bumping ChangeLog
+
+2005-07-20  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/imageops.cl:
+	transform-image now returns a copy of the image instead of messing up
+	the original image. This is probably the right thing to do since we
+	needed to copy the image data anyway. Might as well leave the original
+	untouched.
+
+	* ChangeLog: updating changelogs
+
+	* src/imageops.cl:
+	compute a default region for the transform if none is given now
+
 2005-07-20  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* src/imageops.cl:
