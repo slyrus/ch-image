@@ -291,15 +291,20 @@
 (defmethod get-gray-value ((img gray-image) (row fixnum) (col fixnum))
   (get-channel-value img row col))
 
+(declaim (ftype (function (fixnum fixnum fixnum) fixnum)
+                rgb-to-gray-pixel)
+         (inline rgb-to-gray-pixel))
+
 (defun rgb-to-gray-pixel (r g b)
   (declare (dynamic-extent r g b) (fixnum r g b))
-  (floor (/ (+ r g b) 3)))
+  (floor (/ (+ r g b) 3.0d0)))
 
 (defmethod argb-image-to-gray-image ((src argb-image))
-  (let ((dest (make-instance 'gray-image :width (image-width src) :height (image-height src))))
+  (declare (optimize (speed 3)))
+  (let ((dest (make-instance 'ub8-matrix-image :width (image-width src) :height (image-height src))))
     (map-pixels #'(lambda (img row col)
 		    (declare (dynamic-extent row col) (fixnum row col))
-		    (destructuring-bind (a r g b) (get-pixel img row col)
+		    (multiple-value-bind (a r g b) (get-argb-values img row col)
 		      (declare (dynamic-extent a r g b) (fixnum a r g b))
 		      (declare (ignore a))
 		      (set-pixel dest row col (rgb-to-gray-pixel r g b))))
