@@ -69,46 +69,57 @@
   (let ((ximg (make-instance (class-of img)
                              :height 0
                              :width 0)))
-    (unless u
-      (setf u (cons 0 (image-width img))))
-    (unless v
-      (setf v (cons 0 (image-height img)))) 
-    (multiple-value-bind (x1 y1 x2 y2)
-        (clem::compute-bounds (car u) (car v) (cdr u) (cdr v) xfrm)
-      (unless x
-        (setf x (cons (floor x1) (ceiling x2))))
-      (unless y
-        (setf y (cons (floor y1) (ceiling y2)))))
-    (let ((rows (if y
-                    (- (cdr y) (car y))
-                    (rows (image-r img))))
-          (cols  (if x
-                     (- (cdr x) (car x))
-                     (cols (image-r img)))))
-      (print (cons 'dims (cons rows cols)))
-      (set-channels
-       ximg
-       (mapcar #'(lambda (channel)
-                   (let ((m (make-instance (class-of (image-r img))
-                                           :rows rows
-                                           :cols cols
-                                           :initial-element
-                                           (coerce 0 (clem::element-type (class-of (image-r img)))))))
-                     (apply #'clem:transform-matrix channel m xfrm
-                            (append
-                             (when u (list :u u))
-                             (when v (list :v v))
-                             (when x (list :x x))
-                             (when y (list :y y))
-                             (when background-supplied-p
-                               (list :background background))
-                             (when interpolation-supplied-p
-                               (list :interpolation interpolation))))
-                     m))
-               (get-channels img)))
-    (setf (image-height ximg) rows)
-    (setf (image-width ximg) cols))
+    (set-channels
+     ximg
+     (mapcar #'(lambda (channel)
+                 (apply #'clem::affine-transform channel xfrm
+                        (append
+                         (when u (list :u u))
+                         (when v (list :v v))
+                         (when x (list :x x))
+                         (when y (list :y y))
+                         (when background-supplied-p
+                           (list :background background))
+                         (when interpolation-supplied-p
+                           (list :interpolation interpolation)))))
+             (get-channels img)))
+    (setf (image-height ximg) (rows (car (get-channels ximg))))
+    (setf (image-width ximg) (cols (car (get-channels ximg))))
     ximg))
+
+;;; FIXME: Check to see what happens when constrain-proportions is t
+;;; and no padding is needed!
+(defun resize-image (img y x &key
+                     (interpolation :bilinear)
+                     (constrain-proportions nil))
+  "Resize an image to new size y rows by x columns. If constrain
+   proportions is t, then the xscale and yscale will be set to
+   whichever scale has the largest absolute value and the image
+   will be padded as needed."
+  (let ((oldy (image-height img))
+        (oldx (image-width img)))
+    (let ((xscale (log (/ x oldx)))
+          (yscale (log (/ y oldy)))
+          (xpad 0d0)
+          (ypad 0d0))
+      (when constrain-proportions
+        (cond ((= oldy oldx) nil)
+              ((> oldy oldx) (setf xpad (/ (- oldy oldx) (/ oldy y) 2.0d0)))
+              (t (setf ypad (/ (- oldx oldy) (/ oldx x) 2.0d0))))
+        (setf xscale (* (signum xscale) (max (abs xscale) (abs yscale))))
+        (setf yscale (* (signum yscale) (max (abs xscale) (abs yscale)))))
+      (print (list xscale yscale xpad ypad))
+      (let ((xfrm (make-affine-transformation :x-scale xscale
+                                              :y-scale yscale)))
+        (let ((n (affine-transform-image
+                  img xfrm
+                  :interpolation interpolation
+                  :u (cons 0 oldx) :v (cons 0 oldy)
+                  :x (cons (floor (- xpad))
+                           (floor (- x xpad)))
+                  :y (cons (floor (- ypad))
+                           (floor (- y ypad))))))
+          n)))))
 
 (defun gaussian-blur-image (img &key (k 2) (sigma 1) (truncate nil))
   (declare (ignore truncate))
