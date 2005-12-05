@@ -87,6 +87,13 @@
     (setf (image-width ximg) (cols (car (get-channels ximg))))
     ximg))
 
+(defun split-around-zero (k &key integer)
+  (let ((khalf (/ k 2.0d0)))
+    (if integer
+        (print (cons (1+ (floor (- khalf))) (floor khalf)))
+        (print (cons (1+ (- khalf)) khalf)))))
+        
+
 ;;; FIXME: Check to see what happens when constrain-proportions is t
 ;;; and no padding is needed!
 (defun resize-image (img y x &key
@@ -99,26 +106,19 @@
   (let ((oldy (image-height img))
         (oldx (image-width img)))
     (let ((xscale (log (/ x oldx)))
-          (yscale (log (/ y oldy)))
-          (xpad 0d0)
-          (ypad 0d0))
+          (yscale (log (/ y oldy))))
       (when constrain-proportions
-        (cond ((= oldy oldx) nil)
-              ((> oldy oldx) (setf xpad (/ (- oldy oldx) (/ oldy y) 2.0d0)))
-              (t (setf ypad (/ (- oldx oldy) (/ oldx x) 2.0d0))))
         (setf xscale (* (signum xscale) (max (abs xscale) (abs yscale))))
         (setf yscale (* (signum yscale) (max (abs xscale) (abs yscale)))))
-      (print (list xscale yscale xpad ypad))
       (let ((xfrm (make-affine-transformation :x-scale xscale
                                               :y-scale yscale)))
         (let ((n (affine-transform-image
                   img xfrm
                   :interpolation interpolation
-                  :u (cons 0 oldx) :v (cons 0 oldy)
-                  :x (cons (floor (- xpad))
-                           (floor (- x xpad)))
-                  :y (cons (floor (- ypad))
-                           (floor (- y ypad))))))
+                  :u (split-around-zero oldx)
+                  :v (split-around-zero oldy)
+                  :x (split-around-zero x :integer t)
+                  :y (split-around-zero y :integer t))))
           n)))))
 
 (defun gaussian-blur-image (img &key (k 2) (sigma 1) (truncate nil))
