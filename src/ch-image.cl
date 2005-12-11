@@ -51,6 +51,9 @@
    (clip-region :accessor clip-region :initarg :clip-region))
   (:documentation "abstract image class"))
 
+(defun image-dim (img)
+  (values (image-height img) (image-width img)))
+
 (defmethod shared-initialize :after
     ((img image) slot-names &rest initargs &key &allow-other-keys)
   (declare (ignore slot-names initargs))
@@ -383,6 +386,12 @@
 (defclass ub8-matrix-image (ub8-matrix matrix-gray-image) ()
   (:metaclass clem::standard-matrix-class)
   (:documentation "Grayscale 8-bit image class that is also a matrix"))
+
+(defmethod set-channels ((img ub8-matrix-image) channels)
+  (setf (clem::matrix-vals img) (clem::matrix-vals (car channels))))
+
+(defmethod get-channels ((img ub8-matrix-image))
+  (list img))
 
 (defmethod set-channel-value ((img ub8-matrix-image) (row fixnum) (col fixnum) (v fixnum))
   "Sets the grayscale value at row, col to v"
