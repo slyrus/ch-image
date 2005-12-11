@@ -53,5 +53,6 @@
 	   #:argb-image-to-blue-image
 
            #:affine-transform-image
+           #:resize-image
 	   ))
 
