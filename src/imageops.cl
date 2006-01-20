@@ -90,7 +90,7 @@
 (defun split-around-zero (k &key integer)
   (let ((khalf (/ k 2.0d0)))
     (if integer
-        (print (cons (1+ (floor (- khalf))) (floor khalf)))
+        (print (cons (floor (1+ (- khalf))) (floor khalf)))
         (print (cons (1+ (- khalf)) khalf)))))
         
 
@@ -115,14 +115,13 @@
         (let ((n (affine-transform-image
                   img xfrm
                   :interpolation interpolation
-                  :u (split-around-zero oldx)
-                  :v (split-around-zero oldy)
+                  :u (split-around-zero oldx :integer t)
+                  :v (split-around-zero oldy :integer t)
                   :x (split-around-zero x :integer t)
                   :y (split-around-zero y :integer t))))
           n)))))
 
-(defun gaussian-blur-image (img &key (k 2) (sigma 1) (truncate nil))
-  (declare (ignore truncate))
+(defun gaussian-blur-image (img &key (k 2) (sigma 1) (trim k))
   (let* ((hr (clem::gaussian-kernel-1d k sigma))
          (hc (transpose hr)))
     (let ((mr (image-height img)) (mc (image-width img)) (hrows (rows hr)) (hcols (cols hc)))
@@ -134,7 +133,8 @@
            img
            (mapcar #'(lambda (channel)
                        (let ((z2 (make-instance matrix-class :rows z2r :cols z2c)))
-                         (clem::%separable-discrete-convolve channel hr hc z1 z2 :norm-v nil)))
+                         (clem::mat-trim (clem::%separable-discrete-convolve channel hr hc z1 z2 :norm-v nil)
+                                         trim)))
                    (get-channels img)))
           (setf (image-height img) (clem:rows (ch-image::image-r img)))
           (setf (image-width img) (clem:cols (ch-image::image-r img)))))))
