@@ -36,8 +36,11 @@
     :components
     ((:ch-image-cl-source-file "defpackage")
      (:ch-image-cl-source-file "ch-image" :depends-on ("defpackage"))
+     (:ch-image-cl-source-file "copy-image"  :depends-on ("defpackage" "ch-image"))
+     (:ch-image-cl-source-file "conversion"  :depends-on ("defpackage" "ch-image"))
      (:ch-image-cl-source-file "imageops"  :depends-on ("defpackage" "ch-image"))
      (:ch-image-cl-source-file "shapes"  :depends-on ("defpackage" "ch-image"))))
+     (:ch-image-cl-source-file "gamma"  :depends-on ("defpackage" "ch-image"))))
    (:static-file "README")
    (:static-file "LICENSE")
    (:static-file "bootstrap" :pathname #p"bootstrap.cl")))
