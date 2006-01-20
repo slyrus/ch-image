@@ -1,7 +1,6 @@
 ;;
 ;; file: ch-image.cl
 ;; author: cyrus harmon
-;; time-stamp: Fri Apr 23 12:19:55 EDT 2004
 ;;
 
 ;;;
@@ -28,8 +27,8 @@
 ;;; 5 - 5 bits
 ;;; 6 - 6 bits
 ;;; 8 - 8 bits
-;;; W - 16 bits (half-word)
-;;; L - 32 bits (word)
+;;; H - 16 bits (half-word)
+;;; W - 32 bits (word)
 ;;; F - single float
 ;;; D - double float
 
@@ -45,8 +44,8 @@
 
 (defclass image ()
   ((data :accessor image-data)
-   (width :accessor image-width :initarg :width)
    (height :accessor image-height :initarg :height)
+   (width :accessor image-width :initarg :width)
    (channels :accessor image-channels :initform 1)
    (clip-region :accessor clip-region :initarg :clip-region))
   (:documentation "abstract image class"))
@@ -64,8 +63,8 @@
 
 (defmethod image ((width fixnum) (height fixnum))
   (let ((img (make-instance 'image)))
-    (setf (image-width img) width)
     (setf (image-height img) height)
+    (setf (image-width img) width)
     img))
 
 (defclass multichannel-image (image) ())
@@ -98,10 +97,10 @@
 	(setf (image-b img) (make-instance 'ub8-matrix :rows height :cols width))
 	(setf (image-data img) (list (image-r img) (image-g img) (image-b img))))))
 
-(defclass rgb-www-image (rgb-image) ())
+(defclass rgb-hhh-image (rgb-image) ())
 
 (defmethod shared-initialize :after
-    ((img rgb-www-image) slot-names &rest initargs &key &allow-other-keys)
+    ((img rgb-hhh-image) slot-names &rest initargs &key &allow-other-keys)
   (declare (ignore initargs))
   (if (and (slot-boundp img 'width)
 	   (slot-boundp img 'height))
@@ -110,32 +109,6 @@
 	(setf (image-g img) (make-instance 'ub16-matrix :rows height :cols width))
 	(setf (image-b img) (make-instance 'ub16-matrix :rows height :cols width))
 	(setf (image-data img) (list (image-r img) (image-g img) (image-b img))))))
-
-(defgeneric copy-image (img))
-(defmethod copy-image ((img1 rgb-www-image))
-  (let ((img2 (make-instance 'rgb-www-image
-			     :height (image-height img1)
-			     :width (image-width img1))))
-    (let ((r1 (clem::matrix-vals (image-r img1)))
-	  (g1 (clem::matrix-vals (image-g img1)))
-	  (b1 (clem::matrix-vals (image-b img1)))
-	  (r2 (clem::matrix-vals (image-r img2)))
-	  (g2 (clem::matrix-vals (image-g img2)))
-	  (b2 (clem::matrix-vals (image-b img2))))
-      (declare (type (simple-array (unsigned-byte 16) (* *)) r1)
-	       (type (simple-array (unsigned-byte 16) (* *)) g1)
-	       (type (simple-array (unsigned-byte 16) (* *)) b1)
-	       (type (simple-array (unsigned-byte 16) (* *)) r2)
-	       (type (simple-array (unsigned-byte 16) (* *)) g2)
-	       (type (simple-array (unsigned-byte 16) (* *)) b2))
-      (loop for i from 0 below (image-height img1)
-	 do
-	   (loop for j from 0 below (image-width img1)
-	      do 
-		(setf (aref r2 i j) (aref r1 i j)
-		      (aref g2 i j) (aref g1 i j)
-		      (aref b2 i j) (aref b1 i j)))))
-    img2))
 
 (defclass rgb-fff-image (rgb-image) ())
 
@@ -181,7 +154,39 @@
 	(setf (image-b img) (make-instance 'ub8-matrix :rows height :cols width))
 	(setf (image-data img) (list (image-a img) (image-r img) (image-g img) (image-b img))))))
 
-(defmethod pad-image ((img argb-8888-image))
+(defclass argb-hhhh-image (argb-image) ())
+
+(defmethod shared-initialize :after
+    ((img argb-hhhh-image) slot-names &rest initargs &key &allow-other-keys)
+  (declare (ignore initargs))
+  (if (and (slot-boundp img 'width)
+	   (slot-boundp img 'height))
+      (let ((width (slot-value img 'width))
+	    (height (slot-value img 'height)))
+	(setf (image-a img) (make-instance 'ub16-matrix :rows height :cols width))
+	(setf (image-r img) (make-instance 'ub16-matrix :rows height :cols width))
+	(setf (image-g img) (make-instance 'ub16-matrix :rows height :cols width))
+	(setf (image-b img) (make-instance 'ub16-matrix :rows height :cols width))
+	(setf (image-data img) (list (image-a img) (image-r img) (image-g img) (image-b img))))))
+
+(defclass argb-ffff-image (argb-image) ())
+
+(defmethod shared-initialize :after
+    ((img argb-ffff-image) slot-names &rest initargs &key &allow-other-keys)
+  (declare (ignore initargs))
+  (if (and (slot-boundp img 'width)
+	   (slot-boundp img 'height))
+      (with-slots (width height) img
+	(setf (image-a img) (make-instance 'double-float-matrix :rows height :cols width))
+	(setf (image-r img) (make-instance 'double-float-matrix :rows height :cols width))
+	(setf (image-g img) (make-instance 'double-float-matrix :rows height :cols width))
+	(setf (image-b img) (make-instance 'double-float-matrix :rows height :cols width))
+	(setf (image-data img) (list (image-a img)
+                                     (image-r img)
+                                     (image-g img)
+                                     (image-b img))))))
+
+(defmethod pad-image ((img argb-image))
   (setf (image-a img) (pad-matrix (image-a img)))
   (setf (image-r img) (pad-matrix (image-r img)))
   (setf (image-g img) (pad-matrix (image-g img)))
@@ -293,26 +298,6 @@
 
 (defmethod get-gray-value ((img gray-image) (row fixnum) (col fixnum))
   (get-channel-value img row col))
-
-(declaim (ftype (function (fixnum fixnum fixnum) fixnum)
-                rgb-to-gray-pixel)
-         (inline rgb-to-gray-pixel))
-
-(defun rgb-to-gray-pixel (r g b)
-  (declare (dynamic-extent r g b) (fixnum r g b))
-  (floor (/ (+ r g b) 3.0d0)))
-
-(defmethod argb-image-to-gray-image ((src argb-image))
-  (declare (optimize (speed 3)))
-  (let ((dest (make-instance 'ub8-matrix-image :width (image-width src) :height (image-height src))))
-    (map-pixels #'(lambda (img row col)
-		    (declare (dynamic-extent row col) (fixnum row col))
-		    (multiple-value-bind (a r g b) (get-argb-values img row col)
-		      (declare (dynamic-extent a r g b) (fixnum a r g b))
-		      (declare (ignore a))
-		      (set-pixel dest row col (rgb-to-gray-pixel r g b))))
-		src)
-    dest))
 
 (defclass matrix-image-channel (image-channel matrix)
   ((clem:rows :initarg :height :accessor image-height)

@@ -15,7 +15,7 @@
 
 	   #:rgb-image
 	   #:rgb-888-image
-	   #:rgb-www-image
+	   #:rgb-hhh-image
 
 	   #:argb-image
 	   #:argb-8888-image
