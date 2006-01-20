@@ -116,6 +116,6 @@
 (defgeneric apply-gamma (img gamma))
 
 (defmethod apply-gamma ((img argb-8888-image) gamma)
-  (let ((gamma-curve (make-gamma-curve gamma :bits 8)))
+  (let ((gamma-curve (make-integer-gamma-curve gamma :bits 8)))
     (apply-gamma-curve img gamma-curve)))
 
