@@ -299,6 +299,9 @@
 (defmethod get-gray-value ((img gray-image) (row fixnum) (col fixnum))
   (get-channel-value img row col))
 
+(defmethod get-pixel ((img gray-image) row col)
+  (get-gray-value img row col))
+
 (defclass matrix-image-channel (image-channel matrix)
   ((clem:rows :initarg :height :accessor image-height)
    (clem:cols :initarg :width :accessor image-width)
