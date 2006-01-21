@@ -24,16 +24,19 @@ images.
 
 * Introduction
 
-Common Lisp\bibcite{steele1990common} is a high-level, compiled language with a
-long history that has been used for many diverse tasks, including
-artificial intelligence, computer aided design and drafting,
-mathematical computation, and scientific programming. One common
-complaint about common lisp is the lack of publicly available
+Common Lisp\bibcite{steele1990common} is a high-level, compiled
+language with a long history that has been used for many diverse
+tasks, including artificial intelligence, computer aided design and
+drafting, mathematical computation, and scientific programming. One
+common complaint about common lisp is the lack of publicly available
 libraries for a wide variety of tasks. In the past few years, projects
 such as common-lisp.net\bibcite{common-lisp-dot-net}, the Common Lisp
-Gardereners\bibcite{common-lisp-gardeners}, and The Common Lisp Open Code
-Collection (CLOCC)\bibcite{clocc} have been developed to address this
-lack of publicly available libraries. ch-image is an open-source
+Gardereners\bibcite{common-lisp-gardeners}, and The Common Lisp Open
+Code Collection (CLOCC)\bibcite{clocc} have been developed to address
+this lack of publicly available libraries. Image representation and
+manipulation is an important, or central, part of many computing
+tasks, but there remains a dearth of feature-rich, efficient, publicly
+available image-processing libraries. ch-image is an open-source
 common lisp library for image processing and manipulation and is
 licensed under a liberal BSD-style license. ch-image uses the clem
 common-lisp matrix package which provides for efficient representation
@@ -101,9 +104,105 @@ floating point values. Finally,
 
 ** Channels
 
+Images have one or more channels that contain pixel value
+information. In the case of RGB and ARGB images, there are 3 and 4
+channels, respectively. Multi-channel images can be subclasses of the
+multichannel-image class to indicate that they have multiple
+channels. The generic function \code{get-channels} is used to return a
+list of the channels used by an image.
+
+Grayscale images have a single channel. matrix-gray-images subclass
+both gray-image and matrix and act as their own image-data. The
+\code{get-channels} method of a matrix-gray-image, returns a list
+containing a single item, the matrix-gray-image itself. It may seem
+counter-intuitive to return an image as it's own channel, but it
+simplifies use of the image as a matrix.
+
+The generic function \code{set-channels} is used to set the channels
+of an image. In the case of matrix-gray-image, Calling set-channels
+causes the underlying matrix storage to point to the specified
+data. FIXME! THIS NEEDS MORE DOCUMENTATION!
+
 ** Pixels
 
+Pixel intensity values are stored in channels as discussed
+above. The generic function \code{get-pixel} returns the pixel values
+for an a given row and column of an image. The actual return values
+varies depending on the type of the image. For a multichannel image,
+\code{get-pixel} returns a list of the intensites in the channels,
+while for a grayscale image it returns the pixel intensity as a single
+numerical value.
+
+* Image Processing Functions
+
+** Affine Transformation
+
+The function \code{affine-transform-image} copies applies an affine
+transformation to a copy of an image. Note that the original image is
+unchanged and that a suitably transformed copy is return. The affine
+transformation is specified by an instance of the class
+\code{clem:affine-transformation}. The coordinates in pixel space of
+the source and destination matrices can also be specified via keyword
+arguments to \code{affine-transform-image}.
+
+*** Interpolation
+
+When applying an affine transformation to an image, pixels in the
+source image will, in general, not map directly to pixels in the
+destination image. Rather, the pixels will map to possibly non-integer
+positions in the destination image. The images represented by ch-image
+are all discrete images with values at integer pixels. Therefore, a
+mapping from the computed, but not necessarily integral, source
+destination to the proper pixel must be performed by
+interpolation. ch-image provides three forms of interpolation, nearest
+neighbor, bilinear interpolation, and quadratic (or bicubic)
+interpolation. Quadratic interpolation will give the best results but
+is the slowest. Nearest-neighbor is the least accurate, but is the
+fastest. Bi-linear interpolation is a good compromise and is fairly
+fast and usually yeilds acceptable results.
+
+** Discrete Convolution
+
+*** Gaussian Blur
+
+*** Sharpen
+
+*** Unsharp Mask
+
+*** Gamma Curves
+
+*** Image Masking
+
+** Morphological Operations
+
+*** Dilate
+
+*** Erode
+
+** Fast Fourier Transform
+
+The Fast Fourier Transform of images is provided using a
+Foreign-function Interface (FFI) to the FFTW (Fastest Fourier
+Transfrom in the West) library\bibcite{frigo98fftw}. A number of
+utility functions are provided to convert between the ch-image image
+representation of fftw matrix represenations and to make images of the
+magnitude and frequency of transformed images, and to reconstruct
+spatial-domain images from magnitude and frequency images.
+
+** Image Copying and Conversion
+
 * Shape Drawing Primitives
+
+** Lines
+
+** Circles
+
+** Rectangles
+
+** Triangles
+
+** Polygons
+
 * ch-imageio
 
 In order to get images in and out of ch-image, I/O routines are
@@ -134,10 +233,16 @@ background.
 (defun ch-image-example-1 ()
   (let* ((height 200)
          (width 300)
-         (img (make-instance 'ch-image:argb-8888-image :height height :width width)))
+         (img (make-instance 'ch-image:argb-8888-image :height height
+                             :width width))
+         (image-pathname
+          (make-pathname :directory '(:relative "output-images")
+                         :name "example1"
+                         :type "jpg")))
     (ch-image::fill-rectangle img 0 0 (1- height) (1- width) *dark-blue*)
     (ch-image::draw-triangle img 10 100 50 250 160 70 (list 255 255 255 20))
-    (ch-imageio:write-image-file "example1.jpg" img)))
+    (ensure-directories-exist image-pathname)
+    (ch-imageio:write-image-file image-pathname img)))
 
 (defparameter *example-image-1* (ch-image-example-1))
 }
@@ -169,7 +274,7 @@ write it out as a PNG file:
 
 \lisp{(defparameter *sanfran-png-file*
   (ch-imageio:write-image-file
-   (make-pathname :directory '(:relative "images")
+   (make-pathname :directory '(:relative "output-images")
                   :name "sanfran"
                   :type "png")
    (ch-image:argb-image-to-gray-image *sanfran*)))
@@ -185,13 +290,15 @@ write it out as a PNG file:
 
 (defparameter *sanfran-lighter-file*
   (ch-imageio:write-image-file
-   (make-pathname :directory '(:relative "images")
+   (make-pathname :directory '(:relative "output-images")
                   :name "sanfran-lighter"
-                  :type "png")
+                  :type "jpg")
    *sanfran-lighter-image*))
 }
 
 \image{\lisp-value{*sanfran-lighter-file*}}
+
+* ch-image API reference
 
 * Installing ch-image and required packages
 

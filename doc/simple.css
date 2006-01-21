@@ -16,8 +16,30 @@ h1 {
    padding-bottom: 6px;
 }
 
+h1.title {
+   font-style: normal;
+   padding: 0px;
+   margin-top: 0px;
+   margin-bottom: 0px;
+   font-size: 14px;
+}
+
 h2 {
    font-size: 12px;
+}
+
+h2.author {
+   padding-top: 0px;
+   padding-bottom: 0px;
+   margin-top: 2px;
+   margin-bottom: 2px;
+}
+
+h2.date {
+   padding-top: 0px;
+   padding-bottom: 0px;
+   margin-top: 2px;
+   margin-bottom: 2px;
 }
 
 h3 {
