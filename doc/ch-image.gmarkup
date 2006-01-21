@@ -3,10 +3,14 @@
 \title{Image Processing in Common Lisp with ch-image}
 \author{Cyrus L. Harmon}
 \bibtex-database{(:file "lisp.bib")}
-\bibtex-style{science}
+\bibtex-style{Science}
 }
 \html-metadata{
 \htmlcss{simple.css}
+}
+\lisp-silent{
+(setf markup::*baseline-skip* "14pt")
+(setf markup::*par-skip* "0pt")
 }
 
 * Abstract
