@@ -2,7 +2,7 @@
 \copyright{Copyright 2006, Cyrus Harmon. All Rights Reserved.}
 \title{Image Processing in Common Lisp with ch-image}
 \author{Cyrus L. Harmon}
-\bibtex-database{("asdf:/ch-bib/lisp" "asdf:/ch-bib/bio")}
+\bibtex-database{("asdf:/ch-bib/lisp" "asdf:/ch-bib/bio" "asdf:/ch-bib/vision")}
 \bibtex-style{Science}
 }
 \html-metadata{
@@ -48,6 +48,12 @@ licensed under a liberal BSD-style license. ch-image uses the clem
 common-lisp matrix package which provides for efficient representation
 and access to typed common lisp arrays and for basic matrix operations
 such as matrix arithmetic and affine transformations.
+
+ch-image is designed to be a portable library that can run an any
+standards-compliant common lisp implementation. It has been
+developed entirely using the SBCL\bibcite{sbcl} common lisp
+implementation and has only been tested on SBCL. It should run on
+other common-lisp implementations, however.
 
 * ch-image Image Representation and Data Structures
 
@@ -161,8 +167,7 @@ about the ch-imageio package.
 
 \lisp{
 (defparameter *dark-blue* '(255 5 5 80))
-
-(defun ch-image-example-1 ()
+(defparameter *example-image-1*
   (let* ((height 200)
          (width 300)
          (img (make-instance 'ch-image:argb-8888-image :height height
@@ -175,8 +180,6 @@ about the ch-imageio package.
     (ch-image::draw-triangle img 10 100 50 250 160 70 (list 255 255 255 20))
     (ensure-directories-exist image-pathname)
     (ch-imageio:write-image-file image-pathname img)))
-
-(defparameter *example-image-1* (ch-image-example-1))
 }
 
 This gives us the following image:
@@ -197,9 +200,31 @@ image file, determines it's type based on the file type (or
 extension in non-lisp parlance), and creates an image of the
 appropriate type (argb or greyscale, and, in theory, of the
 appropriate number of bits, although at this point only 8-bit images
-are supported by the IO routines.
+are supported by the IO routines).
 
 * Image Processing Functions
+
+** Image Cropping
+
+First, we load a sample image and crop a region in the center. We
+can also do the affine-transformation and cropping in one step, but
+we'll save that for later.
+
+\lisp{
+(defparameter *cropped-salad*
+  (let ((img (ch-imageio:read-image-file
+              (make-pathname :directory '(:relative "images")
+                             :name "salad"
+                             :type "jpg"))))
+    (ch-image::crop-image
+     img :y1 400 :x1 200 :y2 599 :x2 399)))
+(ch-imageio:write-jpeg-file 
+ (make-pathname :directory '(:relative "output-images")
+                :name "salad-cropped" :type "jpg")
+ *cropped-salad*)
+}
+
+\image{output-images/salad-cropped.jpg}
 
 ** Affine Transformation
 
@@ -210,6 +235,96 @@ transformation is specified by an instance of the class
 \code{clem:affine-transformation}. The coordinates in pixel space of
 the source and destination matrices can also be specified via keyword
 arguments to \code{affine-transform-image}.
+
+
+*** Scaling an Image with an Affine Transformation
+
+We can scale the cropped image from above as follows:
+
+\lisp{
+(let ((transform (clem:make-affine-transformation
+                  :x-scale (log 1.5d0)
+                  :y-scale (log 1.5d0))))
+  (let ((bigimg
+         (ch-image:affine-transform-image
+          *cropped-salad* transform :interpolation :bilinear)))
+    (ch-imageio:write-jpeg-file 
+     (make-pathname :directory '(:relative "output-images")
+                    :name "salad-big"
+                    :type "jpg")
+     bigimg)))
+}
+
+\image{output-images/salad-big.jpg}
+
+Notice that the scale parameters to make-affine-transformation are in
+log space. In order to scale an image two-fold, we must pass in the
+log of 2. The default scale value is 0, or the log of 1. The real
+power of affine transformations comes not just from scaling, but from
+the other linear transformations, such as rotation, shearing and
+shifting, that can be done with them. Next we'll rotate and shear the
+image a bit:
+
+\lisp{
+(let ((transform
+       (clem:make-affine-transformation
+        :x-scale (log 1.2d0)
+        :y-scale (log 1.1d0)
+        :x-shear (log 1.3d0)
+        :y-shear (log 1.8d0)
+        :theta (* -45d0 (/ 180d0) pi)
+        :x-shift 40
+        :y-shift 40)))
+  (let ((transimg
+         (ch-image:affine-transform-image
+          *cropped-salad*
+          transform :interpolation :bilinear)))
+    (ch-imageio:write-jpeg-file 
+     (make-pathname :directory '(:relative "output-images")
+                    :name "salad-trans" :type "jpg") transimg))) }
+
+\image{output-images/salad-trans.jpg}
+
+Notice that the transformed part of the old image fits in the new
+image. The default behavior is to define the extent of the new image
+to completely contain the transformed part of the original image. By
+explicitly specifying the coordinates of the source and destination
+images, one can gain finer control over the region of the transformed
+image that will form the new image.
+
+\lisp{
+(let ((transform
+       (clem:make-affine-transformation
+        :x-scale (log 1.2d0)
+        :y-scale (log 1.1d0)
+        :x-shear (log 1.3d0)
+        :y-shear (log 1.8d0)
+        :theta (* -45d0 (/ 180d0) pi)
+        :x-shift 40
+        :y-shift 40)))
+  (let ((transimg
+         (ch-image:affine-transform-image
+          *cropped-salad* transform
+          :u '(-100 . 100)
+          :v '(-100 . 100)
+          :x '(-100 . 100)
+          :y '(-100 . 100)
+          :interpolation :bilinear)))
+    (ch-imageio:write-jpeg-file 
+     (make-pathname :directory '(:relative "output-images")
+                    :name "salad-trans2" :type "jpg") transimg)))
+}
+
+\image{output-images/salad-trans2.jpg}
+
+*** Resizing Images
+
+Since affine-transformations are commonly used to resize images, a
+convenience function \code{resize-image(img y x \\&key (:interpolation
+                                                      :bilinear)
+                                            (constrain-proportions
+                                             nil))}
+is provided.
 
 *** Interpolation
 
@@ -259,6 +374,10 @@ spatial-domain images from magnitude and frequency images.
 
 * Shape Drawing Primitives
 
+ch-image contains a small number of drawing primitive routines that
+can be used to try shapes on an image. Currently, lines, circles,
+rectangles, triangles and polygons are supported.
+
 ** Lines
 
 ** Circles
@@ -271,9 +390,7 @@ spatial-domain images from magnitude and frequency images.
 
 * Using the ch-image and ch-imageio APIs
 
-** Example 1 - Creating an Image
-
-** Example 2 - Loading an Image from a JPEG File
+** Example 1 - Loading an Image from a JPEG File
 
 We use read-image-file to load a sample image of the San
 Francisco skyline:
@@ -289,7 +406,7 @@ Here's the original image:
                   :type "jpg")))
 }
 
-** Example 3 - Convert Image to Grayscale and Write PNG File
+** Example 2 - Convert Image to Grayscale and Write PNG File
  
 The following code will convert the image to a grayscale image and
 write it out as a PNG file:
@@ -304,7 +421,7 @@ write it out as a PNG file:
 
 \image{\lisp-value{*sanfran-png-file*}}
 
-** Example 4 - Applying a gamma curve
+** Example 3 - Applying a gamma curve
 
 \lisp{
 (defparameter *sanfran-lighter-image*
@@ -319,6 +436,30 @@ write it out as a PNG file:
 }
 
 \image{\lisp-value{*sanfran-lighter-file*}}
+
+** Example 4 - Circles
+
+\lisp{
+(defparameter *circles*
+  (let* ((width 500)
+         (height 250)
+         (img (make-instance 'ch-image:argb-8888-image :width width :height height)))
+    (dotimes (i 100)
+      (let ((radius (random 50))
+            (y (+ 50 (random (- height 100))))
+            (x (+ 50 (random (- width 100))))
+            (color (list (random 255) (random 255) (random 255) (random 255))))
+        (if (> (random 2) 0)
+            (ch-image:draw-circle img y x radius color)
+            (ch-image:fill-circle img y x radius color))))
+    (ch-imageio:write-image-file 
+     (make-pathname :directory '(:relative "output-images")
+                    :name "circles" 
+                    :type "png")
+     img)))
+}
+
+\image{\lisp-value{*circles*}}
 
 * ch-image API reference
 
