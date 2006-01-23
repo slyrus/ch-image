@@ -2,13 +2,15 @@
 \copyright{Copyright 2006, Cyrus Harmon. All Rights Reserved.}
 \title{Image Processing in Common Lisp with ch-image}
 \author{Cyrus L. Harmon}
-\bibtex-database{(:file "lisp.bib")}
+\bibtex-database{("asdf:/ch-bib/lisp" "asdf:/ch-bib/bio")}
 \bibtex-style{Science}
 }
 \html-metadata{
 \htmlcss{simple.css}
 }
 \lisp-silent{
+(asdf:operate 'asdf:load-op 'ch-image)
+(asdf:operate 'asdf:load-op 'ch-imageio)
 (setf markup::*baseline-skip* "14pt")
 (setf markup::*par-skip* "0pt")
 }
@@ -137,6 +139,66 @@ varies depending on the type of the image. For a multichannel image,
 while for a grayscale image it returns the pixel intensity as a single
 numerical value.
 
+First, lets make an image 200 pixels high and 300 pixels wide. Then we
+will draw a blue background, and a yellow triangle on the blue
+background.
+
+** Creating an Image
+
+Images can be created by making an instance of the appropriate class
+of images. To create an 8-bit (per channel) per pixel RGB image with
+an alpha channel one would create an instance of the
+\code{argb-8888-image} class.
+
+*** Sample Image Creation
+
+The following piece of lisp code creates an image 200 pixels high and
+300 pixels wide and fills the image with a dark-blue color, using the
+\code{fill-image} function, and draws a triangle using the
+\code{draw-triangle} function. Finally, the image is saved using the
+\code{write-image-file} method which is described in the section
+about the ch-imageio package.
+
+\lisp{
+(defparameter *dark-blue* '(255 5 5 80))
+
+(defun ch-image-example-1 ()
+  (let* ((height 200)
+         (width 300)
+         (img (make-instance 'ch-image:argb-8888-image :height height
+                             :width width))
+         (image-pathname
+          (make-pathname :directory '(:relative "output-images")
+                         :name "example1"
+                         :type "jpg")))
+    (ch-image::fill-image img *dark-blue*)
+    (ch-image::draw-triangle img 10 100 50 250 160 70 (list 255 255 255 20))
+    (ensure-directories-exist image-pathname)
+    (ch-imageio:write-image-file image-pathname img)))
+
+(defparameter *example-image-1* (ch-image-example-1))
+}
+
+This gives us the following image:
+
+\image{\lisp-value{*example-image-1*}}
+
+* ch-imageio
+
+In order to get images in and out of ch-image, I/O routines are
+needed. An initial set of I/O routines are provided by the ch-imageio
+package. Reading and writing images are supported to and from the JPEG
+and TIFF formats. There is limited PNG, but only for writing images,
+which, while still limitied, means that ch-image can be used to make
+PNG files for use in serving HTML content.
+
+The read-image-file function in the ch-imageio package locates an
+image file, determines it's type based on the file type (or
+extension in non-lisp parlance), and creates an image of the
+appropriate type (argb or greyscale, and, in theory, of the
+appropriate number of bits, although at this point only 8-bit images
+are supported by the IO routines.
+
 * Image Processing Functions
 
 ** Affine Transformation
@@ -207,53 +269,9 @@ spatial-domain images from magnitude and frequency images.
 
 ** Polygons
 
-* ch-imageio
-
-In order to get images in and out of ch-image, I/O routines are
-needed. An initial set of I/O routines are provided by the ch-imageio
-package. Reading and writing images are supported to and from the JPEG
-and TIFF formats. There is limited PNG, but only for writing images,
-which, while still limitied, means that ch-image can be used to make
-PNG files for use in serving HTML content.
-
-The read-image-file function in the ch-imageio package locates an
-image file, determines it's type based on the file type (or
-extension in non-lisp parlance), and creates an image of the
-appropriate type (argb or greyscale, and, in theory, of the
-appropriate number of bits, although at this point only 8-bit images
-are supported by the IO routines.
-
 * Using the ch-image and ch-imageio APIs
 
 ** Example 1 - Creating an Image
-
-First, lets make an image 200 pixels high and 300 pixels wide. Then we
-will draw a blue background, and a yellow triangle on the blue
-background.
-
-\lisp{
-(defparameter *dark-blue* '(255 5 5 80))
-
-(defun ch-image-example-1 ()
-  (let* ((height 200)
-         (width 300)
-         (img (make-instance 'ch-image:argb-8888-image :height height
-                             :width width))
-         (image-pathname
-          (make-pathname :directory '(:relative "output-images")
-                         :name "example1"
-                         :type "jpg")))
-    (ch-image::fill-rectangle img 0 0 (1- height) (1- width) *dark-blue*)
-    (ch-image::draw-triangle img 10 100 50 250 160 70 (list 255 255 255 20))
-    (ensure-directories-exist image-pathname)
-    (ch-imageio:write-image-file image-pathname img)))
-
-(defparameter *example-image-1* (ch-image-example-1))
-}
-
-This gives us the following image:
-
-\image{\lisp-value{*example-image-1*}}
 
 ** Example 2 - Loading an Image from a JPEG File
 
