@@ -159,6 +159,14 @@
   (loop for y from y0 to y1
      do (horiz-line img y x0 x1 value)))
 
+(defgeneric fill-image (img value))
+(defmethod fill-image (img value)
+  (fill-rectangle img
+                  0 0 
+                  (1- (image-height img))
+                  (1- (image-width img))
+                  value))
+
 (defgeneric draw-triangle (img y0 x0 y1 x1 y2 x2 value))
 
 (defmethod draw-triangle ((img image) y0 x0 y1 x1 y2 x2 value)

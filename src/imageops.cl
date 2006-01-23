@@ -59,6 +59,25 @@
 		src)
     dest))
 
+(defgeneric crop-image (img &key y1 x1 y2 x2))
+(defmethod crop-image ((img image) &key y1 x1 y2 x2)
+  (let ((ximg (make-instance (class-of img)
+                             :height 0 :width 0))
+        (new-rows (1+ (- y2 y1)))
+        (new-cols (1+ (- x2 x1))))
+    (set-channels
+     ximg
+     (mapcar #'(lambda (channel)
+                 (let ((new-channel (make-instance (class-of channel)
+                                                   :rows new-rows :cols new-cols)))
+                   (clem:matrix-move-range channel new-channel
+                                           y1 y2 x1 x2
+                                           0 (1- new-rows) 0 (1- new-cols))))
+                   (get-channels img)))
+    (setf (image-height ximg) (rows (car (get-channels ximg))))
+    (setf (image-width ximg) (cols (car (get-channels ximg))))
+    ximg))
+
 (defgeneric affine-transform-image (img xfrm &key u v x y interpolation background))
 (defmethod affine-transform-image ((img image)
                                    (xfrm clem:affine-transformation)

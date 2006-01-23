@@ -54,5 +54,20 @@
 
            #:affine-transform-image
            #:resize-image
+           #:crop-image
+
+           ;;; shapes
+           #:horiz-line
+           #:vert-line
+           #:draw-line
+
+           #:draw-circle
+           #:fill-circle
+
+           #:draw-rectangle
+           #:fill-rectangle
+           
+           #:draw-triangle
+           #:draw-polygon
 	   ))
 
