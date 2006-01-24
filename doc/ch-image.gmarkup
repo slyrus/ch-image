@@ -17,15 +17,14 @@
 * Abstract
 
 ch-image is an open-source Common Lisp library for image
-representation, processing and manipulation. Along with companion
-packages ch-imageio and clem, ch-image enables common lisp programmers
-to read and write images in a number of different formats, and to
-represent images in a variety of different formats, including integers
-and floating point numbers of various sizes and even complex
-numbers. Furthermore, ch-image provides image processing features such
-as applying affine transformations, interpolation of transformed
-images, and discrete convolution and morphological operations on
-images.
+representation, processing and manipulation. Along with the clem
+matrix packages, ch-image enables common lisp programmers to read and
+write images in a number of different formats, and to represent images
+in a variety of different formats, including integers and floating
+point numbers of various sizes and even complex numbers. Furthermore,
+ch-image provides image processing features such as applying affine
+transformations, interpolation of transformed images, and discrete
+convolution and morphological operations on images.
 
 * Introduction
 
@@ -162,7 +161,7 @@ The following piece of lisp code creates an image 200 pixels high and
 \code{fill-image} function, and draws a triangle using the
 \code{draw-triangle} function. Finally, the image is saved using the
 \code{write-image-file} method which is described in the section
-about the ch-imageio package.
+about image input and output.
 
 \lisp{
 (defparameter *dark-blue* '(255 5 5 80))
@@ -188,18 +187,18 @@ This gives us the following image:
 * ch-image I/O
 
 In order to get images in and out of ch-image, I/O routines are
-needed. An initial set of I/O routines are provided by the ch-imageio
-package. Reading and writing images are supported to and from the JPEG
-and TIFF formats. There is limited PNG, but only for writing images,
-which, while still limitied, means that ch-image can be used to make
-PNG files for use in serving HTML content.
+needed. An initial set of I/O routines are provided by the ch-image
+package, although the package is easily extended to support other
+image formats. Reading and writing images are supported to and from
+the JPEG and TIFF formats. There is limited PNG, but only for writing
+images, which, while still limitied, means that ch-image can be used
+to make PNG files for use in serving HTML content.
 
-The read-image-file function in the ch-imageio package locates an
-image file, determines it's type based on the file type (or
-extension in non-lisp parlance), and creates an image of the
-appropriate type (argb or greyscale, and, in theory, of the
-appropriate number of bits, although at this point only 8-bit images
-are supported by the IO routines).
+The read-image-file function locates an image file, determines it's
+type based on the file type (or extension in non-lisp parlance), and
+creates an image of the appropriate type (argb or greyscale, and, in
+theory, of the appropriate number of bits, although at this point only
+8-bit images are supported by the IO routines).
 
 * Image Processing Functions
 
@@ -387,7 +386,7 @@ rectangles, triangles and polygons are supported.
 
 ** Polygons
 
-* Using the ch-image and ch-imageio APIs
+* Using the ch-image APIs
 
 ** Example 1 - Loading an Image from a JPEG File
 
