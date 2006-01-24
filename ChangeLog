@@ -1,3 +1,86 @@
+2006-01-23  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* doc/images/salad.jpg: added salad image
+
+	* src/shapes.cl, src/imageops.cl, src/defpackage.cl, ch-image-doc.asd:
+	* Added salad image
+	* Added fill-image
+	* Added crop-image
+	* Exported fill-image, crop-image and the shape primitives
+
+	* doc/ch-image.gmarkup: * added affine-transformation example
+	* added circles example
+
+	* doc/Science.bst, doc/ch-image-markup.cl, doc/lisp.bib, doc/scicite.sty:
+	continuing to move markup build stuff out of here so that we
+	can use our markup goodies elsewhere.
+
+	* doc/ch-image.gmarkup, ch-image-doc.asd:
+	trying to separate out markup build stuff...
+
+2006-01-21  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* doc/Science.bst, doc/build-docs.cl:
+	Added Science.bst and removed build-docs.cl
+
+	* doc/ch-image.gmarkup, ch-image-doc.asd:
+	moving the documentation build stuff into an asdf file
+
+	* src/conversion.cl, src/ch-image.cl: added conversion.cl
+	added getPixelValue for gray-images
+
+	* doc/simple.css, doc/lisp.bib, doc/ch-image.gmarkup: working on it...
+
+2006-01-20  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* doc/build-docs.cl, doc/ch-image-markup.cl, doc/ch-image.gmarkup, doc/images/sanfran.jpg, doc/lisp.bib, doc/scicite.sty, doc/simple.css:
+	Adding new files...
+
+	* src/gamma.cl, ch-image.asd: Fixed the asdf file
+	make-gamma-curve -> make-integer-gamma-curve
+
+	* test/examples.cl, ch-image-test.asd: * removed .asd cruft
+	* added examples file
+
+	* src/defpackage.cl, src/ch-image.cl:
+	* [a]rgb-www-image -> [a]rgb-hhh-image
+	* moved some copy routines to copy-image.cl
+
+	* src/gamma.cl, src/copy-image.cl, ch-image.asd:
+	* added gamma and copy-image source files
+	* implemented more copy-image functions
+	* added gamma functions
+
+	* src/imageops.cl: cleaning up gaussian blur a little bit
+
+2005-12-11  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* Makefile, ch-image.asd: * Removed Makefile
+
+	* src/defpackage.cl: * export resize-image
+
+	* src/ch-image.cl: * added image-dim
+	* added get/set-channels for ub8-matrix-images
+
+2005-12-05  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/imageops.cl:
+	added split-around-zero and reworked the logic of the
+	constrain-proportions stuff
+
+2005-12-04  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/imageops.cl:
+	* Use the new clem::affine-transform for each image channel instead
+	  of doing it all ourselves.
+	* Added resize-image and made a constrain-proportions keyword arg
+
+2005-11-12  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ChangeLog: updating ChangeLogs
+
+	* src/ch-image.cl: much more efficient argb-image-to-gray-image
+
 2005-11-12  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* src/ch-image.cl: much more efficient argb-image-to-gray-image
