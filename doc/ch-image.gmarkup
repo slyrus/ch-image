@@ -10,7 +10,6 @@
 }
 \lisp-silent{
 (asdf:operate 'asdf:load-op 'ch-image)
-(asdf:operate 'asdf:load-op 'ch-imageio)
 (setf markup::*baseline-skip* "14pt")
 (setf markup::*par-skip* "0pt")
 }
@@ -179,14 +178,14 @@ about the ch-imageio package.
     (ch-image::fill-image img *dark-blue*)
     (ch-image::draw-triangle img 10 100 50 250 160 70 (list 255 255 255 20))
     (ensure-directories-exist image-pathname)
-    (ch-imageio:write-image-file image-pathname img)))
+    (ch-image:write-image-file image-pathname img)))
 }
 
 This gives us the following image:
 
 \image{\lisp-value{*example-image-1*}}
 
-* ch-imageio
+* ch-image I/O
 
 In order to get images in and out of ch-image, I/O routines are
 needed. An initial set of I/O routines are provided by the ch-imageio
@@ -212,13 +211,13 @@ we'll save that for later.
 
 \lisp{
 (defparameter *cropped-salad*
-  (let ((img (ch-imageio:read-image-file
+  (let ((img (ch-image:read-image-file
               (make-pathname :directory '(:relative "images")
                              :name "salad"
                              :type "jpg"))))
     (ch-image::crop-image
      img :y1 400 :x1 200 :y2 599 :x2 399)))
-(ch-imageio:write-jpeg-file 
+(ch-image:write-jpeg-file 
  (make-pathname :directory '(:relative "output-images")
                 :name "salad-cropped" :type "jpg")
  *cropped-salad*)
@@ -248,7 +247,7 @@ We can scale the cropped image from above as follows:
   (let ((bigimg
          (ch-image:affine-transform-image
           *cropped-salad* transform :interpolation :bilinear)))
-    (ch-imageio:write-jpeg-file 
+    (ch-image:write-jpeg-file 
      (make-pathname :directory '(:relative "output-images")
                     :name "salad-big"
                     :type "jpg")
@@ -279,7 +278,7 @@ image a bit:
          (ch-image:affine-transform-image
           *cropped-salad*
           transform :interpolation :bilinear)))
-    (ch-imageio:write-jpeg-file 
+    (ch-image:write-jpeg-file 
      (make-pathname :directory '(:relative "output-images")
                     :name "salad-trans" :type "jpg") transimg))) }
 
@@ -310,7 +309,7 @@ image that will form the new image.
           :x '(-100 . 100)
           :y '(-100 . 100)
           :interpolation :bilinear)))
-    (ch-imageio:write-jpeg-file 
+    (ch-image:write-jpeg-file 
      (make-pathname :directory '(:relative "output-images")
                     :name "salad-trans2" :type "jpg") transimg)))
 }
@@ -400,7 +399,7 @@ Here's the original image:
 \image{images/sanfran.jpg}
 
 \lisp{(defparameter *sanfran*
-  (ch-imageio:read-image-file
+  (ch-image:read-image-file
    (make-pathname :directory '(:relative "images")
                   :name "sanfran"
                   :type "jpg")))
@@ -412,7 +411,7 @@ The following code will convert the image to a grayscale image and
 write it out as a PNG file:
 
 \lisp{(defparameter *sanfran-png-file*
-  (ch-imageio:write-image-file
+  (ch-image:write-image-file
    (make-pathname :directory '(:relative "output-images")
                   :name "sanfran"
                   :type "png")
@@ -428,7 +427,7 @@ write it out as a PNG file:
   (ch-image::apply-gamma *sanfran* 0.60d0))
 
 (defparameter *sanfran-lighter-file*
-  (ch-imageio:write-image-file
+  (ch-image:write-image-file
    (make-pathname :directory '(:relative "output-images")
                   :name "sanfran-lighter"
                   :type "jpg")
@@ -452,7 +451,7 @@ write it out as a PNG file:
         (if (> (random 2) 0)
             (ch-image:draw-circle img y x radius color)
             (ch-image:fill-circle img y x radius color))))
-    (ch-imageio:write-image-file 
+    (ch-image:write-image-file 
      (make-pathname :directory '(:relative "output-images")
                     :name "circles" 
                     :type "png")

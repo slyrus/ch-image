@@ -10,8 +10,7 @@
   :author "Cyrus Harmon" 
   :version "0.1.2+-20060119"
   :licence "BSD"
-  :depends-on (ch-asdf ch-bib ch-util ch-image ch-imageio puri
-               com.gigamonkeys.markup)
+  :depends-on (ch-asdf ch-bib ch-util ch-image puri com.gigamonkeys.markup)
   :components
   ((:module
     :doc
@@ -29,5 +28,6 @@
               :components ((:markup-xhtml-file "ch-image")))
      (:module :images
               :components ((:jpeg-file "sanfran")
-                           (:jpeg-file "salad")))))))
+                           (:jpeg-file "salad")))
+     (:static-file "simple" :pathname #p"simple.css")))))
 

@@ -1,7 +1,8 @@
 
 (in-package #:cl-user)
 
-(defpackage #:ch-image (:use #:cl #:asdf #:ch-util #:clem)
+(defpackage #:ch-image
+  (:use #:cl #:asdf #:ch-util #:clem)
   (:export #:image
 	   #:image-data
 	   #:image-width
@@ -69,5 +70,25 @@
            
            #:draw-triangle
            #:draw-polygon
+
+           ;;; I/O
+           #:read-image-file
+           #:write-image-file
+
+           #:resize-images-in-directory
+
+           #:read-tiff-file
+	   #:write-tiff-file
+	   #:write-argb-image-tiff-file
+	   #:tiff-rgba-to-gray-image
+	   
+	   #:read-jpeg-file
+	   #:write-jpeg-file
+	   #:jpeg-rgb-to-gray-image
+	   #:jpeg-gray-to-gray-image
+	   #:jpeg-rgb-to-argb-image
+
+           #:write-png-file
+           
 	   ))
 

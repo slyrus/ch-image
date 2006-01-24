@@ -58,7 +58,7 @@
     (ch-image::fill-rectangle img 220 300 230 310 (list 255 255 255 25))
     (ch-image::fill-rectangle img 240 300 250 310 (list 255 255 255 25))
 
-    (ch-imageio:write-jpeg-file "argb-image.jpeg" img)))
+    (ch-image:write-jpeg-file "argb-image.jpeg" img)))
 
 (defun image-test-5 ()
   (let* ((width 600)
@@ -71,7 +71,7 @@
     (ch-image::draw-line img 420 200 60 10 (list 255 128 255 255))
     (ch-image::draw-line img 60 20 420 210 (list 255 255 255 128))
     
-    (ch-imageio:write-tiff-file "argb-image.tiff" img)))
+    (ch-image:write-tiff-file "argb-image.tiff" img)))
 
 (defun image-test-6 ()
   (let* ((width 600)
@@ -85,7 +85,7 @@
         (if (> (random 2) 0)
             (ch-image::draw-circle img y x radius color)
             (ch-image::fill-circle img y x radius color))))
-    (ch-imageio::write-png-file "circles.png" img)))
+    (ch-image:write-png-file "circles.png" img)))
 
 (defun run-tests ()
   (let ((run (ch-util:make-test-run)))
