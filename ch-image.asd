@@ -5,10 +5,9 @@
 ;;;; we need to test for the presence of various packages and only
 ;;;; load IO routines when the appropriate packages are present
 
-(defmacro test-io-library (lib)
+(defmacro safe-load-io-library (lib)
   `(handler-case
        (progn
-         (print (cons 'loading ,lib))
          (asdf:operate 'asdf:load-op ,lib)
          (pushnew (intern 
                    (concatenate 'string
@@ -21,10 +20,10 @@
        (format *error-output* "~%ch-image: ~A disabled~&" ,lib))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (test-io-library :jpeg)
-  (test-io-library :tiff-ffi)
-  (test-io-library :salza)
-  (test-io-library :salza-png))
+  (safe-load-io-library :jpeg)
+  (safe-load-io-library :tiff-ffi)
+  (safe-load-io-library :ch-salza)
+  (safe-load-io-library :ch-salza-png))
 
 ;;;;
 ;;;; The following section customizes asdf to work with filenames
@@ -72,7 +71,7 @@
      (:ch-image-cl-source-file "tiffimage")
      #+ch-image-has-jpeg
      (:ch-image-cl-source-file "jpegimage")
-     #+(and ch-image-has-salza ch-image-has-salza-png)
+     #+(and ch-image-has-ch-salza ch-image-has-ch-salza-png)
      (:ch-image-cl-source-file "pngimage")
      (:ch-image-cl-source-file "imageio"
                                :depends-on (#+ch-image-has-tiff-ffi
