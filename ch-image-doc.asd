@@ -1,8 +1,7 @@
 
 (asdf:operate 'asdf:load-op :ch-asdf)
-(asdf:operate 'asdf:load-op :ch-asdf-markup)
 
-(defpackage #:ch-image-doc-system (:use #:asdf #:ch-asdf #:ch-asdf-markup #:cl))
+(defpackage #:ch-image-doc-system (:use #:asdf #:ch-asdf #:cl))
 (in-package #:ch-image-doc-system)
 
 (defsystem :ch-image-doc
@@ -10,7 +9,7 @@
   :author "Cyrus Harmon" 
   :version "0.1.2+-20060119"
   :licence "BSD"
-  :depends-on (ch-asdf ch-bib ch-util ch-image puri com.gigamonkeys.markup)
+  :depends-on (com.gigamonkeys.markup ch-asdf-markup ch-bib ch-util ch-image)
   :components
   ((:module
     :doc
