@@ -77,7 +77,8 @@
                                :depends-on (#+ch-image-has-tiff-ffi
                                             "tiffimage"
                                             #+ch-image-has-jpeg
-                                            "jpegimage"))))
+                                            "jpegimage")))
+    :depends-on (:src))
    (:static-file "README")
    (:static-file "LICENSE")
    (:static-file "bootstrap" :pathname #p"bootstrap.cl")))
