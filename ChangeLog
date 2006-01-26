@@ -1,3 +1,21 @@
+2006-01-25  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ch-image.asd: added :src dependency for io
+
+	* ch-image-doc.asd: trying to get everything to build properly...
+
+	* io/pngimage.cl, io/imageio.cl, ch-image.asd: salza -> ch-salza
+
+2006-01-24  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* doc/ch-image.gmarkup: removed ch-imageio references
+
+	* ChangeLog, io/imageio.cl, io/jpegimage.cl, io/pngimage.cl, io/tiffimage.cl, test/test-ch-image-2.cl:
+	adding ch-image io files and test
+
+	* test/test-ch-image.cl, test/examples.cl, src/defpackage.cl, doc/ch-image.gmarkup, ch-image.asd, ch-image-test.asd, ch-image-doc.asd:
+	moving ch-imageio functionality into ch-image
+
 2006-01-23  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* doc/images/salad.jpg: added salad image
