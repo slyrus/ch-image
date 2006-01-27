@@ -13,7 +13,7 @@
      ("jpeg" . ,#'read-jpeg-file)
      ("jpg" . ,#'read-jpeg-file)
      ("jpe" . ,#'read-jpeg-file))
-   :test #'equal))
+   :test #'equalp))
 
 (defparameter *image-write-functions*
   (ch-util:make-hash-table-from-alist
@@ -24,7 +24,7 @@
      ("jpe" . ,#'write-jpeg-file)
      #+(and ch-image-has-ch-salza ch-image-has-ch-salza-png)
      ("png" . ,#'write-png-file))
-   :test #'equal))
+   :test #'equalp))
 
 (defun image-file-read-function (path)
   (gethash (pathname-type path) *image-read-functions*))
@@ -77,4 +77,5 @@
                     (write-image-file dest-path dst-img)
                     dest-path))))
           (get-image-files-in-directory src-dir source-types)))
+
 
