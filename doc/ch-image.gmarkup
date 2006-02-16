@@ -173,7 +173,7 @@ about image input and output.
          (image-pathname
           (make-pathname :directory '(:relative "output-images")
                          :name "example1"
-                         :type "jpg")))
+                         :type "png")))
     (ch-image::fill-image img *dark-blue*)
     (ch-image::draw-triangle img 10 100 50 250 160 70 (list 255 255 255 20))
     (ensure-directories-exist image-pathname)
@@ -182,7 +182,7 @@ about image input and output.
 
 This gives us the following image:
 
-\image{\lisp-value{*example-image-1*}}
+\image{\lisp-value{(enough-namestring *example-image-1*)}}
 
 * ch-image I/O
 
@@ -315,6 +315,24 @@ image that will form the new image.
 
 \image{output-images/salad-trans2.jpg}
 
+In this example, we scale by a factor of .5
+
+\lisp{
+(let ((transform
+       (clem:make-affine-transformation
+        :x-scale (log .5d0)
+        :y-scale (log .5d0))))
+  (let ((transimg
+         (ch-image:affine-transform-image
+          *cropped-salad* transform
+          :interpolation :bilinear)))
+    (ch-image:write-jpeg-file 
+     (make-pathname :directory '(:relative "output-images")
+                    :name "salad-trans3" :type "jpg") transimg)))
+}
+
+\image{output-images/salad-trans3.jpg}
+
 *** Resizing Images
 
 Since affine-transformations are commonly used to resize images, a
@@ -417,7 +435,7 @@ write it out as a PNG file:
    (ch-image:argb-image-to-gray-image *sanfran*)))
 }
 
-\image{\lisp-value{*sanfran-png-file*}}
+\image{\lisp-value{(enough-namestring *sanfran-png-file*)}}
 
 ** Example 3 - Applying a gamma curve
 
@@ -433,7 +451,7 @@ write it out as a PNG file:
    *sanfran-lighter-image*))
 }
 
-\image{\lisp-value{*sanfran-lighter-file*}}
+\image{\lisp-value{(enough-namestring *sanfran-lighter-file*)}}
 
 ** Example 4 - Circles
 
@@ -457,7 +475,7 @@ write it out as a PNG file:
      img)))
 }
 
-\image{\lisp-value{*circles*}}
+\image{\lisp-value{(enough-namestring *circles*)}}
 
 * ch-image API reference
 

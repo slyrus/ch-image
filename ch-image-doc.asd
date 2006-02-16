@@ -28,5 +28,16 @@
      (:module :images
               :components ((:jpeg-file "sanfran")
                            (:jpeg-file "salad")))
+     (:module :output-images
+              :components ((:png-file "circles")
+                           (:png-file "example1")
+                           (:jpeg-file "salad-big")
+                           (:jpeg-file "salad-cropped")
+                           (:jpeg-file "salad-trans")
+                           (:jpeg-file "salad-trans2")
+                           (:jpeg-file "salad-trans3")
+                           (:jpeg-file "sanfran-lighter")
+                           (:png-file "sanfran")
+                           ))
      (:static-file "simple" :pathname #p"simple.css")))))
 
