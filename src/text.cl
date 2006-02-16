@@ -17,7 +17,7 @@
 
 (defgeneric get-glyph (font char))
 
-(defgeneric draw-char (img context char y x))
+(defgeneric draw-char (img context char y x &key &allow-other-keys))
 
 (defgeneric draw-string (img context str y x))
 
