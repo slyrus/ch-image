@@ -10,7 +10,7 @@
                (:futura "/Library/Fonts/Futura.dfont")
                (:gill-sans "/Library/Fonts/GillSans.dfont")
                (:helvetica "/System/Library/Fonts/Helvetica.dfont")
-               (:times-new-roman "/Library/Fonts/Times new Roman")
+               (:times-new-roman "/Library/Fonts/Times New Roman")
                (:monaco "/System/Library/Fonts/Monaco.dfont")
                (:times "/System/Library/Fonts/Times.dfont")))
 
@@ -131,12 +131,10 @@
                (ch-image::or-pixel img
                                   (+ (- (bearing-y glyph)) y i)
                                   (+ pixel-kern (bearing-x glyph) x j)
-                                  (list 0 val val val)))))
+                                  (list 255 val val val)))))
         (values (vert-advance glyph)
                 (+ kern (hori-advance glyph)))))))
 
-  
-              
 (defmethod draw-string (img (context freetype-text-context) str y x)
   (loop for c across str with prev
      do (multiple-value-bind (yadv xadv)
