@@ -10,6 +10,7 @@
                (:futura "/Library/Fonts/Futura.dfont")
                (:gill-sans "/Library/Fonts/GillSans.dfont")
                (:helvetica "/System/Library/Fonts/Helvetica.dfont")
+               (:times-new-roman "/Library/Fonts/Times new Roman")
                (:monaco "/System/Library/Fonts/Monaco.dfont")
                (:times "/System/Library/Fonts/Times.dfont")))
 
@@ -21,7 +22,9 @@
   (face (context-font context)))
 
 (defclass freetype-glyph (glyph)
-  ((rows :accessor rows :initarg :rows)
+  ((ft-glyph :accessor ft-glyph :initarg :ft-glyph)
+   (char-index :accessor char-index :initarg :char-index)
+   (rows :accessor rows :initarg :rows)
    (cols :accessor cols :initarg :cols)
    (matrix :accessor matrix :initarg :matrix)
    (bearing-y :accessor bearing-y :initarg :bearing-y)
@@ -37,7 +40,8 @@
 
 (defmethod shared-initialize :after
     ((font freetype-font) slot-names &rest initargs &key name library &allow-other-keys)
-  (declare (ignore initargs))
+  (declare (ignore initargs)
+           (type (sb-alien:alien (* freetype::|FT_Library|)) library))
   (setf (face font)
         (let ((font-path (cadr (assoc name *platform-fonts*))))
           (freetype-ffi::load-face library font-path))))
@@ -85,6 +89,8 @@
                               (sb-alien:deref buffer (+ (* i cols) j)))))
                     (let ((glyph-obj
                            (make-instance 'freetype-glyph
+                                          :ft-glyph glyph
+                                          :char-index char-index
                                           :rows rows
                                           :cols (sb-alien:slot bitmap 'freetype::|width|)
                                           :matrix bitmap-matrix
@@ -97,28 +103,46 @@
                       (setf (gethash char (glyph-cache font)) glyph-obj)
                       glyph-obj))))))))))
 
-(defmethod draw-char (img context char y x)
-  (let ((glyph (get-glyph (context-font context) char)))
+(defmethod draw-char (img context char y x &key previous-char)
+  (declare (optimize (debug 2)))
+  (let ((glyph (get-glyph (context-font context) char))
+        (face (context-face context)))
+    (declare (type (sb-alien:alien (* freetype::|FT_Face|)) face))
     (let ((rows (rows glyph))
           (cols (cols glyph))
           (matrix (matrix glyph)))
-      (loop for i fixnum from 0 below rows
-         do 
+      (let* ((kern (if previous-char
+                       (let ((prev-glyph (get-glyph (context-font context) previous-char)))
+                         (sb-alien:with-alien ((kerning freetype::|FT_Vector|))
+                           (freetype::|FT_Get_Kerning|
+                                      (sb-alien:deref face)
+                                      (char-index prev-glyph)
+                                      (char-index glyph)
+                                     freetype::|FT_KERNING_DEFAULT|
+                                     (sb-alien:addr kerning))
+                           (sb-alien:slot kerning 'freetype::|x|)))
+                       0))
+             (pixel-kern (ash kern -6)))
+        (loop for i fixnum from 0 below rows
+           do 
            (dotimes (j cols)
              (declare (type fixnum j))
              (let ((val (clem::mref matrix i j)))
-               (ch-image:set-pixel img
-                                   (+ (- (bearing-y glyph)) y i)
-                                   (+ (bearing-x glyph) x j)
-                                   (list 0 val val val)))))
-      (values (vert-advance glyph)
-              (hori-advance glyph)))))
+               (ch-image::or-pixel img
+                                  (+ (- (bearing-y glyph)) y i)
+                                  (+ pixel-kern (bearing-x glyph) x j)
+                                  (list 0 val val val)))))
+        (values (vert-advance glyph)
+                (+ kern (hori-advance glyph)))))))
+
+  
               
 (defmethod draw-string (img (context freetype-text-context) str y x)
-  (loop for c across str
+  (loop for c across str with prev
      do (multiple-value-bind (yadv xadv)
-            (draw-char img context c y x)
+            (draw-char img context c y x :previous-char prev)
           (declare (ignore yadv))
+          (setf prev c)
           (incf x (ash xadv -6)))))
 
 (defun make-text-context ()
