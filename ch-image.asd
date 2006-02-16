@@ -50,9 +50,9 @@
   :name "ch-image"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
   :licence "BSD"
-  :version "0.1.2-20050724"
+  :version "0.1.3-20060128"
   :description "image representation and processing"
-  :depends-on (ch-util clem)
+  :depends-on (ch-util clem freetype-ffi)
   :components
   ((:module
     :src
@@ -63,6 +63,8 @@
      (:ch-image-cl-source-file "conversion"  :depends-on ("defpackage" "ch-image"))
      (:ch-image-cl-source-file "imageops"  :depends-on ("defpackage" "ch-image"))
      (:ch-image-cl-source-file "shapes"  :depends-on ("defpackage" "ch-image"))
+     (:ch-image-cl-source-file "text"  :depends-on ("defpackage" "ch-image"))
+     (:ch-image-cl-source-file "freetype-text"  :depends-on ("text"))
      (:ch-image-cl-source-file "gamma"  :depends-on ("defpackage" "ch-image"))))
    (:module
     :io

@@ -25,7 +25,7 @@
   (list (merge-pathnames *fasl-directory* (compile-file-pathname (component-pathname c)))))
 
 (defsystem :ch-image-test
-  :version "0.1.2+-20060119"
+  :version "0.1.2+-20060215"
   :depends-on (ch-util ch-image ch-image)
   :components
   ((:module
@@ -34,6 +34,7 @@
     ((:ch-image-test-cl-source-file "defpackage")
      (:ch-image-test-cl-source-file "test-ch-image" :depends-on ("defpackage"))
      (:ch-image-test-cl-source-file "test-ch-image-2" :depends-on ("defpackage"))
+     (:ch-image-test-cl-source-file "test-ch-image-3" :depends-on ("defpackage"))
      (:ch-image-test-cl-source-file "examples" :depends-on ("defpackage"))
      (:module
       :images
