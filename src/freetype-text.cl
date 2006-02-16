@@ -7,7 +7,11 @@
 
 (defparameter *platform-fonts*
     #+darwin '((:arial "/Library/Fonts/Arial")
-               (:helvetica "/System/Library/Fonts/Helvetica.font")))
+               (:futura "/Library/Fonts/Futura.dfont")
+               (:gill-sans "/Library/Fonts/GillSans.dfont")
+               (:helvetica "/System/Library/Fonts/Helvetica.dfont")
+               (:monaco "/System/Library/Fonts/Monaco.dfont")
+               (:times "/System/Library/Fonts/Times.dfont")))
 
 (defclass freetype-text-context (text-context)
   ((library :accessor context-library :initarg :library)
@@ -51,7 +55,7 @@
                      font-name size
                      &key (x-dpi 72) (y-dpi 72))
   (let ((font (make-instance 'freetype-font
-                             :name :arial
+                             :name font-name
                              :library (context-library context) )))
     (setf (context-font context) font)
     (set-font-metrics font size :x-dpi x-dpi :y-dpi y-dpi)))
