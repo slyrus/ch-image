@@ -269,9 +269,13 @@
   (declare (ignore row col val))
   (print "set-pixel not implemented for generic image class"))
 
+(defmethod or-pixel ((img image) row col val)
+  (declare (ignore row col val))
+  (print "or-pixel not implemented for generic image class"))
+
 (defmethod get-pixel ((img image) row col)
   (declare (ignore row col))
-  (print "set-pixel not implemented for generic image class"))
+  (print "get-pixel not implemented for generic image class"))
 
 (defmethod set-pixel ((img image-channel) row col val)
   (set-channel-value img row col val))
@@ -285,6 +289,14 @@
 		   (cadr val)
 		   (caddr val)
 		   (cadddr val)))
+
+(defmethod or-pixel ((img argb-image) row col val)
+  (multiple-value-bind (a r g b) (get-argb-values img row col)
+    (set-argb-values img row col
+                     (logior a (car val))
+                     (logior r (cadr val))
+                     (logior g (caddr val))
+                     (logior b (cadddr val)))))
 
 (defmethod get-pixel ((img argb-image) row col)
   (multiple-value-bind (a r g b) (get-argb-values img row col)
