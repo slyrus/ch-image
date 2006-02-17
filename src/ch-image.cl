@@ -148,7 +148,7 @@
 	   (slot-boundp img 'height))
       (let ((width (slot-value img 'width))
 	    (height (slot-value img 'height)))
-	(setf (image-a img) (make-instance 'ub8-matrix :rows height :cols width))
+	(setf (image-a img) (make-instance 'ub8-matrix :rows height :cols width :initial-element 255))
 	(setf (image-r img) (make-instance 'ub8-matrix :rows height :cols width))
 	(setf (image-g img) (make-instance 'ub8-matrix :rows height :cols width))
 	(setf (image-b img) (make-instance 'ub8-matrix :rows height :cols width))
@@ -273,6 +273,14 @@
   (declare (ignore row col val))
   (print "or-pixel not implemented for generic image class"))
 
+(defmethod xor-pixel ((img image) row col val)
+  (declare (ignore row col val))
+  (print "or-pixel not implemented for generic image class"))
+
+(defmethod and-pixel ((img image) row col val)
+  (declare (ignore row col val))
+  (print "or-pixel not implemented for generic image class"))
+
 (defmethod get-pixel ((img image) row col)
   (declare (ignore row col))
   (print "get-pixel not implemented for generic image class"))
@@ -297,6 +305,22 @@
                      (logior r (cadr val))
                      (logior g (caddr val))
                      (logior b (cadddr val)))))
+
+(defmethod xor-pixel ((img argb-image) row col val)
+  (multiple-value-bind (a r g b) (get-argb-values img row col)
+    (set-argb-values img row col
+                     (logxor a (car val))
+                     (logxor r (cadr val))
+                     (logxor g (caddr val))
+                     (logxor b (cadddr val)))))
+
+(defmethod and-pixel ((img argb-image) row col val)
+  (multiple-value-bind (a r g b) (get-argb-values img row col)
+    (set-argb-values img row col
+                     (logand a (car val))
+                     (logand r (cadr val))
+                     (logand g (caddr val))
+                     (logand b (cadddr val)))))
 
 (defmethod get-pixel ((img argb-image) row col)
   (multiple-value-bind (a r g b) (get-argb-values img row col)

@@ -110,30 +110,35 @@
                       (setf (gethash char (glyph-cache font)) glyph-obj)
                       glyph-obj))))))))))
 
+(defun xor-blit-matrix (src dest yoff xoff &key (alpha 255))
+  (let ((nalpha (logxor 255 alpha))
+	(rows (rows src))
+	(cols (cols src)))
+    (dotimes (i rows)
+      (declare (type fixnum i))
+      (dotimes (j cols)
+	(declare (type fixnum j))
+	(let ((val (clem::mref src i j)))
+	  (ch-image::xor-pixel dest
+			       (+ yoff i)
+			       (+ xoff j)
+			       (list nalpha val val val)))))))
 
-(defmethod draw-char (img context char y x &key previous-char)
+(defmethod draw-char (img context char y x &key previous-char (alpha 255))
   (declare (optimize (debug 2)))
   (let ((glyph (get-glyph (context-font context) char))
         (face (context-face context)))
-    (let ((rows (rows glyph))
-          (cols (cols glyph))
-          (matrix (matrix glyph)))
+    (let ((matrix (matrix glyph)))
       (let* ((kern (if previous-char
                        (let ((prev-glyph (get-glyph (context-font context) previous-char)))
 			 (freetype-ffi::kern-pair face
 						  (char-index prev-glyph)
 						  (char-index glyph)))
-                       0))
-             (pixel-kern (ash kern -6)))
-        (loop for i fixnum from 0 below rows
-           do 
-           (dotimes (j cols)
-             (declare (type fixnum j))
-             (let ((val (clem::mref matrix i j)))
-               (ch-image::or-pixel img
-                                  (+ (- (bearing-y glyph)) y i)
-                                  (+ pixel-kern (bearing-x glyph) x j)
-                                  (list 255 val val val)))))
+                       0)))
+	(xor-blit-matrix matrix img
+			 (- y (bearing-y glyph))
+			 (+ (ash kern -6) (bearing-x glyph) x)
+			 :alpha alpha)
         (values (vert-advance glyph)
                 (+ kern (hori-advance glyph)))))))
 
