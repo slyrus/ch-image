@@ -5,6 +5,10 @@
 
 (in-package :ch-image)
 
+;;; Note that we can't just iterate over the font directories (with
+;;; some list of suggested nicknames perhaps), as some of the font
+;;; names contains Unicode characters and this currently breaks SBCL.
+
 (defparameter *platform-fonts*
     #+darwin '((:arial "/Library/Fonts/Arial")
                (:futura "/Library/Fonts/Futura.dfont")
@@ -13,6 +17,9 @@
                (:times-new-roman "/Library/Fonts/Times New Roman")
                (:monaco "/System/Library/Fonts/Monaco.dfont")
                (:times "/System/Library/Fonts/Times.dfont")))
+;;; need font paths for linux!
+
+
 
 (defclass freetype-text-context (text-context)
   ((library :accessor context-library :initarg :library)
@@ -103,24 +110,19 @@
                       (setf (gethash char (glyph-cache font)) glyph-obj)
                       glyph-obj))))))))))
 
+
 (defmethod draw-char (img context char y x &key previous-char)
   (declare (optimize (debug 2)))
   (let ((glyph (get-glyph (context-font context) char))
         (face (context-face context)))
-    (declare (type (sb-alien:alien (* freetype::|FT_Face|)) face))
     (let ((rows (rows glyph))
           (cols (cols glyph))
           (matrix (matrix glyph)))
       (let* ((kern (if previous-char
                        (let ((prev-glyph (get-glyph (context-font context) previous-char)))
-                         (sb-alien:with-alien ((kerning freetype::|FT_Vector|))
-                           (freetype::|FT_Get_Kerning|
-                                      (sb-alien:deref face)
-                                      (char-index prev-glyph)
-                                      (char-index glyph)
-                                     freetype::|FT_KERNING_DEFAULT|
-                                     (sb-alien:addr kerning))
-                           (sb-alien:slot kerning 'freetype::|x|)))
+			 (freetype-ffi::kern-pair face
+						  (char-index prev-glyph)
+						  (char-index glyph)))
                        0))
              (pixel-kern (ash kern -6)))
         (loop for i fixnum from 0 below rows
