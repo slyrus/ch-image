@@ -18,7 +18,7 @@
 
 ch-image is an open-source Common Lisp library for image
 representation, processing and manipulation. Along with the clem
-matrix packages, ch-image enables common lisp programmers to read and
+matrix package, ch-image enables common lisp programmers to read and
 write images in a number of different formats, and to represent images
 in a variety of different formats, including integers and floating
 point numbers of various sizes and even complex numbers. Furthermore,
