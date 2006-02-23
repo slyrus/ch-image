@@ -5,22 +5,6 @@
 
 (in-package :ch-image)
 
-;;; Note that we can't just iterate over the font directories (with
-;;; some list of suggested nicknames perhaps), as some of the font
-;;; names contains Unicode characters and this currently breaks SBCL.
-
-(defparameter *platform-fonts*
-    #+darwin '((:arial "/Library/Fonts/Arial")
-               (:futura "/Library/Fonts/Futura.dfont")
-               (:gill-sans "/Library/Fonts/GillSans.dfont")
-               (:helvetica "/System/Library/Fonts/Helvetica.dfont")
-               (:times-new-roman "/Library/Fonts/Times New Roman")
-               (:monaco "/System/Library/Fonts/Monaco.dfont")
-               (:times "/System/Library/Fonts/Times.dfont")))
-;;; need font paths for linux!
-
-
-
 (defclass freetype-text-context (text-context)
   ((library :accessor context-library :initarg :library)
    (font :accessor context-font :initarg :font)))
@@ -50,7 +34,7 @@
   (declare (ignore initargs)
            (type (sb-alien:alien (* freetype::|FT_Library|)) library))
   (setf (face font)
-        (let ((font-path (cadr (assoc name *platform-fonts*))))
+        (let ((font-path (freetype-ffi::get-font-path name)))
           (freetype-ffi::load-face library font-path))))
 
 (defun set-font-metrics (font height &key (width 0)
