@@ -5,3 +5,5 @@
 (asdf:operate 'asdf:load-op 'ch-image-test)
 
 (ch-image-test:run-tests)
+
+;; (ch-image-system::make-tinaa-docs)
