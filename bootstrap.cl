@@ -6,4 +6,3 @@
 
 (ch-image-test:run-tests)
 
-;; (ch-image-system::make-tinaa-docs)
