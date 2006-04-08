@@ -6,12 +6,15 @@
 
 (defsystem :ch-image-doc
   :name "ch-image-doc"
-  :author "Cyrus Harmon" 
-  :version "0.1.2+-20060119"
+  :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
+  :version #.(with-open-file
+                 (vers (merge-pathnames "version.lisp-expr" *load-truename*))
+               (read vers))
   :licence "BSD"
   :depends-on (com.gigamonkeys.markup ch-asdf-markup ch-bib ch-util ch-image)
   :components
-  ((:module
+  ((:static-file "make-tinaa-docs" :pathname #p"make-tinaa-docs.lisp")
+   (:module
     :doc
     :components
     ((:module :gmarkup :pathname #P""
@@ -39,5 +42,6 @@
                            (:jpeg-file "sanfran-lighter")
                            (:png-file "sanfran")
                            ))
-     (:static-file "simple" :pathname #p"simple.css")))))
+     (:static-file "simple" :pathname #p"simple.css")
+     (:tinaa-directory :tinaa)))))
 

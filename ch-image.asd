@@ -50,11 +50,14 @@
   :name "ch-image"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
   :licence "BSD"
-  :version "0.1.3-20060128"
+  :version #.(with-open-file
+                 (vers (merge-pathnames "version.lisp-expr" *load-truename*))
+               (read vers))
   :description "image representation and processing"
   :depends-on (ch-util clem freetype-ffi)
   :components
-  ((:module
+  ((:static-file "version" :pathname #p"version.lisp-expr")
+   (:module
     :src
     :components
     ((:ch-image-cl-source-file "defpackage")
@@ -83,7 +86,6 @@
     :depends-on (:src))
    (:static-file "README")
    (:static-file "LICENSE")
-   (:static-file "bootstrap" :pathname #p"bootstrap.cl")
-   (:module :tinaadoc)))
+   (:static-file "bootstrap" :pathname #p"bootstrap.cl")))
 
 
