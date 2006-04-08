@@ -94,7 +94,22 @@
                       (setf (gethash char (glyph-cache font)) glyph-obj)
                       glyph-obj))))))))))
 
-(defun xor-blit-matrix (src dest yoff xoff &key (alpha 255))
+(defgeneric xor-blit-matrix (src dest yoff xoff &key &allow-other-keys))
+
+(defmethod xor-blit-matrix (src (dest image-channel) yoff xoff &key)
+  (let ((rows (rows src))
+	(cols (cols src)))
+    (dotimes (i rows)
+      (declare (type fixnum i))
+      (dotimes (j cols)
+	(declare (type fixnum j))
+	(let ((val (clem::mref src i j)))
+	  (ch-image::xor-pixel dest
+			       (+ yoff i)
+			       (+ xoff j)
+                               val))))))
+
+(defmethod xor-blit-matrix (src (dest argb-image) yoff xoff &key (alpha 255))
   (let ((nalpha (logxor 255 alpha))
 	(rows (rows src))
 	(cols (cols src)))
