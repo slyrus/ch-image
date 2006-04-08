@@ -267,29 +267,38 @@
 
 (defmethod set-pixel ((img image) row col val)
   (declare (ignore row col val))
-  (print "set-pixel not implemented for generic image class"))
+  (error "set-pixel not implemented for generic image class"))
 
 (defmethod or-pixel ((img image) row col val)
   (declare (ignore row col val))
-  (print "or-pixel not implemented for generic image class"))
+  (error "or-pixel not implemented for generic image class"))
 
 (defmethod xor-pixel ((img image) row col val)
   (declare (ignore row col val))
-  (print "or-pixel not implemented for generic image class"))
+  (error "xor-pixel not implemented for generic image class"))
 
 (defmethod and-pixel ((img image) row col val)
   (declare (ignore row col val))
-  (print "or-pixel not implemented for generic image class"))
+  (error "and-pixel not implemented for generic image class"))
 
 (defmethod get-pixel ((img image) row col)
   (declare (ignore row col))
-  (print "get-pixel not implemented for generic image class"))
+  (error "get-pixel not implemented for generic image class"))
 
 (defmethod set-pixel ((img image-channel) row col val)
   (set-channel-value img row col val))
 
 (defmethod get-pixel ((img image-channel) row col)
   (get-channel-value img row col))
+
+(defmethod or-pixel ((img image-channel) row col val)
+  (set-channel-value img row col (logior (get-channel-value img row col) val)))
+
+(defmethod xor-pixel ((img image-channel) row col val)
+  (set-channel-value img row col (logxor (get-channel-value img row col) val)))
+
+(defmethod and-pixel ((img image-channel) row col val)
+  (set-channel-value img row col (logand (get-channel-value img row col) val)))
 
 (defmethod set-pixel ((img argb-image) row col val)
   (set-argb-values img row col
