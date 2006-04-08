@@ -14,6 +14,10 @@
 	   #:set-pixel
 	   #:get-pixel
 
+           #:or-pixel
+           #:xor-pixel
+           #:and-pixel
+           
 	   #:rgb-image
 	   #:rgb-888-image
 	   #:rgb-hhh-image
@@ -46,7 +50,7 @@
 
 	   #:argb-image-to-gray-image
 	   
-	   ;;; imageops.cl
+	   ;; imageops.cl
 	   #:*masked-pixel*
 	   #:mask-image
 	   #:flip-image
@@ -57,7 +61,7 @@
            #:resize-image
            #:crop-image
 
-           ;;; shapes
+           ;; shapes
            #:horiz-line
            #:vert-line
            #:draw-line
@@ -70,8 +74,8 @@
            
            #:draw-triangle
            #:draw-polygon
-
-           ;;; I/O
+           
+           ;; I/O
            #:read-image-file
            #:write-image-file
 
@@ -89,6 +93,16 @@
 	   #:jpeg-rgb-to-argb-image
 
            #:write-png-file
-           
-	   ))
 
+           ;; text rendering stuff
+           #:text-context
+           #:context-face
+
+           #:glyph
+
+           #:font
+
+           #:set-font
+           #:get-glyph
+           #:draw-char
+           #:draw-string))
