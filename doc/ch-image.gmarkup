@@ -28,7 +28,7 @@ convolution and morphological operations on images.
 
 * Introduction
 
-Common Lisp\bibcite{steele1990common} is a high-level, compiled
+Common Lisp\bibcite{steele1990common} is a high-level programming
 language with a long history that has been used for many diverse
 tasks, including artificial intelligence, computer aided design and
 drafting, mathematical computation, and scientific programming. One
@@ -170,10 +170,7 @@ about image input and output.
          (width 300)
          (img (make-instance 'ch-image:argb-8888-image :height height
                              :width width))
-         (image-pathname
-          (make-pathname :directory '(:relative "output-images")
-                         :name "example1"
-                         :type "png")))
+         (image-pathname "output-images/example1.png"))
     (ch-image::fill-image img *dark-blue*)
     (ch-image::draw-triangle img 10 100 50 250 160 70 (list 255 255 255 20))
     (ensure-directories-exist image-pathname)
@@ -210,15 +207,11 @@ we'll save that for later.
 
 \lisp{
 (defparameter *cropped-salad*
-  (let ((img (ch-image:read-image-file
-              (make-pathname :directory '(:relative "images")
-                             :name "salad"
-                             :type "jpg"))))
+  (let ((img (ch-image:read-image-file "images/salad.jpg")))
     (ch-image::crop-image
      img :y1 400 :x1 200 :y2 599 :x2 399)))
-(ch-image:write-jpeg-file 
- (make-pathname :directory '(:relative "output-images")
-                :name "salad-cropped" :type "jpg")
+(ch-image:write-image-file
+ "output-images/salad-cropped.jpg"
  *cropped-salad*)
 }
 
@@ -246,10 +239,8 @@ We can scale the cropped image from above as follows:
   (let ((bigimg
          (ch-image:affine-transform-image
           *cropped-salad* transform :interpolation :bilinear)))
-    (ch-image:write-jpeg-file 
-     (make-pathname :directory '(:relative "output-images")
-                    :name "salad-big"
-                    :type "jpg")
+    (ch-image:write-image-file
+     "output-images/salad-big.jpg"
      bigimg)))
 }
 
@@ -277,9 +268,9 @@ image a bit:
          (ch-image:affine-transform-image
           *cropped-salad*
           transform :interpolation :bilinear)))
-    (ch-image:write-jpeg-file 
-     (make-pathname :directory '(:relative "output-images")
-                    :name "salad-trans" :type "jpg") transimg))) }
+    (ch-image:write-image-file
+     "output-images/salad-trans.jpg"
+     transimg))) }
 
 \image{output-images/salad-trans.jpg}
 
@@ -308,9 +299,9 @@ image that will form the new image.
           :x '(-100 . 100)
           :y '(-100 . 100)
           :interpolation :bilinear)))
-    (ch-image:write-jpeg-file 
-     (make-pathname :directory '(:relative "output-images")
-                    :name "salad-trans2" :type "jpg") transimg)))
+    (ch-image:write-image-file
+     "output-images/salad-trans2.jpg"
+     transimg)))
 }
 
 \image{output-images/salad-trans2.jpg}
@@ -326,9 +317,9 @@ In this example, we scale by a factor of .5
          (ch-image:affine-transform-image
           *cropped-salad* transform
           :interpolation :bilinear)))
-    (ch-image:write-jpeg-file 
-     (make-pathname :directory '(:relative "output-images")
-                    :name "salad-trans3" :type "jpg") transimg)))
+    (ch-image:write-image-file
+     "output-images/salad-trans3.jpg"
+     transimg)))
 }
 
 \image{output-images/salad-trans3.jpg}
@@ -369,6 +360,83 @@ fast and usually yeilds acceptable results.
 *** Gamma Curves
 
 *** Image Masking
+
+** Connectivity and Boundaries
+
+*** Labeling Connected Components
+
+For a binary image, connected components can be found using the
+\code{lable-components} function.
+
+
+\lisp{
+(defparameter *shape-image-file* "output-images/shapes.png")
+
+(defparameter *shape-image*
+  (let ((img (make-instance 'ch-image::bit-matrix-image
+                            :rows 128 :cols 128 :initial-element 0)))
+    (ch-image::fill-rectangle img 4 4 10 10 1)
+    (ch-image::fill-rectangle img 8 8 16 30 1)
+    (ch-image::fill-rectangle img 30 30 50 60 1)
+    (ch-image::draw-circle img 75 20 10 1)
+    (ch-image::write-image-file
+     *shape-image-file*
+     (ch-image::make-norm-ub8-image img))
+    img))
+
+(defparameter *connected-components*
+      (ch-image::label-components *shape-image*
+                                  :neighbor-function #'ch-image::8-neighbors))
+
+(defparameter *cc-image-file*
+  (ch-image:write-image-file
+   "output-images/connected-components.png"
+   (ch-image::make-norm-ub8-image *connected-components*)))
+}
+
+\image{\lisp-value{(enough-namestring *shape-image-file*)}}
+\image{\lisp-value{(enough-namestring *cc-image-file*)}}
+
+*** Finding Boundaries
+
+Given an image of connected components, one can find the internal
+or external boundaries of a component, given its label, using the
+\code{component-internal-boundary} and
+\code{component-external-boundary} functions.
+
+\lisp{
+(defparameter *internal-boundary* (ch-image::component-internal-boundary
+                                  *connected-components* 3))
+(defparameter *internal-boundary-file*
+  (ch-image:write-image-file
+   "output-images/internal-boundary.png"
+   (ch-image::make-norm-ub8-image
+    *internal-boundary*)))
+
+(defparameter *external-boundary* (ch-image::component-external-boundary
+                                  *connected-components* 3))
+(defparameter *external-boundary-file*
+  (ch-image:write-image-file
+   "output-images/external-boundary.png"
+   (ch-image::make-norm-ub8-image
+    *external-boundary*)))
+
+(defparameter *boundary* (ch-image::component-boundary
+                         *connected-components* 3))
+(defparameter *boundary-file*
+  (ch-image:write-image-file
+   "output-images/boundary.png"
+   (ch-image::make-norm-ub8-image
+    *boundary*)))
+}
+
+\image{\lisp-value{(enough-namestring *internal-boundary-file*)}}
+\image{\lisp-value{(enough-namestring *external-boundary-file*)}}
+\image{\lisp-value{(enough-namestring *boundary-file*)}}
+
+We see that the external boundary of the non-filled circle is in fact a
+double-ring around the circle. If we only wanted the exterior circle,
+we would need to fill in the object first.
 
 ** Morphological Operations
 
@@ -415,11 +483,9 @@ Here's the original image:
 
 \image{images/sanfran.jpg}
 
-\lisp{(defparameter *sanfran*
-  (ch-image:read-image-file
-   (make-pathname :directory '(:relative "images")
-                  :name "sanfran"
-                  :type "jpg")))
+\lisp{
+(defparameter *sanfran*
+  (ch-image:read-image-file "images/sanfran.jpg"))
 }
 
 ** Example 2 - Convert Image to Grayscale and Write PNG File
@@ -427,11 +493,10 @@ Here's the original image:
 The following code will convert the image to a grayscale image and
 write it out as a PNG file:
 
-\lisp{(defparameter *sanfran-png-file*
+\lisp{
+(defparameter *sanfran-png-file*
   (ch-image:write-image-file
-   (make-pathname :directory '(:relative "output-images")
-                  :name "sanfran"
-                  :type "png")
+   "output-images/sanfran.png"
    (ch-image:argb-image-to-gray-image *sanfran*)))
 }
 
@@ -445,9 +510,7 @@ write it out as a PNG file:
 
 (defparameter *sanfran-lighter-file*
   (ch-image:write-image-file
-   (make-pathname :directory '(:relative "output-images")
-                  :name "sanfran-lighter"
-                  :type "jpg")
+   "output-images/sanfran-lighter.jpg"
    *sanfran-lighter-image*))
 }
 
@@ -468,10 +531,8 @@ write it out as a PNG file:
         (if (> (random 2) 0)
             (ch-image:draw-circle img y x radius color)
             (ch-image:fill-circle img y x radius color))))
-    (ch-image:write-image-file 
-     (make-pathname :directory '(:relative "output-images")
-                    :name "circles" 
-                    :type "png")
+    (ch-image:write-image-file
+     "output-images/circles.png"
      img)))
 }
 

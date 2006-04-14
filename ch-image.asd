@@ -65,6 +65,7 @@
      (:ch-image-cl-source-file "copy-image"  :depends-on ("defpackage" "ch-image"))
      (:ch-image-cl-source-file "conversion"  :depends-on ("defpackage" "ch-image"))
      (:ch-image-cl-source-file "imageops"  :depends-on ("defpackage" "ch-image"))
+     (:ch-image-cl-source-file "morphology"  :depends-on ("defpackage" "ch-image"))
      (:ch-image-cl-source-file "shapes"  :depends-on ("defpackage" "ch-image"))
      (:ch-image-cl-source-file "text"  :depends-on ("defpackage" "ch-image"))
      (:ch-image-cl-source-file "freetype-text"  :depends-on ("text"))

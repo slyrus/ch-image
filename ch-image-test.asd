@@ -25,7 +25,11 @@
   (list (merge-pathnames *fasl-directory* (compile-file-pathname (component-pathname c)))))
 
 (defsystem :ch-image-test
-  :version "0.1.2+-20060215"
+  :name "ch-image-test"
+  :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
+  :version #.(with-open-file
+                 (vers (merge-pathnames "version.lisp-expr" *load-truename*))
+               (read vers))
   :depends-on (ch-util ch-image ch-image)
   :components
   ((:module

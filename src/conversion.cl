@@ -76,3 +76,13 @@
                 src)
     dest))
 
+(defun make-matrix-image (m &key (matrix-type 'ch-image::ub8-matrix-image))
+  (let ((img (make-instance matrix-type
+                            :rows (clem:rows m)
+                            :cols (clem:cols m))))
+      (clem::matrix-move m img)
+      img))
+
+(defun make-norm-ub8-image (matrix)
+  (make-matrix-image
+   (clem:norm-0-255 (clem:copy-to-double-float-matrix matrix))))

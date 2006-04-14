@@ -105,4 +105,15 @@
            #:set-font
            #:get-glyph
            #:draw-char
-           #:draw-string))
+           #:draw-string
+
+           ;; morphology stuff
+           #:4-neighbors
+           #:8-neighbors
+
+           #:label-components
+           #:component-internal-boundary
+           #:component-external-boundary
+
+           #:component-boundary
+           ))
