@@ -86,3 +86,9 @@
 (defun make-norm-ub8-image (matrix)
   (make-matrix-image
    (clem:norm-0-255 (clem:copy-to-double-float-matrix matrix))))
+
+(defun bit-matrix->ub8-image (m)
+  (make-matrix-image
+   (clem:norm-0-255
+    (clem:copy-to-ub8-matrix m))))
+  

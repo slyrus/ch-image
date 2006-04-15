@@ -116,4 +116,8 @@
            #:component-external-boundary
 
            #:component-boundary
+
+           ;; conversion
+           #:make-matrix-image
+           #:bit-matrix->ub8-image
            ))

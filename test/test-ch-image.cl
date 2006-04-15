@@ -93,3 +93,16 @@
     (time (ch-util:run-test #'image-test-2 "image-test-2" run))
     (time (ch-util:run-test #'image-test-3 "image-test-3" run)))
   (print 'done))
+
+
+(defun make-shapes-test-image ()
+  (let ((path
+         (merge-pathnames #p"shapes.png"
+                          (ch-asdf::asdf-lookup-path "asdf:/ch-image-test/test/images"))))
+    (let ((img (make-instance 'ch-image::bit-matrix-image :rows 128 :cols 128 :initial-element 0)))
+      (ch-image::fill-rectangle img 4 4 10 10 1)
+      (ch-image::fill-rectangle img 20 20 40 40 1)
+      (ch-image::draw-circle img 75 20 10 1)
+      (ch-image::write-image-file path (ch-image::make-norm-ub8-image img))
+      (values path img))))
+
