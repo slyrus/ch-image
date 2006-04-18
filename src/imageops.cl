@@ -109,8 +109,8 @@
 (defun split-around-zero (k &key integer)
   (let ((khalf (/ k 2.0d0)))
     (if integer
-        (print (cons (floor (1+ (- khalf))) (floor khalf)))
-        (print (cons (1+ (- khalf)) khalf)))))
+        (cons (floor (- khalf)) (ceiling khalf))
+        (cons (+ (- khalf) 0.5d0) (+ khalf 0.5d0)))))
         
 
 ;;; FIXME: Check to see what happens when constrain-proportions is t
@@ -124,20 +124,20 @@
    will be padded as needed."
   (let ((oldy (image-height img))
         (oldx (image-width img)))
-    (let ((xscale (log (/ x oldx)))
-          (yscale (log (/ y oldy))))
+    (let ((yscale (log (/ y oldy)))
+          (xscale (log (/ x oldx))))
       (when constrain-proportions
-        (setf xscale (* (signum xscale) (max (abs xscale) (abs yscale))))
-        (setf yscale (* (signum yscale) (max (abs xscale) (abs yscale)))))
+        (setf yscale (* (signum yscale) (max (abs xscale) (abs yscale))))
+        (setf xscale (* (signum xscale) (max (abs xscale) (abs yscale)))))
       (let ((xfrm (make-affine-transformation :x-scale xscale
                                               :y-scale yscale)))
         (let ((n (affine-transform-image
                   img xfrm
                   :interpolation interpolation
-                  :u (split-around-zero oldx :integer t)
-                  :v (split-around-zero oldy :integer t)
-                  :x (split-around-zero x :integer t)
-                  :y (split-around-zero y :integer t))))
+                  :u (split-around-zero oldx :integer nil)
+                  :v (split-around-zero oldy :integer nil)
+                  :x (split-around-zero x :integer nil)
+                  :y (split-around-zero y :integer nil))))
           n)))))
 
 (defun gaussian-blur-image (img &key (k 2) (sigma 1) (trim k))
@@ -159,3 +159,8 @@
           (setf (image-width img) (clem:cols (ch-image::image-r img)))))))
   img)
 
+
+(defun map-channels (function image)
+  (mapcar #'(lambda (channel)
+              (apply function (list channel)))
+          (get-channels image)))
