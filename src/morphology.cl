@@ -142,3 +142,67 @@ instead of 4 for computing the boundary."
                         (append
                          (when neighbor-function (list :neighbor-function neighbor-function))
                          (when value (list :value value))))))
+
+(defun backward-4-neighbors (matrix i j)
+  "Returns two values, each value is either a list containing the
+coordinates of a backward 4-neighbor of (i,j), that is the left
+or top neighbor, in matrix or nil if the neighbor would be
+outside of the matrix. The order of the values is top, left."
+  (declare (type fixnum i j))
+  (destructuring-bind (rows cols)
+      (clem:dim matrix)
+    (declare (type fixnum rows cols))
+    (values (when (> i 0) (list (1- i) j)) ; top
+            (when (> j 0) (list i (1- j))) ; left
+            )))
+
+(defun forward-4-neighbors (matrix i j)
+  "Returns two values, each value is either a list containing the
+coordinates of a backward 4-neighbor of (i,j), that is the left
+or top neighbor, in matrix or nil if the neighbor would be
+outside of the matrix. The order of the values is top, left."
+  (declare (type fixnum i j))
+  (destructuring-bind (rows cols)
+      (clem:dim matrix)
+    (declare (type fixnum rows cols))
+    (values (when (< i (1- rows)) (list (1+ i) j)) ; bottom
+            (when (< j (1- cols)) (list i (1+ j))) ; right
+            )))
+
+
+(defun distance-transform (in)
+  "Computes the distance transform of an image. The distance
+transform is a matrix where the value of each pixel is the
+distance between that pixel and the closest zero-valued
+pixel. This function uses the algorithm described in Soille,
+2003, p. 48."
+  (destructuring-bind (rows cols)
+      (clem:dim in)
+    (let ((dist (clem::copy-to-ub32-matrix in)))
+      (dotimes (i rows)
+        (dotimes (j cols)
+          (when (= (clem::mref dist i j) 1)
+            (setf (clem::mref dist i j)
+                  (1+ (apply
+                       #'min
+                       (mapcar
+                        (lambda (p) (if p (clem::mref dist (car p) (cadr p)) 0))
+                        (multiple-value-list
+                         (backward-4-neighbors dist i j)))))))))
+      (loop for i from (1- rows) downto 0
+         do 
+           (loop for j from (1- cols) downto 0
+              do
+                (unless (equal (clem::mref dist i j) 0)
+                  (setf (clem::mref dist i j)
+                        (min (clem::mref dist i j)
+                             (1+ (apply
+                                  #'min
+                                  (mapcar
+                                   (lambda (p) (if p (clem::mref dist (car p) (cadr p)) 0))
+                                   (multiple-value-list
+                                    (forward-4-neighbors dist i j))))))))))
+      dist)))
+
+
+
