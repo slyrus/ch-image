@@ -23,7 +23,8 @@
   (safe-load-io-library :jpeg)
   (safe-load-io-library :tiff-ffi)
   (safe-load-io-library :ch-salza)
-  (safe-load-io-library :ch-salza-png))
+  (safe-load-io-library :ch-salza-png)
+  (safe-load-io-library :freetype-ffi))
 
 ;;;;
 ;;;; The following section customizes asdf to work with filenames
@@ -54,7 +55,7 @@
                  (vers (merge-pathnames "version.lisp-expr" *load-truename*))
                (read vers))
   :description "image representation and processing"
-  :depends-on (ch-util clem freetype-ffi)
+  :depends-on (ch-util clem)
   :components
   ((:static-file "version" :pathname #p"version.lisp-expr")
    (:module
@@ -68,6 +69,7 @@
      (:ch-image-cl-source-file "morphology"  :depends-on ("defpackage" "ch-image"))
      (:ch-image-cl-source-file "shapes"  :depends-on ("defpackage" "ch-image"))
      (:ch-image-cl-source-file "text"  :depends-on ("defpackage" "ch-image"))
+     #+ch-image-has-freetype-ffi
      (:ch-image-cl-source-file "freetype-text"  :depends-on ("text"))
      (:ch-image-cl-source-file "gamma"  :depends-on ("defpackage" "ch-image"))))
    (:module

@@ -207,8 +207,20 @@
   (setf (clem::mref (image-a img) row col) a)
   (setf (clem::mref (image-r img) row col) r)
   (setf (clem::mref (image-g img) row col) g)
-  (setf (clem::mref (image-b img) row col) b)
-  )
+  (setf (clem::mref (image-b img) row col) b))
+
+(defmethod set-argb-values ((img argb-8888-image)
+			    (row fixnum)
+			    (col fixnum)
+			    (a fixnum)
+			    (r fixnum)
+			    (g fixnum)
+			    (b fixnum))
+  "Sets the alpha, red, green and blue values at x, y"
+  (setf (clem::ub8-matrix-mref (the clem:ub8-matrix (image-a img)) row col) a)
+  (setf (clem::ub8-matrix-mref (the clem:ub8-matrix (image-r img)) row col) r)
+  (setf (clem::ub8-matrix-mref (the clem:ub8-matrix (image-g img)) row col) g)
+  (setf (clem::ub8-matrix-mref (the clem:ub8-matrix (image-b img)) row col) b))
 
 (defmethod get-argb-values ((img argb-image) (row fixnum) (col fixnum))
   "Gets the alpha, red, green and blue values at x, y"
