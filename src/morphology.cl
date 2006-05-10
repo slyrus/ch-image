@@ -44,22 +44,22 @@ components of matrix. The default neighbor-fucntion is
 4-neighbors."
   (destructuring-bind (rows cols)
       (clem:dim matrix)
-    (let ((label-matrix (make-instance 'clem::ub8-matrix
+    (let ((label-matrix (make-instance 'clem:ub8-matrix
                               :rows rows :cols cols
                               :initial-element 0))
           (stack)
           (label-value 0))
       (dotimes (i rows)
         (dotimes (j cols)
-          (when (= 0 (clem::mref label-matrix i j))
-            (let ((current-label-value (clem::mref matrix i j)))
+          (when (= 0 (clem:mref label-matrix i j))
+            (let ((current-label-value (clem:mref matrix i j)))
               (incf label-value)
-              (setf (clem::mref label-matrix i j) label-value)
+              (setf (clem:mref label-matrix i j) label-value)
               (mapcar (lambda (p)
                         (destructuring-bind (ni nj) p
-                          (when (= current-label-value (clem::mref matrix ni nj))
+                          (when (= current-label-value (clem:mref matrix ni nj))
                             (push p stack)
-                            (setf (clem::mref label-matrix ni nj) label-value))))
+                            (setf (clem:mref label-matrix ni nj) label-value))))
                       (multiple-value-list-remove-nulls
                        (funcall neighbor-function matrix i j)))
               ;; now we walk through the list....
@@ -67,15 +67,15 @@ components of matrix. The default neighbor-fucntion is
                   ((null k))
                 (mapcar (lambda (p)
                           (destructuring-bind (ni nj) p
-                            (when (and (= current-label-value (clem::mref matrix ni nj))
-                                       (= 0 (clem::mref label-matrix ni nj)))
+                            (when (and (= current-label-value (clem:mref matrix ni nj))
+                                       (= 0 (clem:mref label-matrix ni nj)))
                               (push p stack)
-                              (setf (clem::mref label-matrix ni nj) label-value))))
+                              (setf (clem:mref label-matrix ni nj) label-value))))
                         (multiple-value-list-remove-nulls
                          (funcall neighbor-function matrix (car k) (cadr k)))))))))
       ;; this is an ugly hack to deal with the fact that our matrix
       ;; addition API still needs work!
-      (clem::mat-add label-matrix (make-instance 'clem::sb8-scalar
+      (clem:mat-add label-matrix (make-instance 'clem:sb8-scalar
                                                  :initial-element -1)))))
 
 
@@ -90,17 +90,17 @@ instead of 4 for computing the boundary."
     (flet ((neighbor-labels (i j)
              (mapcar (lambda (p)
                        (destructuring-bind (ni nj) p
-                         (clem::mref matrix ni nj)))
+                         (clem:mref matrix ni nj)))
                      (multiple-value-list-remove-nulls
                       (funcall neighbor-function matrix i j)))))
-      (let ((label-matrix (make-instance 'clem::ub8-matrix
+      (let ((label-matrix (make-instance 'clem:ub8-matrix
                                          :rows rows :cols cols
                                          :initial-element 0)))
         (dotimes (i rows)
           (dotimes (j cols)
-            (when (= label (clem::mref matrix i j))
+            (when (= label (clem:mref matrix i j))
               (unless (apply #'= label (neighbor-labels i j))
-                (setf (clem::mref label-matrix i j) value)))))
+                (setf (clem:mref label-matrix i j) value)))))
         label-matrix))))
 
 
@@ -115,17 +115,17 @@ instead of 4 for computing the boundary."
     (flet ((neighbor-labels (i j)
              (mapcar (lambda (p)
                        (destructuring-bind (ni nj) p
-                         (clem::mref matrix ni nj)))
+                         (clem:mref matrix ni nj)))
                      (multiple-value-list-remove-nulls
                       (funcall neighbor-function matrix i j)))))
-      (let ((label-matrix (make-instance 'clem::ub8-matrix
+      (let ((label-matrix (make-instance 'clem:ub8-matrix
                                          :rows rows :cols cols
                                          :initial-element 0)))
         (dotimes (i rows)
           (dotimes (j cols)
-            (unless (= label (clem::mref matrix i j))
+            (unless (= label (clem:mref matrix i j))
               (when (member label (neighbor-labels i j) :test #'=)
-                (setf (clem::mref label-matrix i j) value)))))
+                (setf (clem:mref label-matrix i j) value)))))
         label-matrix))))
 
 (defun component-boundary (matrix label &key
@@ -134,7 +134,7 @@ instead of 4 for computing the boundary."
 the component whose value is label. neighbor-function is
 4-neighbors by default, using 8-neighbors will use 8 neighbors
 instead of 4 for computing the boundary."
-  (clem::mlogior (apply #'component-internal-boundary matrix label
+  (clem:mlogior (apply #'component-internal-boundary matrix label
                         (append
                          (when neighbor-function (list :neighbor-function neighbor-function))
                          (when value (list :value value))))
@@ -170,7 +170,7 @@ outside of the matrix. The order of the values is top, left."
             )))
 
 
-(defun distance-transform (in)
+(defun distance-transform (in &key (border 0))
   "Computes the distance transform of an image. The distance
 transform is a matrix where the value of each pixel is the
 distance between that pixel and the closest zero-valued
@@ -178,28 +178,28 @@ pixel. This function uses the algorithm described in Soille,
 2003, p. 48."
   (destructuring-bind (rows cols)
       (clem:dim in)
-    (let ((dist (clem::copy-to-ub32-matrix in)))
+    (let ((dist (clem:copy-to-ub32-matrix in)))
       (dotimes (i rows)
         (dotimes (j cols)
-          (when (= (clem::mref dist i j) 1)
-            (setf (clem::mref dist i j)
+          (when (> (clem:mref dist i j) 1)
+            (setf (clem:mref dist i j)
                   (1+ (apply
                        #'min
                        (mapcar
-                        (lambda (p) (if p (clem::mref dist (car p) (cadr p)) 0))
+                        (lambda (p) (if p (clem:mref dist (car p) (cadr p)) border))
                         (multiple-value-list
                          (backward-4-neighbors dist i j)))))))))
       (loop for i from (1- rows) downto 0
          do 
            (loop for j from (1- cols) downto 0
               do
-                (unless (equal (clem::mref dist i j) 0)
-                  (setf (clem::mref dist i j)
-                        (min (clem::mref dist i j)
+                (unless (equal (clem:mref dist i j) 0)
+                  (setf (clem:mref dist i j)
+                        (min (clem:mref dist i j)
                              (1+ (apply
                                   #'min
                                   (mapcar
-                                   (lambda (p) (if p (clem::mref dist (car p) (cadr p)) 0))
+                                   (lambda (p) (if p (clem:mref dist (car p) (cadr p)) border))
                                    (multiple-value-list
                                     (forward-4-neighbors dist i j))))))))))
       dist)))
