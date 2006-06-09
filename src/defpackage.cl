@@ -2,13 +2,11 @@
 (in-package #:cl-user)
 
 (defpackage #:ch-image
-  (:use #:cl #:asdf #:ch-util #:clem)
+  (:use #:cl #:ch-util #:clem)
   (:export #:image
 	   #:image-data
 	   #:image-width
 	   #:image-height
-
-           #:get-channels
 
 	   #:map-pixels
 	   #:set-pixel
@@ -32,7 +30,15 @@
 	   #:set-gray-value
 	   #:set-image-data
 
+           #:get-channels
+           #:set-channels
+           #:map-channels
 
+           #:image-r
+           #:image-g
+           #:image-b
+           #:image-a
+                                            
 	   #:bit-matrix-image
 
 	   #:ub8-matrix-image
@@ -49,7 +55,15 @@
 	   #:complex-matrix-image
 
 	   #:argb-image-to-gray-image
-	   
+
+           ;; clipping
+           #:clip-region
+           #:clip-rect
+           #:y1
+           #:x1
+           #:y2
+           #:x2
+           
 	   ;; imageops.cl
 	   #:*masked-pixel*
 	   #:mask-image
@@ -102,6 +116,7 @@
 
            #:font
 
+           #:make-text-context
            #:set-font
            #:get-glyph
            #:draw-char
@@ -117,7 +132,19 @@
 
            #:component-boundary
 
+           #:distance-transform
+           
            ;; conversion
            #:make-matrix-image
            #:bit-matrix->ub8-image
+
+           ;; gamma curves
+           #:apply-gamma
+
+           ;;
+           #:gaussian-blur-image
            ))
+
+(defpackage #:ch-image-drawing
+  (:use #:cl #:ch-image #:ch-util #:clem))
+

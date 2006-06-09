@@ -89,6 +89,8 @@
     :depends-on (:src))
    (:static-file "README")
    (:static-file "LICENSE")
+   (:static-file "NEWS")
+   (:static-file "ChangeLog")
    (:static-file "bootstrap" :pathname #p"bootstrap.cl")))
 
 

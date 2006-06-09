@@ -3,7 +3,7 @@
 ;; author: cyrus harmon
 ;;
 
-(in-package :ch-image)
+(in-package :ch-image-drawing)
 
 (defgeneric in-clip-region (clip-region y x))
 

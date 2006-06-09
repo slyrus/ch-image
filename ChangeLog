@@ -1,3 +1,142 @@
+2006-05-10  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/ch-image.cl, version.lisp-expr, ch-image.asd:
+	* safely load freetype-ffi now. if freetype-ffi is not present, we won't get
+	  the text functions, but everything else will still load
+	* added a fast version of set-argb-values for argb-8888-images
+
+	* src/morphology.cl: * removing unnecessary double colons
+	* fixing (?) distance-transform
+
+2006-05-09  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/morphology.cl:
+	* added distance transform and forward-4-neighbors and backward-4-neighbors
+
+2006-04-19  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* make-dist.sh: adding make-dist.sh
+
+2006-04-18  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/imageops.cl: * added map-channels
+	* trying to fix off-by-one error in resize-image
+
+2006-04-15  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* test/test-ch-image.cl, src/conversion.cl, src/defpackage.cl:
+	* added bit-matrix->image
+	* made bit-matrix->image and make-matrix-image external
+	* added make-shapes-test-image test
+
+2006-04-14  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ch-image-test.asd, ch-image.asd, doc/ch-image.gmarkup, src/conversion.cl, src/defpackage.cl, src/morphology.cl, version.lisp-expr:
+	* fix version number for ch-image-test.asd
+	* add morphology.cl
+	* clean up paths in docs
+	* add boundary stuff to docs
+	* add make-matrix-image which makes a matrix-image from a matrix
+	* add make-norm-ub8-image
+	* added 4-neighbors, 8-neighbors, label-components,
+	  component-internal-boundary, component-external-boundary, and
+	  component boundary and made them external
+
+2006-04-08  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/defpackage.cl:  * make text stuff and logical pixel ops external
+
+	* version.lisp-expr, make-tinaa-docs.lisp, ch-image.asd, ch-image-doc.asd:
+	 * tinaa docs
+	 * version.lisp-expr stuff
+
+	* test/test-ch-image-3.cl:  * add grayscale text test
+
+	* src/ch-image.cl:
+	 * change get/set-pixel not implemented messages to errors
+	 * add or-/and-/xor-pixel methods for image-channels
+
+	* src/freetype-text.cl:
+	make xor-blit-matrix a generic function and add a method for
+	image-channel, along with the existing argb-image method
+
+2006-04-05  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* make-tinaa-docs.lisp: added lisp files for loading to make tinaa docs
+
+	* ch-image.asd, bootstrap.cl: cleaning up tinaa doc stuff
+
+	* ch-image.asd, bootstrap.cl: added tinaa stuff
+
+2006-02-23  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* doc/ch-image.gmarkup: fix typo
+
+	* src/freetype-text.cl:
+	use freetype-ffi::get-font-path instead of hard-coding it.
+
+2006-02-17  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/freetype-text.cl, src/ch-image.cl:
+	* added xor-pixel, and-pixel. probably need more here.
+	* added xor-blt-matrix
+
+	* src/freetype-text.cl: * Moved kerning guts in freetype-ffi
+
+2006-02-16  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/freetype-text.cl:
+	* Whoops. Make that Times New Roman not Times new Roman!
+	* Set alpha value to 255 instead of 0
+
+	* test/images/euc.jpeg, test/images/euc.tiff, test/images/eucgray.jpeg, test/images/eucgray.tiff, test/images/sanfran.jpg, test/images/sunset-lzw.tiff:
+	added images that moved here from ch-imageio
+
+	* test/test-ch-image-3.cl: exercise fonts a bit
+
+	* src/text.cl:
+	* added allow-other-keys to draw-char. Currently this is used by the freetext
+	  rendering stuff to pass in the previous char to use for kerning.
+
+	* src/freetype-text.cl: * Added times-new-roman
+	* Extended the glyph class to hold the char-index and a ref to the glyph itself
+	* Added kerning. The kerning stuff (at least some of it) should move
+	  to freetype-ffi.
+
+	* src/ch-image.cl:
+	* Added or-pixel method. We're going to need more of these, esp xor-pixel.
+	* Fixed a typo.
+
+	* ch-image.asd, ch-image-test.asd:
+	asdf changes for using freetype-ffi and the new text stuff
+
+	* test/test-ch-image-3.cl: testing more fongs
+
+	* src/freetype-text.cl:
+	* Added some more fonts and fixed a big where we using :arial every
+	  time, no matter what we passed in.
+
+	* doc/ch-image.gmarkup, ch-image-doc.asd, bootstrap.cl:
+	* cleanup bootstrap.cl
+	* added output-images to the asdf
+	* use enough-namestring in gmarkup file so the right images can be found
+
+	* src/freetype-text.cl: initial verion
+
+	* src/text.cl: adding text rendering capabilities
+
+	* test/test-ch-image-3.cl: added new text rendering test.
+
+2006-01-27  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* io/imageio.cl:
+	use equalp in hash-tables so we do case-insensitive matching on file
+	type
+
+2006-01-26  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ChangeLog: commmit ChangeLog changes
+
 2006-01-25  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* ch-image.asd: added :src dependency for io

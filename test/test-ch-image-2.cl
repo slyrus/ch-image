@@ -159,19 +159,19 @@
       (let ((img (read-tiff-file inputfile)))
 	(time
 	 (progn
-	   (setf (ch-image::image-a img)
-		 (clem::gaussian-blur (ch-image::image-a img) :k 2))
+	   (setf (ch-image:image-a img)
+		 (clem:gaussian-blur (ch-image:image-a img) :k 2))
            
-	   (setf (ch-image::image-r img)
-		 (clem::gaussian-blur (ch-image::image-r img) :k 2))
+	   (setf (ch-image:image-r img)
+		 (clem:gaussian-blur (ch-image:image-r img) :k 2))
            
-           (setf (ch-image::image-g img)
-                 (clem::gaussian-blur (ch-image::image-g img) :k 2))
+           (setf (ch-image:image-g img)
+                 (clem:gaussian-blur (ch-image:image-g img) :k 2))
 	   
-	   (setf (ch-image::image-b img)
-		 (clem::gaussian-blur (ch-image::image-b img) :k 2))))
-        (setf (image-height img) (clem:rows (ch-image::image-r img)))
-        (setf (image-width img) (clem:cols (ch-image::image-r img)))
+	   (setf (ch-image:image-b img)
+		 (clem:gaussian-blur (ch-image:image-b img) :k 2))))
+        (setf (image-height img) (clem:rows (ch-image:image-r img)))
+        (setf (image-width img) (clem:cols (ch-image:image-r img)))
 	(write-tiff-file
          (test-output-img
           (merge-pathnames (make-pathname :name "blur-sunset" :type "tiff")
@@ -193,7 +193,7 @@
       (ensure-directories-exist imagedir)
       (let ((img (read-tiff-file inputfile)))
 	(time
-         (ch-image::gaussian-blur-image img :k 2))
+         (ch-image:gaussian-blur-image img :k 2))
         (write-tiff-file
          (test-output-img
           (merge-pathnames (make-pathname :name "blur-sunset" :type "tiff")
@@ -218,7 +218,7 @@
         (let ((img (ch-image:read-tiff-file inputfile)))
           (print img)
           (ch-image:affine-transform-image
-           img (clem::make-affine-transformation :x-shift 0d0 :y-shift 0d0
+           img (clem:make-affine-transformation :x-shift 0d0 :y-shift 0d0
                                                  :theta (* -.15 pi)
                                                  :x-shear 0.05d0
                                                  :y-shear 0d0
@@ -247,7 +247,7 @@
       (let ((path (merge-pathnames (make-pathname :name "xfrm-euc-2" :type "tiff")
                                    imagedir)))
         (let ((img (ch-image:read-tiff-file inputfile))
-              (xfrm (clem::make-affine-transformation :x-shift 0d0 :y-shift 0d0
+              (xfrm (clem:make-affine-transformation :x-shift 0d0 :y-shift 0d0
                                                       :theta (* -.15 pi)
                                                       :x-shear 0.00d0
                                                       :y-shear 0d0
@@ -258,7 +258,7 @@
                 (v1 (- (/ (image-height img) 2)))
                 (v2 (/ (image-height img) 2)))
             (multiple-value-bind (x1 y1 x2 y2)
-                (clem::compute-bounds u1 v1 u2 v2 xfrm)
+                (clem:compute-bounds u1 v1 u2 v2 xfrm)
               (let ((ximg
                      (ch-image:affine-transform-image
                       img xfrm
@@ -282,7 +282,7 @@
     img))
 
 (defun test-affine-transform-3 (&optional (img (load-euclid-image)))
-  (let ((xfrm (clem::make-affine-transformation :x-shift 0d0 :y-shift 0d0
+  (let ((xfrm (clem:make-affine-transformation :x-shift 0d0 :y-shift 0d0
                                                 :theta (* (/ 14 180) pi)
                                                 :x-shear 0.0d0
                                                 :y-shear 0d0
