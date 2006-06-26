@@ -8,6 +8,8 @@
 	   #:image-width
 	   #:image-height
 
+           #:copy-image
+           
 	   #:map-pixels
 	   #:set-pixel
 	   #:get-pixel

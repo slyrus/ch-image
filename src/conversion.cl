@@ -80,7 +80,7 @@
   (let ((img (make-instance matrix-type
                             :rows (clem:rows m)
                             :cols (clem:cols m))))
-      (clem::matrix-move m img)
+      (clem::matrix-move m img :constrain t)
       img))
 
 (defun make-norm-ub8-image (matrix)

@@ -5,10 +5,19 @@
 
 (in-package :ch-image)
 
-(defparameter *masked-pixel* '(255 0 0 0))
+(defparameter *masked-argb-pixel* '(255 0 0 0))
+(defparameter *masked-rgb-pixel* '(0 0 0))
+(defparameter *masked-gray-pixel* 0)
 
-(defun mask-image (img seg &key (mask-val 0) (masked-pixel *masked-pixel*))
-  (let ((mask (make-instance 'argb-8888-image :width (image-width img) :height (image-height img))))
+(defun get-default-masked-pixel (img)
+  (typecase img
+    (argb-8888-image *masked-argb-pixel*)
+    (rgb-888-image *masked-rgb-pixel*)
+    (gray-image *masked-gray-pixel*)))
+
+(defun mask-image (img seg &key (mask-val 0) (masked-pixel (get-default-masked-pixel img)))
+  (let ((mask (make-instance (class-of img)
+                             :width (image-width img) :height (image-height img))))
     (map-pixels #'(lambda (img x y)
 		    (if (/= (get-pixel seg x y) mask-val)
 			(set-pixel mask x y (get-pixel img x y))	
@@ -124,8 +133,8 @@
    will be padded as needed."
   (let ((oldy (image-height img))
         (oldx (image-width img)))
-    (let ((yscale (log (/ y oldy)))
-          (xscale (log (/ x oldx))))
+    (let ((yscale (/ y oldy))
+          (xscale (/ x oldx)))
       (when constrain-proportions
         (setf yscale (* (signum yscale) (max (abs xscale) (abs yscale))))
         (setf xscale (* (signum xscale) (max (abs xscale) (abs yscale)))))

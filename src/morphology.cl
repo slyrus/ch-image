@@ -181,7 +181,7 @@ pixel. This function uses the algorithm described in Soille,
     (let ((dist (clem:copy-to-ub32-matrix in)))
       (dotimes (i rows)
         (dotimes (j cols)
-          (when (> (clem:mref dist i j) 1)
+          (when (> (clem:mref dist i j) 0)
             (setf (clem:mref dist i j)
                   (1+ (apply
                        #'min

@@ -216,21 +216,21 @@
       (let ((path (merge-pathnames (make-pathname :name "xfrm-euc" :type "tiff")
                                    imagedir)))
         (let ((img (ch-image:read-tiff-file inputfile)))
-          (print img)
-          (ch-image:affine-transform-image
-           img (clem:make-affine-transformation :x-shift 0d0 :y-shift 0d0
-                                                 :theta (* -.15 pi)
-                                                 :x-shear 0.05d0
-                                                 :y-shear 0d0
-                                                 :x-scale (log 1.5)
-                                                 :y-scale (log 1.5))
-           :interpolation :bilinear
-           :u '(-100 . 100)
-           :v '(-100 . 100)
-           :x '(-100 . 100)
-           :y '(-100 . 100))
-          (ch-image:write-tiff-file 
-           (test-output-img path) img))))))
+          (let ((ximg
+                 (ch-image:affine-transform-image
+                  img (clem:make-affine-transformation :x-shift 0d0 :y-shift 0d0
+                                                       :theta (* -.15 pi)
+                                                       :x-shear 0.05d0
+                                                       :y-shear 0d0
+                                                       :x-scale 1.5
+                                                       :y-scale 1.5)
+                  :interpolation :bilinear
+                  :u '(-100 . 100)
+                  :v '(-100 . 100)
+                  :x '(-100 . 100)
+                  :y '(-100 . 100))))
+            (ch-image:write-tiff-file 
+             (test-output-img path) ximg)))))))
 
 (defun test-affine-transform-2 ()
   (let ((images-component
@@ -251,8 +251,8 @@
                                                       :theta (* -.15 pi)
                                                       :x-shear 0.00d0
                                                       :y-shear 0d0
-                                                      :x-scale (log 2)
-                                                      :y-scale (log 2))))
+                                                      :x-scale 2
+                                                      :y-scale 2)))
           (let ((u1 (- (/ (image-width img) 2)))
                 (u2 (/ (image-width img) 2))
                 (v1 (- (/ (image-height img) 2)))
@@ -286,8 +286,8 @@
                                                 :theta (* (/ 14 180) pi)
                                                 :x-shear 0.0d0
                                                 :y-shear 0d0
-                                                :x-scale (log 1.25)
-                                                :y-scale (log 1.25))))
+                                                :x-scale 1.25
+                                                :y-scale 1.25)))
     (let ((ximg
            (ch-image:affine-transform-image
             img xfrm
