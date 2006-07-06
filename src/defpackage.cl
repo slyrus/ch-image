@@ -78,6 +78,8 @@
            #:crop-image
 
            ;; shapes
+           #:fill-image
+
            #:horiz-line
            #:vert-line
            #:draw-line
