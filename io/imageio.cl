@@ -40,6 +40,10 @@
   (let ((f (image-file-write-function path)))
     (funcall f path image)))
 
+(defun write-matrix-image-file (path matrix)
+  (let ((f (image-file-write-function path)))
+    (funcall f path (make-matrix-image matrix))))
+
 (defun get-image-files-in-directory (directory type)
   (cond ((null type) nil)
         ((listp type)

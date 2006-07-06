@@ -158,3 +158,22 @@
 		      (aref g2 i j) (aref g1 i j)
 		      (aref b2 i j) (aref b1 i j)))))
     img2))
+
+(defgeneric copy-pixels (src
+                         dest
+                         src-ystart src-yend src-xstart src-xend
+                         dest-ystart dest-yend dest-xstart dest-xend))
+
+;; FIXME! Specialized versions of this will go much faster!
+(defmethod copy-pixels ((src image)
+                        (dest image)
+                        src-ystart src-yend src-xstart src-xend
+                        dest-ystart dest-yend dest-xstart dest-xend)
+  ;; FIXME add bounds checking here!
+  (loop for srcy from src-ystart to src-yend
+     for desty from dest-ystart to dest-yend
+     do (loop for srcx from src-xstart to src-xend
+           for destx from dest-xstart to dest-xend
+           do (set-pixel dest desty destx
+                         (get-pixel src srcy srcx)))))
+
