@@ -50,7 +50,10 @@
                             (- (clem::mref feature y x) tavg)))
               (incf dfsum (square (- (clem::mref image j i) favg)))
               (incf dtsum (square (- (clem::mref feature y x) tavg)))))
-        (coerce (/ csum (sqrt (* dfsum dtsum))) 'double-float)))))
+	(let ((denom (sqrt (* dfsum dtsum))))
+	  (if (not (zerop denom))
+	      (coerce (/ csum denom) 'double-float)
+	      0d0))))))
 
 ;;;
 ;;; an (incomplete) implementation of an algorithm to compute the
