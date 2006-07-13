@@ -147,6 +147,9 @@
 
            ;;
            #:gaussian-blur-image
+
+           #:image-l1-distance
+           #:image-l2-distance
            ))
 
 (defpackage #:ch-image-drawing

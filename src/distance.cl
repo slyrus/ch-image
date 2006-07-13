@@ -1,14 +1,18 @@
 
 (in-package :ch-image)
 
-(defun image-l1-distance (b0 b1)
+(defgeneric image-l1-distance (b0 b1))
+
+(defmethod image-l1-distance ((b0 matrix) (b1 matrix))
   (let ((pixels (* (clem:rows b0) (clem:cols b0))))
     (coerce (/ (clem:sum
                 (clem:mat-abs (clem:m- b0 b1)))
                pixels)
             'double-float)))
 
-(defun image-l2-distance (b0 b1)
+(defgeneric image-l2-distance (b0 b1))
+
+(defmethod image-l2-distance ((b0 matrix) (b1 matrix))
   (let ((pixels (* (clem:rows b0) (clem:cols b0))))
     (coerce (/ (clem:sum
                 (clem:mat-square
