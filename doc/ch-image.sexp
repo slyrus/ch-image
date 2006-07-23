@@ -11,8 +11,8 @@
 
   (:lisp-silent 
    "(asdf:operate 'asdf:load-op 'ch-image)
-    (setf markup::*baseline-skip* \"14pt\")
-    (setf markup::*par-skip* \"0pt\")"
+    (setf smarkup::*baseline-skip* \"14pt\")
+    (setf smarkup::*par-skip* \"0pt\")"
    ))
 
  (:h1 "Abstract")
@@ -59,7 +59,7 @@ common-lisp.net"
  (:p "ch-image is designed to be a portable library that can run
  an any standards-compliant common lisp implementation. It has
  been developed entirely using the SBCL"
-     (:bibcite "sbcl")
+     (:bibcite "sbcl2006")
      " common lisp implementation and has only been tested on
      SBCL. It should run on other common-lisp implementations,
      however.")

@@ -59,6 +59,9 @@
 	      (coerce (/ csum denom) 'double-float)
 	      0d0))))))
 
+(defun image-ncc-distance (a b)
+  (- 1 (normalized-cross-correlation a b)))
+
 ;;;
 ;;; an (incomplete) implementation of an algorithm to compute the
 ;;; hausdorff distance between two rasterized images, using the

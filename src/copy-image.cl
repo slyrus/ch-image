@@ -8,6 +8,19 @@
 
 (defgeneric copy-image (img))
 
+(defmethod copy-image ((img1 image-channel))
+  (let ((img2 (make-instance (class-of img1)
+			     :height (image-height img1)
+			     :width (image-width img1))))
+    (let ((src (clem::matrix-vals img1))
+          (dest (clem::matrix-vals img2)))
+      (loop for i from 0 below (image-height img1)
+	 do
+         (loop for j from 0 below (image-width img1)
+            do 
+            (setf (aref dest i j) (aref src i j)))))
+    img2))
+
 (defmethod copy-image ((img1 rgb-image))
   (let ((img2 (make-instance (class-of img1)
 			     :height (image-height img1)
@@ -20,11 +33,11 @@
 	  (b2 (clem::matrix-vals (image-b img2))))
       (loop for i from 0 below (image-height img1)
 	 do
-	   (loop for j from 0 below (image-width img1)
-	      do 
-		(setf (aref r2 i j) (aref r1 i j)
-		      (aref g2 i j) (aref g1 i j)
-		      (aref b2 i j) (aref b1 i j)))))
+         (loop for j from 0 below (image-width img1)
+            do 
+            (setf (aref r2 i j) (aref r1 i j)
+                  (aref g2 i j) (aref g1 i j)
+                  (aref b2 i j) (aref b1 i j)))))
     img2))
 
 (defmethod copy-image ((img1 rgb-888-image))

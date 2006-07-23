@@ -118,10 +118,12 @@
       (dotimes (j cols)
 	(declare (type fixnum j))
 	(let ((val (clem::mref src i j)))
-	  (ch-image::xor-pixel dest
-			       (+ yoff i)
-			       (+ xoff j)
-			       (list nalpha val val val)))))))
+	  (handler-case
+              (ch-image::xor-pixel dest
+                                   (+ yoff i)
+                                   (+ xoff j)
+                                   (list nalpha val val val))
+            (simple-type-error ())))))))
 
 (defmethod draw-char (img context char y x &key previous-char (alpha 255))
   (declare (optimize (debug 2)))
