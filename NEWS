@@ -1,0 +1,15 @@
+
+changes in ch-image-0.1.7 relative to ch-image-0.1.6
+  * Safely load freetype-ffi
+
+changes in ch-image-0.1.6 relative to ch-image-0.1.5
+  * added morphology.cl with the following functions:
+    ** 4-neighbors
+    ** 8-neighbors
+    ** label-components
+    ** component-boundary
+    ** component-internal-boundary
+    ** component-external-boundary
+    ** distance-transform
+  * added make-matrix-image
+  * added make-norm-ub8-image
