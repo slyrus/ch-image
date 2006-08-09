@@ -135,9 +135,16 @@
         (oldx (image-width img)))
     (let ((yscale (/ y oldy))
           (xscale (/ x oldx)))
-      (when constrain-proportions
-        (setf yscale (* (signum yscale) (max (abs xscale) (abs yscale))))
-        (setf xscale (* (signum xscale) (max (abs xscale) (abs yscale)))))
+      (let ((max-or-min
+             (if (or (< yscale 1)
+                     (< xscale 1))
+                 #'min
+                 #'max)))
+        (when constrain-proportions
+          (setf yscale (* (signum yscale)
+                          (funcall max-or-min (abs xscale) (abs yscale))))
+          (setf xscale (* (signum xscale)
+                          (funcall max-or-min (abs xscale) (abs yscale))))))
       (let ((xfrm (make-affine-transformation :x-scale xscale
                                               :y-scale yscale)))
         (let ((n (affine-transform-image

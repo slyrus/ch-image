@@ -498,7 +498,7 @@ to "
  (:p "The Fast Fourier Transform of images is provided using a
  Foreign-function Interface (FFI) to the FFTW (Fastest Fourier
  Transfrom in the West) library"
-     (:bibcite "frigo98fftw")
+     (:bibcite "frigo1998fftw")
      ". A number of utility functions are provided to convert
      between the ch-image image representation of fftw matrix
      represenations and to make images of the magnitude and
