@@ -13,12 +13,7 @@
 (defgeneric image-l2-distance (b0 b1))
 
 (defmethod image-l2-distance ((b0 matrix) (b1 matrix))
-  (let ((pixels (* (clem:rows b0) (clem:cols b0))))
-    (coerce (/ (clem:sum
-                (clem:mat-square
-                 (clem::copy-to-double-float-matrix (clem:m- b0 b1))))
-               pixels)
-            'double-float)))
+  (clem::matrix-l2-distance b0 b1))
 
 (defun image-cauchy-l2-distance (b0 b1)
   (let ((pixels (* (clem:rows b0) (clem:cols b0))))

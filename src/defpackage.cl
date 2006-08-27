@@ -7,7 +7,8 @@
 	   #:image-data
 	   #:image-width
 	   #:image-height
-
+           #:image-dim
+           
            #:copy-image
            
 	   #:map-pixels

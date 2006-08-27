@@ -229,6 +229,36 @@
 	  (val (image-g img) row col)
 	  (val (image-b img) row col)))
 
+(defgeneric set-rgb-values (img row col r g b))
+
+(defmethod set-rgb-values ((img rgb-image)
+			    (row fixnum)
+			    (col fixnum)
+			    (r fixnum)
+			    (g fixnum)
+			    (b fixnum))
+  "Sets the red, green and blue values at x, y"
+  (setf (clem::mref (image-r img) row col) r)
+  (setf (clem::mref (image-g img) row col) g)
+  (setf (clem::mref (image-b img) row col) b))
+
+(defmethod set-rgb-values ((img rgb-888-image)
+			    (row fixnum)
+			    (col fixnum)
+			    (r fixnum)
+			    (g fixnum)
+			    (b fixnum))
+  "Sets the red, green and blue values at x, y"
+  (setf (clem::ub8-matrix-mref (the clem:ub8-matrix (image-r img)) row col) r)
+  (setf (clem::ub8-matrix-mref (the clem:ub8-matrix (image-g img)) row col) g)
+  (setf (clem::ub8-matrix-mref (the clem:ub8-matrix (image-b img)) row col) b))
+
+(defmethod get-rgb-values ((img rgb-image) (row fixnum) (col fixnum))
+  "Gets the red, green and blue values at x, y"
+  (values (val (image-r img) row col)
+	  (val (image-g img) row col)
+	  (val (image-b img) row col)))
+
 (defclass image-channel (image) ()
   (:documentation "base class for a single channel image"))
 
@@ -346,6 +376,38 @@
 (defmethod get-pixel ((img argb-image) row col)
   (multiple-value-bind (a r g b) (get-argb-values img row col)
     (list a r g b)))
+
+
+(defmethod set-pixel ((img rgb-image) row col val)
+  (set-rgb-values img row col
+		   (car val)
+		   (cadr val)
+		   (caddr val)))
+
+(defmethod or-pixel ((img rgb-image) row col val)
+  (multiple-value-bind (r g b) (get-rgb-values img row col)
+    (set-rgb-values img row col
+                     (logior r (car val))
+                     (logior g (cadr val))
+                     (logior b (caddr val)))))
+
+(defmethod xor-pixel ((img rgb-image) row col val)
+  (multiple-value-bind (r g b) (get-rgb-values img row col)
+    (set-rgb-values img row col
+                     (logxor r (car val))
+                     (logxor g (cadr val))
+                     (logxor b (caddr val)))))
+
+(defmethod and-pixel ((img rgb-image) row col val)
+  (multiple-value-bind (r g b) (get-rgb-values img row col)
+    (set-rgb-values img row col
+                     (logand r (car val))
+                     (logand g (cadr val))
+                     (logand b (caddr val)))))
+
+(defmethod get-pixel ((img rgb-image) row col)
+  (multiple-value-list (get-rgb-values img row col)))
+
 
 (defclass gray-image (image-channel) ()
   (:documentation "Grayscale 8-bit image class"))

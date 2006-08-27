@@ -15,14 +15,25 @@
     (rgb-888-image *masked-rgb-pixel*)
     (gray-image *masked-gray-pixel*)))
 
-(defun mask-image (img seg &key (mask-val 0) (masked-pixel (get-default-masked-pixel img)))
+(defgeneric mask-image (img seg &key mask-val masked-pixel))
+
+(defmethod mask-image ((img image) (seg image) &key (mask-val 0) (masked-pixel (get-default-masked-pixel img)))
   (let ((mask (make-instance (class-of img)
                              :width (image-width img) :height (image-height img))))
-    (map-pixels #'(lambda (img x y)
-		    (if (/= (get-pixel seg x y) mask-val)
-			(set-pixel mask x y (get-pixel img x y))	
-			(set-pixel mask x y masked-pixel)	
-			))
+    (map-pixels #'(lambda (img y x)
+		    (if (/= (get-pixel seg y x) mask-val)
+			(set-pixel mask y x (get-pixel img y x))	
+			(set-pixel mask y x masked-pixel)))
+		img)
+    mask))
+
+(defmethod mask-image ((img image) (seg bit-matrix) &key (mask-val 0) (masked-pixel (get-default-masked-pixel img)))
+  (let ((mask (make-instance (class-of img)
+                             :width (image-width img) :height (image-height img))))
+    (map-pixels #'(lambda (img y x)
+		    (if (/= (clem::mref seg y x) mask-val)
+			(set-pixel mask y x (get-pixel img y x))	
+			(set-pixel mask y x masked-pixel)))
 		img)
     mask))
 
@@ -180,3 +191,97 @@
   (mapcar #'(lambda (channel)
               (apply function (list channel)))
           (get-channels image)))
+
+(defgeneric posterize (image levels))
+
+(defmethod posterize ((img clem:ub8-matrix) (levels fixnum))
+  (let* ((max (clem::maxval (class-of img)))
+         (level-inv (truncate (/ max levels)))
+         (p (clem::mat-copy img)))
+    (clem:mloop (((p (unsigned-byte 8) a)) m n i j)
+      (setf (aref a i j)
+            (* level-inv (truncate (/ (aref a i j) level-inv)))))
+    p))
+
+(defgeneric foreground-pixel-list (img &key background-pixel))
+
+(defmethod foreground-pixel-list ((img image) &key (background-pixel 0))
+  (loop for i below (image-height img)
+     append
+       (loop for j below (image-width img)
+          append (unless (equal (get-pixel img i j)
+                                background-pixel)
+                   (list (cons i j))))))
+
+(defmethod foreground-pixel-list ((img matrix) &key (background-pixel 0))
+  (loop for i below (clem:rows img)
+     append
+       (loop for j below (clem:cols img)
+          append (unless (equal (clem:mref img i j)
+                                background-pixel)
+                   (list (cons i j))))))
+
+(defparameter *preset-default-color-list*
+    '((255 0 0 0)
+      (255 255 0 128)
+      (255 0 128 0)
+      (255 192 192 64)
+      (255 255 0 0)
+      (255 0 128 255)
+      (255 255 255 0)
+      (255 0 255 0)
+      (255 0 0 255)
+      (255 128 128 0)
+      (255 255 0 255)
+      (255 0 128 128)
+      (255 128 0 128)
+      (255 255 255 255)
+      (255 128 0 0)
+      (255 0 0 128)
+      (255 255 128 0)
+      (255 0 255 128)
+      (255 128 0 255)
+      (255 128 255 0)
+      (255 0 255 255)
+      (255 64 255 255)
+      (255 255 64 255)
+      (255 255 255 64)
+      (255 64 64 255)
+      (255 255 64 64)
+      (255 64 255 64)
+      (255 64 64 128)
+      (255 128 64 64)
+      (255 64 128 64)
+      (255 64 128 128)
+      (255 128 64 128)
+      (255 192 64 192)
+      (255 64 192 192)))
+
+(defparameter *default-color-map*
+  (make-array 256))
+
+(loop for i from 0 for c in *preset-default-color-list*
+   do (setf (elt *default-color-map* i) c))
+
+(loop for i from (length *preset-default-color-list*) below 256
+   do (setf (elt *default-color-map* i)
+            (list 255
+                  (random 256)
+                  (random 256)
+                  (random 256))))
+
+(defgeneric color-map-image (img &key colors class))
+
+(defmethod color-map-image ((img matrix)
+                            &key
+                            (colors *default-color-map*)
+                            (class 'argb-8888-image))
+  (let ((cimg (make-instance class
+                             :height (rows img)
+                             :width (cols img))))
+    (dotimes (i (image-height cimg))
+      (dotimes (j (image-width cimg))
+        (set-pixel cimg i j (elt colors (clem:mref img i j)))))
+    cimg))
+
+
