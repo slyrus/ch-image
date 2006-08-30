@@ -79,6 +79,14 @@
 		src)
     dest))
 
+(defmethod gray-image-to-argb-8888-image ((src gray-image) &key (alpha 255))
+  (let ((dest (make-instance 'argb-8888-image :width (image-width src) :height (image-height src))))
+    (map-pixels #'(lambda (img x y)
+		    (let ((v (get-pixel img x y)))
+		      (set-pixel dest x y (list alpha v v v))))
+		src)
+    dest))
+
 (defgeneric crop-image (img &key y1 x1 y2 x2))
 (defmethod crop-image ((img image) &key y1 x1 y2 x2)
   (let ((ximg (make-instance (class-of img)
