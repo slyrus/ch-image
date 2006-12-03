@@ -438,6 +438,9 @@
     (setf (clip-region img) (make-instance 'clip-rect
                                            :y1 0 :x1 0 :y2 (clem:rows img) :x2 (clem:cols img)))))
 
+(defmethod image-data ((chan matrix-image-channel))
+  chan)
+
 (defclass ub8-matrix-image-channel (ub8-matrix matrix-image-channel) ()
   (:metaclass clem::standard-matrix-class)
   (:documentation "8-bit image channel class that is also a matrix"))
@@ -488,7 +491,7 @@
 (defmethod shared-initialize :after
     ((img matrix-gray-image) slot-names &rest initargs &key &allow-other-keys)
   (declare (ignore initargs))
-  (setf (image-data img) img))
+  (setf (image-data img) nil))
 
 (defclass ub8-matrix-image (ub8-matrix matrix-gray-image) ()
   (:metaclass clem::standard-matrix-class)
@@ -500,13 +503,16 @@
 (defmethod get-channels ((img ub8-matrix-image))
   (list img))
 
+(defmethod get-channel-value ((img image-channel) (row fixnum) (col fixnum))
+  "Gets the value at row, col"
+  (val img row col))
+
 (defmethod set-channel-value ((img ub8-matrix-image) (row fixnum) (col fixnum) (v fixnum))
   "Sets the grayscale value at row, col to v"
   (declare (type fixnum row col v))
-  (let ((m (image-data img)))
-    (let ((a (clem::matrix-vals m)))
-      (declare (type (simple-array (unsigned-byte 8) (* *)) a))
-      (setf (aref a row col) (clem::fit m v)))))
+  (let ((a (clem::matrix-vals img)))
+    (declare (type (simple-array (unsigned-byte 8) (* *)) a))
+    (setf (aref a row col) (clem::fit img v))))
 
 (defclass ub16-matrix-image-channel (ub16-matrix matrix-image-channel) ()
   (:metaclass clem::standard-matrix-class)
