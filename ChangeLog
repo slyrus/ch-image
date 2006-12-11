@@ -1,3 +1,121 @@
+2006-12-03  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/ch-image.cl, src/conversion.cl, version.lisp-expr: ch-image 0.2.7
+	 * trying to fix image-data problems. seem to be fixed now.
+	 * whitespace
+
+2006-11-18  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* io/jpegimage.cl, version.lisp-expr: ch-image 0.2.6
+	 * added write-jpeg-stream for gray-images
+
+2006-08-30  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/imageops.cl, version.lisp-expr: ch-image 0.2.5
+	  * added gray-image-to-argb-8888-image
+
+2006-08-27  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/ch-image.cl, src/defpackage.cl, src/distance.cl, src/imageops.cl, version.lisp-expr:
+	ch-image 0.2.4
+	* added defgeneric for set-rgb-values
+	* added set-rgb-values for rgb-888-image and rgb-image
+	* added get-rgb-values for rgb-image
+	* added set-pixel, or-pixel, or-pixel, and-pixel and get-pixel
+	  for rgb-image
+	* exported image-dm
+	* image-l2-distance now calls matrix-l2-distance where appropriate
+	* mask-image is now a generic function
+	* added mask-iamge for bit-matrix
+	* added posterize generic function and posterize method for ub8-matrix
+	* added foregound-pixel-list gf and methods for image and matrix
+	* added color-map-image and friends
+
+2006-08-09  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* doc/ch-image.sexp, make-dist.sh, make-tinaa-docs.lisp, src/distance.cl, src/imageops.cl, version.lisp-expr:
+	ch-image 0.2.3
+	  * use asdf-package:package-system instead of ch-util:make-dist in make-dist.sh
+	  * fix bibcites
+	  * add image-cauchy-l2-distance (not sure if this works)
+	  * fix scale constraining in resize-image
+
+2006-07-31  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* version.lisp-expr: discs 0.1.6.10-20060731
+	  * added NEWS file
+
+	* NEWS: added NEWS file
+
+2006-07-23  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* version.lisp-expr, doc/ch-image.sexp, src/copy-image.cl, src/distance.cl, src/freetype-text.cl:
+	ch-image 0.1.6.9-20060722
+	 * add a handler case around the xor-pixels in freetype text drawing stuff
+	 * minor formatting
+	 * added copy-image for image-channel
+	 * fixed sbcl -> sbcl2006
+	 * markup -> smarkup
+
+2006-07-18  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* version.lisp-expr: ch-image 0.1.6.8-20060717
+	  * markup -> smarkup
+
+2006-07-13  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/defpackage.cl, src/distance.cl, version.lisp-expr:
+	ch-image 0.1.6.7-20060712
+	  * add and export image-l1-distance and image-l2-distance generic
+	    functions
+
+2006-07-06  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* doc/ch-image.sexp: lowercase tags
+
+	* ch-image-doc.asd, doc/ch-image.sexp, src/defpackage.cl, version.lisp-expr:
+	ch-image 0.1.1.6-20060629
+	  * export fill-image
+	  * add ch-image.sexp and change ch-image-doc.asd to use the sexp
+	    instead of the gmarkup stuff
+
+	* src/distance.cl, version.lisp-expr: ch-image 0.1.6.5-20060706
+	  * guard against division by zero error in
+	    normalized-cross-correlation
+
+	* ch-image.asd, io/imageio.cl, src/copy-image.cl, src/distance.cl, src/morphology.cl, version.lisp-expr:
+	ch-image 0.1.6.4-20060705
+	  * added distance.cl for various image distance operations
+	  * added copy-pixels
+	  * added backward-8-neighbors and forward-8-neighbors
+	  * added distance-transform-3-4 and some other dt functions
+	    that need to be clenaed up
+
+2006-06-26  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/conversion.cl, src/defpackage.cl, src/imageops.cl, src/morphology.cl, test/bench-ch-image.cl, test/test-ch-image-2.cl, version.lisp-expr:
+	ch-image 0.1.6.3-20060626
+	  * constrain values in conversion.cl
+	  * add *masked-{argb,rgb,gray}-pixel* and use as defaults for mask
+	    function
+	  * no longer need to take logs for affine transform scaling
+	  * distance transform no works with values > 0 instead of > 1
+	  * added a preliminary benchmark file
+	  * messing with tests
+
+2006-06-09  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ChangeLog, ch-image.asd, doc/ch-image.gmarkup, io/pngimage.cl, make-tinaa-docs.lisp, src/defpackage.cl, src/gamma.cl, src/shapes.cl, test/test-ch-image-2.cl, test/test-ch-image-3.cl, version.lisp-expr:
+	* Add NEWS and ChangeLog to the ASDF file
+	* fix make-tinna-docs.lisp
+	* add write-png-file for bit-matrix
+	* export some more symbols (image-{r,g,b,a}, clip-region, make-text-context,
+	  distance-transform, apply-gamma, gaussian-blur-image
+	* make-integer-gamma-curve -> make-gamma-curve-lookup-table
+	* more gamma clenaup
+	* added new package, ch-image-drawing for the drawing stuff
+	* some :: -> :
+
 2006-05-10  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* src/ch-image.cl, version.lisp-expr, ch-image.asd:
