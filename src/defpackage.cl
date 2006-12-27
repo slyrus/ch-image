@@ -156,3 +156,5 @@
 (defpackage #:ch-image-drawing
   (:use #:cl #:ch-image #:ch-util #:clem))
 
+(defpackage #:ch-image-user
+    (:use #:cl #:ch-image #:clem))
