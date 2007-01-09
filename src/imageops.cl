@@ -98,9 +98,9 @@
      (mapcar #'(lambda (channel)
                  (let ((new-channel (make-instance (class-of channel)
                                                    :rows new-rows :cols new-cols)))
-                   (clem:matrix-move-range channel new-channel
-                                           y1 y2 x1 x2
-                                           0 (1- new-rows) 0 (1- new-cols))))
+                   (clem:matrix-move-range-2d channel new-channel
+                                              y1 y2 x1 x2
+                                              0 (1- new-rows) 0 (1- new-cols))))
                    (get-channels img)))
     (setf (image-height ximg) (rows (car (get-channels ximg))))
     (setf (image-width ximg) (cols (car (get-channels ximg))))

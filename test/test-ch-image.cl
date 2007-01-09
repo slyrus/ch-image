@@ -22,13 +22,13 @@
   t)
 
 (defun image-test-3 ()
+  (declare (optimize (debug 3)))
   (let* ((width 600)
          (height 400)
          (img (make-instance 'ub8-matrix-image :width width :height height)))
     (dotimes (i height)
       (dotimes (j width)
-	(set-gray-value img i j 63)
-	)))
+	(set-gray-value img i j 63))))
   t)
 
 (defun image-test-4 ()

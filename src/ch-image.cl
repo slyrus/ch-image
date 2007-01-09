@@ -204,10 +204,10 @@
 			    (g fixnum)
 			    (b fixnum))
   "Sets the alpha, red, green and blue values at x, y"
-  (setf (clem::mref (image-a img) row col) a)
-  (setf (clem::mref (image-r img) row col) r)
-  (setf (clem::mref (image-g img) row col) g)
-  (setf (clem::mref (image-b img) row col) b))
+  (setf (mref (image-a img) row col) a)
+  (setf (mref (image-r img) row col) r)
+  (setf (mref (image-g img) row col) g)
+  (setf (mref (image-b img) row col) b))
 
 (defmethod set-argb-values ((img argb-8888-image)
 			    (row fixnum)
@@ -217,10 +217,10 @@
 			    (g fixnum)
 			    (b fixnum))
   "Sets the alpha, red, green and blue values at x, y"
-  (setf (clem::ub8-matrix-mref (the clem:ub8-matrix (image-a img)) row col) a)
-  (setf (clem::ub8-matrix-mref (the clem:ub8-matrix (image-r img)) row col) r)
-  (setf (clem::ub8-matrix-mref (the clem:ub8-matrix (image-g img)) row col) g)
-  (setf (clem::ub8-matrix-mref (the clem:ub8-matrix (image-b img)) row col) b))
+  (setf (mref (image-a img) row col) a)
+  (setf (mref (image-r img) row col) r)
+  (setf (mref (image-g img) row col) g)
+  (setf (mref (image-b img) row col) b))
 
 (defmethod get-argb-values ((img argb-image) (row fixnum) (col fixnum))
   "Gets the alpha, red, green and blue values at x, y"
@@ -238,9 +238,9 @@
 			    (g fixnum)
 			    (b fixnum))
   "Sets the red, green and blue values at x, y"
-  (setf (clem::mref (image-r img) row col) r)
-  (setf (clem::mref (image-g img) row col) g)
-  (setf (clem::mref (image-b img) row col) b))
+  (setf (mref (image-r img) row col) r)
+  (setf (mref (image-g img) row col) g)
+  (setf (mref (image-b img) row col) b))
 
 (defmethod set-rgb-values ((img rgb-888-image)
 			    (row fixnum)
@@ -249,9 +249,9 @@
 			    (g fixnum)
 			    (b fixnum))
   "Sets the red, green and blue values at x, y"
-  (setf (clem::ub8-matrix-mref (the clem:ub8-matrix (image-r img)) row col) r)
-  (setf (clem::ub8-matrix-mref (the clem:ub8-matrix (image-g img)) row col) g)
-  (setf (clem::ub8-matrix-mref (the clem:ub8-matrix (image-b img)) row col) b))
+  (setf (mref (image-r img) row col) r)
+  (setf (mref (image-g img) row col) g)
+  (setf (mref (image-b img) row col) b))
 
 (defmethod get-rgb-values ((img rgb-image) (row fixnum) (col fixnum))
   "Gets the red, green and blue values at x, y"
@@ -290,7 +290,7 @@
 (defmethod set-channel-value ((img image-channel) (row fixnum) (col fixnum) v)
   "Sets the value at row, col to v"
   (let ((m (image-data img)))
-    (setf (clem::mref m row col) v)))
+    (setf (mref m row col) v)))
 
 (defmethod set-image-data ((img image-channel) (m matrix))
   "Sets the image-channel data to the matrix m and updates image-width and image-height"
@@ -422,19 +422,27 @@
   (get-gray-value img row col))
 
 (defclass matrix-image-channel (image-channel matrix)
-  ((clem:rows :initarg :height :accessor image-height)
-   (clem:cols :initarg :width :accessor image-width)
-   (clem::initial-element :accessor initial-element
+  ((clem::initial-element :accessor initial-element
 			    :initarg :initial-element
 			    :initform (coerce 0 'unsigned-byte)))
   (:metaclass clem::standard-matrix-class)
   (:documentation "image channel class that is also a matrix"))
 
+(defmethod image-height ((img matrix-image-channel))
+  (clem:rows img))
+
+(defmethod image-width ((img matrix-image-channel))
+  (clem:cols img))
+
+(defmethod shared-initialize :before
+    ((img matrix-image-channel) slot-names &rest initargs &key width height &allow-other-keys)
+  (setf (slot-value img 'clem::dimensions) (list height width)))
+
 (defmethod shared-initialize :after
     ((img matrix-image-channel) slot-names &rest initargs &key &allow-other-keys)
-  (declare (ignore slot-names initargs))
-  (when (and (slot-boundp img 'clem:rows)
-             (slot-boundp img 'clem:cols))
+  (declare (ignore slot-names initargs)
+           (optimize (debug 3)))
+  (when (and (slot-boundp img 'clem::m))
     (setf (clip-region img) (make-instance 'clip-rect
                                            :y1 0 :x1 0 :y2 (clem:rows img) :x2 (clem:cols img)))))
 
