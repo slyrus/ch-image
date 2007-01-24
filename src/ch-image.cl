@@ -519,7 +519,7 @@
   "Sets the grayscale value at row, col to v"
   (declare (type fixnum row col v))
   (let ((a (clem::matrix-vals img)))
-    (declare (type (simple-array (unsigned-byte 8) (* *)) a))
+    (declare (type (simple-array (unsigned-byte 8) *) a))
     (setf (aref a row col) (clem::fit img v))))
 
 (defclass ub16-matrix-image-channel (ub16-matrix matrix-image-channel) ()

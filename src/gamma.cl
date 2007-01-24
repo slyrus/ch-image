@@ -41,7 +41,7 @@ appropriate value for each pixel."
       (let ((ra (clem::matrix-vals r))
             (ga (clem::matrix-vals g))
             (ba (clem::matrix-vals b)))
-        (declare (type (simple-array (unsigned-byte 16) (* *)) ra ga ba)
+        (declare (type (simple-array (unsigned-byte 16) *) ra ga ba)
                  (type (simple-array (unsigned-byte 16) (*)) gamma-curve))
         (loop for i from 0 below (ch-image::image-height img2)
            do	   
@@ -62,7 +62,7 @@ appropriate value for each pixel."
             (ra (clem::matrix-vals r))
             (ga (clem::matrix-vals g))
             (ba (clem::matrix-vals b)))
-        (declare (type (simple-array (unsigned-byte 16) (* *)) aa ra ga ba))
+        (declare (type (simple-array (unsigned-byte 16) *) aa ra ga ba))
         (loop for i from 0 below (ch-image::image-height img2)
            do	   
              (loop for j from 0 below (ch-image::image-width img2)
@@ -81,7 +81,7 @@ appropriate value for each pixel."
       (let ((ra (clem::matrix-vals r))
             (ga (clem::matrix-vals g))
             (ba (clem::matrix-vals b)))
-        (declare (type (simple-array (unsigned-byte 8) (* *)) ra ga ba))
+        (declare (type (simple-array (unsigned-byte 8) *) ra ga ba))
         (loop for i from 0 below (ch-image::image-height img2)
            do	   
              (loop for j from 0 below (ch-image::image-width img2)
@@ -101,7 +101,7 @@ appropriate value for each pixel."
             (ra (clem::matrix-vals r))
             (ga (clem::matrix-vals g))
             (ba (clem::matrix-vals b)))
-        (declare (type (simple-array (unsigned-byte 8) (* *)) aa ra ga ba))
+        (declare (type (simple-array (unsigned-byte 8) *) aa ra ga ba))
         (loop for i from 0 below (ch-image::image-height img2)
            do	   
              (loop for j from 0 below (ch-image::image-width img2)
@@ -115,7 +115,7 @@ appropriate value for each pixel."
 (defmethod apply-gamma-curve-lookup-table ((img ub8-matrix-image) gamma-curve)
   (let ((img2 (copy-image img)))
     (let ((v (clem::matrix-vals img2)))
-      (declare (type (simple-array (unsigned-byte 8) (* *)) v))
+      (declare (type (simple-array (unsigned-byte 8) *) v))
       (loop for i from 0 below (ch-image::image-height img2)
          do	   
            (loop for j from 0 below (ch-image::image-width img2)
