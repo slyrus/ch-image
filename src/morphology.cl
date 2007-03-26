@@ -75,8 +75,7 @@ components of matrix. The default neighbor-fucntion is
                          (funcall neighbor-function matrix (car k) (cadr k)))))))))
       ;; this is an ugly hack to deal with the fact that our matrix
       ;; addition API still needs work!
-      (clem:mat-add label-matrix (make-instance 'clem:sb8-scalar
-                                                 :initial-element -1)))))
+      (clem:mat-add label-matrix -1))))
 
 
 (defun component-internal-boundary (matrix label &key

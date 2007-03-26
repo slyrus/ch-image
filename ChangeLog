@@ -1,3 +1,10 @@
+2007-03-26  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ChangeLog, src/defpackage.cl, src/gamma.cl, src/imageops.cl, test/test-ch-image.cl, version.lisp-expr:
+	ch-image 0.2.12
+	 * add apply-gamma method for ub8-matrix-image
+	 * add and export discrete-convolve-image and sharpen-image
+
 2007-01-24  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* src/ch-image.cl, src/copy-image.cl, src/gamma.cl, version.lisp-expr:
