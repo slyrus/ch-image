@@ -127,6 +127,10 @@ appropriate value for each pixel."
   (:documentation "Returns a copy of img to which a gamma curve
   of exponent gamma has been applied."))
 
+(defmethod apply-gamma ((img ub8-matrix-image) gamma)
+  (let ((gamma-curve (make-gamma-curve-lookup-table gamma :bits 8)))
+    (apply-gamma-curve-lookup-table img gamma-curve)))
+
 (defmethod apply-gamma ((img argb-8888-image) gamma)
   (let ((gamma-curve (make-gamma-curve-lookup-table gamma :bits 8)))
     (apply-gamma-curve-lookup-table img gamma-curve)))

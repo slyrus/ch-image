@@ -194,6 +194,46 @@
           (setf (image-width img) (clem:cols (ch-image::image-r img)))))))
   img)
 
+(defparameter *sharpen-kernel-1d*
+  (clem:array->double-float-matrix #2A((-.125d0) (1.25d0) (-.125d0))))
+
+(defun sharpen-image-separable (img &key (trim 2))
+  (let* ((hr *sharpen-kernel-1d*)
+         (hc (transpose hr)))
+    (let ((mr (image-height img)) (mc (image-width img)) (hrows (rows hr)) (hcols (cols hc)))
+      (let ((z1r mr) (z1c (+ mc hcols -1))
+            (z2r (+ mr hrows -1)) (z2c (+ mc hcols -1))
+            (matrix-class (class-of (car (get-channels img)))))
+        (let ((z1 (make-instance matrix-class :rows z1r :cols z1c)))
+          (set-channels
+           img
+           (mapcar #'(lambda (channel)
+                       (let ((z2 (make-instance matrix-class :rows z2r :cols z2c)))
+                         (clem::mat-trim (clem::%separable-discrete-convolve channel hr hc z1 z2 :norm-v nil)
+                                         trim)))
+                   (get-channels img)))
+          (setf (image-height img) (clem:rows (ch-image::image-r img)))
+          (setf (image-width img) (clem:cols (ch-image::image-r img)))))))
+  img)
+
+(defun discrete-convolve-image (img kernel)
+  (let ((copy (copy-image img)))
+    (set-channels
+     copy
+     (map-channels
+      #'(lambda (channel)
+          (clem:copy-to-ub8-matrix
+           (clem:discrete-convolve
+            (clem:copy-to-double-float-matrix channel) kernel)
+           :constrain t))
+      img))
+    copy))
+
+(defparameter *sharpen-kernel*
+  (clem:array->double-float-matrix #2A((-.125d0 -.125d0 -.125d0) (-.125d0 2d0 -.125d0) (-.125d0 -.125d0 -.125d0))))
+
+(defun sharpen-image (img)
+  (discrete-convolve-image img *sharpen-kernel*))
 
 (defun map-channels (function image)
   (mapcar #'(lambda (channel)

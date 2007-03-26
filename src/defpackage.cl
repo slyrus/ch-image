@@ -146,8 +146,10 @@
            ;; gamma curves
            #:apply-gamma
 
-           ;;
+           ;; discrete convolution
+           #:discrete-convolve-image
            #:gaussian-blur-image
+           #:sharpen-image
 
            #:image-l1-distance
            #:image-l2-distance

@@ -1,3 +1,23 @@
+2007-01-24  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/ch-image.cl, src/copy-image.cl, src/gamma.cl, version.lisp-expr:
+	ch-image 0.2.11
+	 * change matrix data array declarations to (simple-array ... *
+	   instead of (simple-array ... (* *)
+
+2007-01-09  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/ch-image.cl, src/distance.cl, src/imageops.cl, test/test-ch-image.cl, version.lisp-expr:
+	ch-image 0.2.10
+	 * more cleanup to work with n-d matrices
+	 * mref cleanup
+	 * use :in-place instead of ! methods where appropriate
+
+2006-12-27  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ChangeLog, src/defpackage.cl, version.lisp-expr: ch-image 0.2.9
+	 * add ch-image-user package
+
 2006-12-11  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* ChangeLog, version.lisp-expr: ch-image 0.2.8
