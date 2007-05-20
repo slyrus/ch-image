@@ -9,6 +9,7 @@
                                (ch-image::image-width img)
                                8
                                (list
+                                (clem::matrix-vals (ch-image::image-a img))
                                 (clem::matrix-vals (ch-image::image-r img))
                                 (clem::matrix-vals (ch-image::image-g img))
                                 (clem::matrix-vals (ch-image::image-b img)))
@@ -20,6 +21,7 @@
                                       (ch-image::image-width img)
                                       8
                                       (list
+                                       (clem::matrix-vals (ch-image::image-a img))
                                        (clem::matrix-vals (ch-image::image-r img))
                                        (clem::matrix-vals (ch-image::image-g img))
                                        (clem::matrix-vals (ch-image::image-b img)))))

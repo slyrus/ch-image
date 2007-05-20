@@ -80,10 +80,11 @@
       (let ((radius (random 50))
             (y (+ 50 (random 400)))
             (x (+ 50 (random 500)))
-            (color (list (random 255) (random 255) (random 255) (random 255))))
+            (color (list 255 (random 255) (random 255) (random 255))))
         (if (> (random 2) 0)
             (ch-image::draw-circle img y x radius color)
             (ch-image::fill-circle img y x radius color))))
+    (ch-image:write-jpeg-file "circles.jpg" img)
     (ch-image:write-png-file "circles.png" img)))
 
 (defun run-tests ()

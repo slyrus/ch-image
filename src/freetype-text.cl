@@ -94,9 +94,9 @@
                       (setf (gethash char (glyph-cache font)) glyph-obj)
                       glyph-obj))))))))))
 
-(defgeneric xor-blit-matrix (src dest yoff xoff &key &allow-other-keys))
+(defgeneric draw-glyph-matrix (src dest yoff xoff &key &allow-other-keys))
 
-(defmethod xor-blit-matrix (src (dest image-channel) yoff xoff &key)
+(defmethod draw-glyph-matrix (src (dest image-channel) yoff xoff &key)
   (let ((rows (rows src))
 	(cols (cols src)))
     (dotimes (i rows)
@@ -109,23 +109,34 @@
 			       (+ xoff j)
                                val))))))
 
-(defmethod xor-blit-matrix (src (dest argb-image) yoff xoff &key (alpha 255))
-  (let ((nalpha (logxor 255 alpha))
-	(rows (rows src))
-	(cols (cols src)))
+(defmethod draw-glyph-matrix (src (dest argb-image) yoff xoff
+                            &key
+                            (color (list 255 255 255 255)))
+  (let ((rows (rows src))
+        (cols (cols src))
+        (rval (second color))
+        (gval (third color))
+        (bval (fourth color)))
     (dotimes (i rows)
       (declare (type fixnum i))
       (dotimes (j cols)
-	(declare (type fixnum j))
-	(let ((val (clem::mref src i j)))
-	  (handler-case
-              (ch-image::xor-pixel dest
-                                   (+ yoff i)
-                                   (+ xoff j)
-                                   (list nalpha val val val))
+        (declare (type fixnum j))
+        (let ((val (clem::mref src i j)))
+          (handler-case
+              (progn
+                (ch-image::set-pixel dest
+                                     (+ yoff i)
+                                     (+ xoff j)
+                                     (list val
+                                           rval
+                                           gval
+                                           bval)))
             (simple-type-error ())))))))
 
-(defmethod draw-char (img context char y x &key previous-char (alpha 255))
+(defmethod draw-char (img context char y x
+                      &key
+                      previous-char
+                      (color (list 255 0 0 0 0)))
   (declare (optimize (debug 2)))
   (let ((glyph (get-glyph (context-font context) char))
         (face (context-face context)))
@@ -136,20 +147,23 @@
 						  (char-index prev-glyph)
 						  (char-index glyph)))
                        0)))
-	(xor-blit-matrix matrix img
+	(draw-glyph-matrix matrix img
 			 (- y (bearing-y glyph))
 			 (+ (ash kern -6) (bearing-x glyph) x)
-			 :alpha alpha)
+                         :color color)
         (values (vert-advance glyph)
                 (+ kern (hori-advance glyph)))))))
 
-(defmethod draw-string (img (context freetype-text-context) str y x)
+(defmethod draw-string (img (context freetype-text-context) str y x
+                        &key color)
   (loop for c across str with prev
      do (multiple-value-bind (yadv xadv)
-            (draw-char img context c y x :previous-char prev)
+            (apply #'draw-char img context c y x :previous-char prev
+                   (when color `(:color ,color)))
           (declare (ignore yadv))
           (setf prev c)
-          (incf x (ash xadv -6)))))
+          (incf x (ash xadv -6))))
+  (list y x))
 
 (defun make-text-context ()
   (make-instance 'freetype-text-context

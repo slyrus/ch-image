@@ -19,5 +19,5 @@
 
 (defgeneric draw-char (img context char y x &key &allow-other-keys))
 
-(defgeneric draw-string (img context str y x))
+(defgeneric draw-string (img context str y x &key &allow-other-keys))
 
