@@ -1,6 +1,9 @@
 
 (asdf:operate 'asdf:load-op :ch-asdf)
 
+(defpackage #:ch-image-test-system (:use #:asdf #:ch-asdf #:cl))
+(in-package #:ch-image-test-system)
+
 (asdf:defsystem :ch-image-test
   :name "ch-image-test"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
