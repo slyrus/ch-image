@@ -12,11 +12,11 @@
   ((:module
     :test
     :components
-    ((:ch-image-test-cl-source-file "defpackage")
-     (:ch-image-test-cl-source-file "test-ch-image" :depends-on ("defpackage"))
-     (:ch-image-test-cl-source-file "test-ch-image-2" :depends-on ("defpackage"))
-     (:ch-image-test-cl-source-file "test-ch-image-3" :depends-on ("defpackage"))
-     (:ch-image-test-cl-source-file "examples" :depends-on ("defpackage"))
+    ((:cl-source-file "defpackage")
+     (:cl-source-file "test-ch-image" :depends-on ("defpackage"))
+     (:cl-source-file "test-ch-image-2" :depends-on ("defpackage"))
+     (:cl-source-file "test-ch-image-3" :depends-on ("defpackage"))
+     (:cl-source-file "examples" :depends-on ("defpackage"))
      (:module
       :images
       :components
