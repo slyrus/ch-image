@@ -28,6 +28,8 @@
 
 (defclass my-object-latex-file (ch-image-mixin smarkup:object-latex-file) ())
 
+(defclass my-object-cl-pdf-file (ch-image-mixin smarkup:object-cl-pdf-file) ())
+
 (defsystem :ch-image-doc
   :name "ch-image-doc"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
@@ -53,10 +55,19 @@
                             :input-object :ch-image-filtered-sexp)
      (:pdf-file :ch-image-pdf :pathname #p"ch-image.pdf" :depends-on (ch-image-latex))
 
-     (:my-filtered-object :ch-image-html-filtered-sexp
+     (:filtered-object :ch-image-pdf-filtered-sexp
                        :filters (:html-metadata)
                        :depends-on (:ch-image-filtered-sexp)
                        :input-object :ch-image-filtered-sexp)
+     (:my-object-cl-pdf-file :ch-image-cl-pdf
+                             :pathname #p"ch-image-cl.pdf"
+                             :depends-on (:ch-image-pdf-filtered-sexp)
+                             :input-object :ch-image-pdf-filtered-sexp)
+
+     (:my-filtered-object :ch-image-html-filtered-sexp
+                          :filters (:html-metadata)
+                          :depends-on (:ch-image-filtered-sexp)
+                          :input-object :ch-image-filtered-sexp)
      (:object-xhtml-file :ch-image-xhtml
                          :pathname #p"ch-image.xhtml"
                          :depends-on (:ch-image-html-filtered-sexp)
