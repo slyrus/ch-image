@@ -106,3 +106,14 @@
       (ch-image::write-image-file path (ch-image::make-norm-ub8-image img))
       (values path img))))
 
+
+(defun make-argb-shapes-test-image ()
+  (let ((path
+         (merge-pathnames #p"argb-shapes.png"
+                          (ch-asdf::asdf-lookup-path "asdf:/ch-image-test/test/images"))))
+    (let ((img (make-instance 'ch-image::argb-8888-image :height 128 :width 128)))
+      (ch-image::fill-rectangle img 4 4 10 10 '(255 255 0 0))
+      (ch-image::fill-rectangle img 20 20 40 40 '(255 0 255 255))
+      (ch-image::draw-circle img 75 20 10 '(255 0 0 255))
+      (ch-image::write-image-file path img)
+      (values path img))))

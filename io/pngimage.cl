@@ -9,10 +9,10 @@
                                (ch-image::image-width img)
                                8
                                (list
-                                (clem::matrix-vals (ch-image::image-a img))
                                 (clem::matrix-vals (ch-image::image-r img))
                                 (clem::matrix-vals (ch-image::image-g img))
-                                (clem::matrix-vals (ch-image::image-b img)))
+                                (clem::matrix-vals (ch-image::image-b img))
+                                (clem::matrix-vals (ch-image::image-a img)))
                                :if-exists :supersede))
 
 (defmethod write-png-stream (stream (img argb-image))
@@ -21,11 +21,10 @@
                                       (ch-image::image-width img)
                                       8
                                       (list
-                                       (clem::matrix-vals (ch-image::image-a img))
                                        (clem::matrix-vals (ch-image::image-r img))
                                        (clem::matrix-vals (ch-image::image-g img))
-                                       (clem::matrix-vals (ch-image::image-b img)))))
-
+                                       (clem::matrix-vals (ch-image::image-b img))
+                                       (clem::matrix-vals (ch-image::image-a img)))))
 
 (defmethod write-png-file (file (img bit-matrix-image))
   (ch-png::write-2d-planar-png file

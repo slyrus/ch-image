@@ -86,16 +86,14 @@ common-lisp.net"
      (:code "image")
      ", which is defined by the following class definition:")
 
- (:p
-  (:lisp-no-eval 
-   "(defclass image ()
-      ((data :accessor image-data)
-       (height :accessor image-height :initarg :height)
-       (width :accessor image-width :initarg :width)
-       (channels :accessor image-channels :initform 1)
-       (clip-region :accessor clip-region :initarg :clip-region))
-      (:documentation \"abstract image class\"))"
-   ))
+ (:lisp-no-eval 
+  "(defclass image ()
+  ((data :accessor image-data)
+   (height :accessor image-height :initarg :height)
+   (width :accessor image-width :initarg :width)
+   (channels :accessor image-channels :initform 1)
+   (clip-region :accessor clip-region :initarg :clip-region))
+  (:documentation \"abstract image class\"))")
  
  (:p "The exported accessors for the image class are "
      (:code "image-data")
