@@ -22,8 +22,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (safe-load-io-library :jpeg)
   (safe-load-io-library :tiff-ffi)
-  (safe-load-io-library :ch-salza)
-  (safe-load-io-library :ch-salza-png)
+  (safe-load-io-library :zpng)
   (safe-load-io-library :freetype-ffi))
 
 (defsystem :ch-image
@@ -34,7 +33,7 @@
                  (vers (merge-pathnames "version.lisp-expr" *load-truename*))
                (read vers))
   :description "image representation and processing"
-  :depends-on (ch-util clem)
+  :depends-on (ch-util clem zpng)
   :components
   ((:static-file "version" :pathname #p"version.lisp-expr")
    (:module
@@ -59,7 +58,7 @@
      (:cl-source-file "tiffimage")
      #+ch-image-has-jpeg
      (:cl-source-file "jpegimage")
-     #+(and ch-image-has-ch-salza ch-image-has-ch-salza-png)
+     #+(and ch-image-has-zpng)
      (:cl-source-file "pngimage")
      (:cl-source-file "imageio"
                       :depends-on (#+ch-image-has-tiff-ffi

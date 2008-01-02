@@ -87,6 +87,21 @@
     (ch-image:write-jpeg-file "circles.jpg" img)
     (ch-image:write-png-file "circles.png" img)))
 
+(defun image-test-7 ()
+  (let* ((width 600)
+         (height 500)
+         (img (make-instance 'ub8-matrix-image :width width :height height)))
+    (dotimes (i 150)
+      (let ((radius (random 50))
+            (y (+ 50 (random 400)))
+            (x (+ 50 (random 500)))
+            (color (random 255)))
+        (if (> (random 2) 0)
+            (ch-image::draw-circle img y x radius color)
+            (ch-image::fill-circle img y x radius color))))
+    (ch-image:write-jpeg-file "circles-gray.jpg" img)
+    (ch-image:write-png-file "circles-gray.png" img)))
+
 (defun run-tests ()
   (let ((run (ch-util:make-test-run)))
     (time (ch-util:run-test #'image-test-1 "image-test-1" run))
@@ -115,5 +130,16 @@
       (ch-image::fill-rectangle img 4 4 10 10 '(255 255 0 0))
       (ch-image::fill-rectangle img 20 20 40 40 '(255 0 255 255))
       (ch-image::draw-circle img 75 20 10 '(255 0 0 255))
+      (ch-image::write-image-file path img)
+      (values path img))))
+
+(defun make-rgb-shapes-test-image ()
+  (let ((path
+         (merge-pathnames #p"rgb-shapes.png"
+                          (ch-asdf::asdf-lookup-path "asdf:/ch-image-test/test/images"))))
+    (let ((img (make-instance 'ch-image::rgb-888-image :height 128 :width 128)))
+      (ch-image::fill-rectangle img 4 4 10 10 '(255 0 0))
+      (ch-image::fill-rectangle img 20 20 40 40 '(0 255 255))
+      (ch-image::draw-circle img 75 20 10 '(0 0 255))
       (ch-image::write-image-file path img)
       (values path img))))
