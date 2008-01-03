@@ -22,7 +22,7 @@
      ("jpeg" . ,#'write-jpeg-file)
      ("jpg" . ,#'write-jpeg-file)
      ("jpe" . ,#'write-jpeg-file)
-     #+(and ch-image-has-ch-salza ch-image-has-ch-salza-png)
+     #+(and ch-image-has-zpng ch-image-has-zpng)
      ("png" . ,#'write-png-file))
    :test #'equalp))
 

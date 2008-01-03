@@ -69,7 +69,7 @@
    (:static-file "README")
    (:static-file "LICENSE")
    (:static-file "NEWS")
-   (:static-file "ChangeLog")
-   (:static-file "bootstrap" :pathname #p"bootstrap.cl")))
+   (:static-file "TODO")
+   (:static-file "ChangeLog")))
 
 

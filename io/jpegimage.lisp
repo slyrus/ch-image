@@ -47,7 +47,8 @@
 		    (setf (svref jpegimg (ch-util:postincf offset)) (get-pixel img x y)))
 		img)
     (jpeg:encode-image filename jpegimg +ncomp-gray+
-		  (image-height img) (image-width img) :q-tabs *gray-q-tabs*)))
+                       (image-height img) (image-width img) :q-tabs *gray-q-tabs*)
+    (truename filename)))
 
 (defmethod write-jpeg-stream (stream (img gray-image))
   (let ((jpegimg (make-array (* (image-width img) (image-height img))))
@@ -77,7 +78,8 @@
     (jpeg:encode-image filename jpegimg +ncomp-argb+ 
 		  (image-height img) (image-width img)
 		  :q-tabs *argb-q-tabs*
-		  :sampling *argb-sampling*)))
+		  :sampling *argb-sampling*)
+    (truename filename)))
 
 (defparameter *rgb-sampling* '((1 1)(1 1)(1 1)))
 
@@ -92,9 +94,8 @@
 		      (setf (svref jpegimg (ch-util:postincf offset)) r)))
 		img)
     (jpeg:encode-image filename jpegimg +ncomp-rgb+
-		  (image-height img) (image-width img)
-		  :sampling *rgb-sampling*
-		  )
+                       (image-height img) (image-width img)
+                       :sampling *rgb-sampling*)
     (truename filename)))
 
 (defmethod write-jpeg-stream (stream (img argb-image))

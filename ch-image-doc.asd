@@ -11,17 +11,17 @@
 
 (defmethod perform ((op compile-op) (c ch-image-mixin))
   (let ((*default-pathname-defaults*
-         (print (component-pathname (component-parent c)))))
+         (component-pathname (component-parent c))))
     (call-next-method)))
 
 (defmethod perform ((op load-op) (c ch-image-mixin))
   (let ((*default-pathname-defaults*
-         (print (component-pathname (component-parent c)))))
+         (component-pathname (component-parent c))))
     (call-next-method)))
 
 (defmethod perform ((op ch-asdf::generate-op) (c ch-image-mixin))
   (let ((*default-pathname-defaults*
-         (print (component-pathname (component-parent c)))))
+         (component-pathname (component-parent c))))
     (call-next-method)))
 
 (defclass my-filtered-object (ch-image-mixin smarkup:filtered-object) ())

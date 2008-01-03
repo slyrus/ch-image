@@ -1,7 +1,7 @@
 ((:p
   (:smarkup-metadata 
    (:copyright
-    "Copyright 2006, Cyrus Harmon. All Rights Reserved.")
+    "Copyright 2006-2007, Cyrus Harmon. All Rights Reserved.")
    (:title "Image Processing in Common Lisp with ch-image")
    (:author "Cyrus L. Harmon")
    (:bibtex-database
@@ -207,19 +207,18 @@ of the image. For a multichannel image, "
      " method which is described in the section about image input
      and output.")
 
- (:lisp 
-  "(defparameter *dark-blue* '(255 5 5 80))
+ (:lisp-no-results
+  "(defparameter *dark-blue* '(5 5 80))
     (defparameter *example-image-1*
       (let* ((height 200)
              (width 300)
-             (img (make-instance 'ch-image:argb-8888-image :height height
+             (img (make-instance 'ch-image:rgb-888-image :height height
                                  :width width))
              (image-pathname \"output-images/example1.png\"))
         (ch-image::fill-image img *dark-blue*)
-        (ch-image::draw-triangle img 10 100 50 250 160 70 (list 255 255 255 20))
+        (ch-image::draw-triangle img 10 100 50 250 160 70 (list 255 255 20))
         (ensure-directories-exist image-pathname)
-        (ch-image:write-image-file image-pathname img)))"
-  )
+        (ch-image:write-image-file image-pathname img)))")
 
  (:p "This gives us the following image:")
 
@@ -250,15 +249,14 @@ of the image. For a multichannel image, "
  (:p "First, we load a sample image and crop a region in the
  center. We can also do the affine-transformation and cropping in
  one step, but we'll save that for later.")
- (:lisp 
-        "(defparameter *cropped-salad*"
-        "  (let ((img (ch-image:read-image-file \"images/salad.jpg\")))"
-        "    (ch-image::crop-image"
-        "     img :y1 400 :x1 200 :y2 599 :x2 399)))"
-        "(ch-image:write-image-file"
-        " \"output-images/salad-cropped.jpg\""
-        " *cropped-salad*)"
-        )
+
+ (:lisp
+  #q{(defparameter *cropped-salad*
+       (let ((img (ch-image:read-image-file "images/salad.jpg")))
+         (ch-image::crop-image img :y1 400 :x1 200 :y2 599 :x2 399)))
+  (ch-image:write-image-file
+   "output-images/salad-cropped.jpg" 
+   *cropped-salad*)})
 
  (:p (:image "output-images/salad-cropped.jpg"))
 
@@ -571,12 +569,12 @@ to "
   "(defparameter *circles*
       (let* ((width 500)
              (height 250)
-             (img (make-instance 'ch-image:argb-8888-image :width width :height height)))
+             (img (make-instance 'ch-image:rgb-888-image :width width :height height)))
         (dotimes (i 100)
           (let ((radius (random 50))
                 (y (+ 50 (random (- height 100))))
                 (x (+ 50 (random (- width 100))))
-                (color (list (random 255) (random 255) (random 255) (random 255))))
+                (color (list (random 255) (random 255) (random 255))))
             (if (> (random 2) 0)
                 (ch-image:draw-circle img y x radius color)
                 (ch-image:fill-circle img y x radius color))))

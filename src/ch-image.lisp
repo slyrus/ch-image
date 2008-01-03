@@ -1,8 +1,34 @@
-;;
-;; file: ch-image.cl
-;; author: cyrus harmon
-;;
-
+;;;
+;;; file: ch-image.cl
+;;; author: cyrus harmon
+;;;
+;;; Copyright (c) 2007 Cyrus Harmon (ch-lisp@bobobeach.com)
+;;; All rights reserved.
+;;;
+;;; Redistribution and use in source and binary forms, with or without
+;;; modification, are permitted provided that the following conditions
+;;; are met:
+;;;
+;;;   * Redistributions of source code must retain the above copyright
+;;;     notice, this list of conditions and the following disclaimer.
+;;;
+;;;   * Redistributions in binary form must reproduce the above
+;;;     copyright notice, this list of conditions and the following
+;;;     disclaimer in the documentation and/or other materials
+;;;     provided with the distribution.
+;;;
+;;; THIS SOFTWARE IS PROVIDED BY THE AUTHOR 'AS IS' AND ANY EXPRESSED
+;;; OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+;;; ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+;;; DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+;;; DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+;;; GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+;;; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+;;; WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+;;; NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+;;;
 ;;;
 ;;; This file contains the core of the image common-lisp class.
 ;;; This class represents images and provides utility functions for
@@ -13,16 +39,15 @@
 ;;; As an array of RGB values? I'm going to try the separate plane
 ;;; approach and see where that gets us.
 ;;;
-
 ;;; should the image accessor functions be row, col or x,y???
-
+;;;
 ;;; TODO:
 ;;;  1. Support for 565-rgb images
 ;;;  2. Support for 888-rgb images
 ;;;  3. Support for FFF-rgb and FFFF-argb images
 ;;;  4. Support for 48-rgb and 64-argb images
 ;;;  5. Support for chunky images 
-
+;;;
 ;;; sub-pixel element sizes:
 ;;; 5 - 5 bits
 ;;; 6 - 6 bits
