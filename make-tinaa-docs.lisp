@@ -9,11 +9,11 @@
   (asdf:operate 'asdf:load-op 'tinaa)
   (let ((tinaa::*short-documentation-length* 512))
     (tinaa:document-system
-     'asdf-system 'ch-image (asdf:component-pathname
-                             (asdf:find-component
-                              (asdf:find-component
-                               (asdf:find-system 'ch-image-doc)
-                               "doc")
-                              "tinaa")))))
+     'package 'ch-image (asdf:component-pathname
+                         (asdf:find-component
+                          (asdf:find-component
+                           (asdf:find-system 'ch-image-doc)
+                           "doc")
+                          "tinaa")))))
 
 (ch-image-doc-system::make-tinaa-docs)
