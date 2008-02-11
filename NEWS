@@ -1,7 +1,4 @@
 
-This is a bogus news entry.
-And so is this.
-
 changes in ch-image-0.1.7 relative to ch-image-0.1.6
   * Safely load freetype-ffi
 

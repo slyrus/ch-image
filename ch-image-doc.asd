@@ -49,18 +49,12 @@
                           :depends-on (:ch-image-sexp)
                           :input-object :ch-image-sexp)
      
-     (:my-object-latex-file :ch-image-latex
-                            :pathname #p"ch-image.tex"
-                            :depends-on (:ch-image-filtered-sexp)
-                            :input-object :ch-image-filtered-sexp)
-     (:pdf-file :ch-image-pdf :pathname #p"ch-image.pdf" :depends-on (ch-image-latex))
-
      (:filtered-object :ch-image-pdf-filtered-sexp
                        :filters (:html-metadata)
                        :depends-on (:ch-image-filtered-sexp)
                        :input-object :ch-image-filtered-sexp)
-     (:my-object-cl-pdf-file :ch-image-cl-pdf
-                             :pathname #p"ch-image-cl.pdf"
+     (:my-object-cl-pdf-file :ch-image-pdf
+                             :pathname #p"ch-image.pdf"
                              :depends-on (:ch-image-pdf-filtered-sexp)
                              :input-object :ch-image-pdf-filtered-sexp)
 
