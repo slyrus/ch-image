@@ -8,7 +8,9 @@
 
 (defparameter *image-read-functions*
   (ch-util:make-hash-table-from-alist
-   `(("tiff" . ,#'read-tiff-file)
+   `(#+ch-image-has-tiff-ffi
+     ("tiff" . ,#'read-tiff-file)
+     #+ch-image-has-tiff-ffi
      ("tif" . ,#'read-tiff-file)
      ("jpeg" . ,#'read-jpeg-file)
      ("jpg" . ,#'read-jpeg-file)
@@ -17,12 +19,14 @@
 
 (defparameter *image-write-functions*
   (ch-util:make-hash-table-from-alist
-   `(("tiff" . ,#'write-tiff-file)
+   `(#+ch-image-has-tiff-ffi
+     ("tiff" . ,#'write-tiff-file)
+     #+ch-image-has-tiff-ffi
      ("tif" . ,#'write-tiff-file)
      ("jpeg" . ,#'write-jpeg-file)
      ("jpg" . ,#'write-jpeg-file)
      ("jpe" . ,#'write-jpeg-file)
-     #+(and ch-image-has-zpng ch-image-has-zpng)
+     #+ch-image-has-zpng
      ("png" . ,#'write-png-file))
    :test #'equalp))
 
