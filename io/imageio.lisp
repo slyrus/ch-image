@@ -8,26 +8,26 @@
 
 (defparameter *image-read-functions*
   (ch-util:make-hash-table-from-alist
-   `(#+ch-image-has-tiff-ffi
-     ("tiff" . ,#'read-tiff-file)
-     #+ch-image-has-tiff-ffi
-     ("tif" . ,#'read-tiff-file)
-     ("jpeg" . ,#'read-jpeg-file)
-     ("jpg" . ,#'read-jpeg-file)
-     ("jpe" . ,#'read-jpeg-file))
+   (append #+ch-image-has-tiff-ffi
+           `(("tiff" . read-tiff-file)
+             ("tif" . read-tiff-file))
+           #+ch-image-has-cl-jpeg
+           '(("jpeg" . read-jpeg-file)
+             ("jpg" . read-jpeg-file)
+             ("jpe" . read-jpeg-file)))
    :test #'equalp))
 
 (defparameter *image-write-functions*
   (ch-util:make-hash-table-from-alist
-   `(#+ch-image-has-tiff-ffi
-     ("tiff" . ,#'write-tiff-file)
-     #+ch-image-has-tiff-ffi
-     ("tif" . ,#'write-tiff-file)
-     ("jpeg" . ,#'write-jpeg-file)
-     ("jpg" . ,#'write-jpeg-file)
-     ("jpe" . ,#'write-jpeg-file)
-     #+ch-image-has-zpng
-     ("png" . ,#'write-png-file))
+   (append #+ch-image-has-tiff-ffi
+           '(("tiff" . write-tiff-file)
+             ("tif" . write-tiff-file))
+           #+ch-image-has-cl-jpeg
+           '(("jpeg" . write-jpeg-file)
+             ("jpg" . write-jpeg-file)
+             ("jpe" . write-jpeg-file))
+           #+ch-image-has-zpng
+           '(("png" . write-png-file)))
    :test #'equalp))
 
 (defun image-file-read-function (path)
