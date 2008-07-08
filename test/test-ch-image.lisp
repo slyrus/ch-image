@@ -14,7 +14,7 @@
 (defun image-test-2 ()
   (let* ((width 600)
          (height 400)
-         (img (make-instance 'gray-image :width width :height height)))
+         (img (make-instance 'matrix-gray-image :width width :height height)))
     (dotimes (i height)
       (dotimes (j width)
 	(set-gray-value img i j 63)

@@ -3,7 +3,7 @@
 
 (defun test-gray-image ()
   (destructuring-bind (height width) (list 400 300)
-    (let ((img (make-instance 'gray-image :width width :height height)))
+    (let ((img (make-instance 'matrix-gray-image :width width :height height)))
       (dotimes (h height)
 	(dotimes (w width)
 	  (set-gray-value img h w (mod (* w 3) 255))))
