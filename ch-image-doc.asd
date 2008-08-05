@@ -37,7 +37,7 @@
                  (vers (merge-pathnames "version.lisp-expr" *load-truename*))
                (read vers))
   :licence "BSD"
-  :depends-on (ch-asdf ch-bib ch-util ch-image smarkup)
+  :depends-on (ch-asdf ch-util ch-image smarkup)
   :components
   ((:static-file "make-tinaa-docs" :pathname #p"make-tinaa-docs.lisp")
    (:module
