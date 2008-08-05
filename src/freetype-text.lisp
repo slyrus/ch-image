@@ -61,7 +61,7 @@
                      &key (x-dpi 72) (y-dpi 72))
   (let ((font (make-instance 'freetype-font
                              :name font-name
-                             :library (context-library context) )))
+                             :library (context-library context))))
     (setf (context-font context) font)
     (set-font-metrics font size :x-dpi x-dpi :y-dpi y-dpi)))
 
