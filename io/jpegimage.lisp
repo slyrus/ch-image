@@ -30,12 +30,12 @@
 		img)))
 
 (defun read-jpeg-file (srcfile)
-  (multiple-value-bind (buffer height width jpegimage)
+  (multiple-value-bind (buffer height width ncomp)
       (jpeg:decode-image srcfile)
     (cond
-      ((= (jpeg::descriptor-ncomp jpegimage) 3)
+      ((= ncomp 3)
        (jpeg-rgb-to-argb-image buffer width height))
-      ((= (jpeg::descriptor-ncomp jpegimage) 1)
+      ((= ncomp 1)
        (jpeg-gray-to-gray-image buffer width height)))))
 
 (defparameter *gray-q-tabs* (vector jpeg::*q-luminance*))
