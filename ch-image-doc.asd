@@ -82,5 +82,6 @@
                            (:png-file "sanfran")
                            ))
      (:static-file "simple" :pathname #p"simple.css")
+     (:static-file "ch-image-bib" :pathname #p"ch-image.bib")
      (:tinaa-directory :tinaa)))))
 

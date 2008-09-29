@@ -5,15 +5,14 @@
    (:title "Image Processing in Common Lisp with ch-image")
    (:author "Cyrus L. Harmon")
    (:bibtex-database
-    "(\"asdf:/ch-bib/lisp\" \"asdf:/ch-bib/bio\" \"asdf:/ch-bib/vision\")")
+    "(\"asdf:/ch-image-doc/doc/ch-image-bib\")")
    (:bibtex-style "Science"))
-  (:html-metadata  (:hTMLCSS "simple.css") )
+  (:html-metadata  (:htmlcss "simple.css") )
 
   (:lisp-silent 
    "(asdf:operate 'asdf:load-op 'ch-image)
     (setf smarkup::*baseline-skip* \"14pt\")
-    (setf smarkup::*par-skip* \"0pt\")"
-   ))
+    (setf smarkup::*par-skip* \"0pt\")"))
 
  (:h1 "Abstract")
 
