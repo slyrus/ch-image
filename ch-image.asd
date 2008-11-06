@@ -21,9 +21,9 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (safe-load-io-library :cl-jpeg)
-  (safe-load-io-library :tiff-ffi)
+  (safe-load-io-library :retrospectiff)
   (safe-load-io-library :zpng)
-  (safe-load-io-library :freetype-ffi))
+  #+nil (safe-load-io-library :freetype-ffi))
 
 (defsystem :ch-image
   :name "ch-image"
@@ -54,14 +54,14 @@
    (:module
     :io
     :components
-    (#+ch-image-has-tiff-ffi
+    (#+ch-image-has-retrospectiff
      (:cl-source-file "tiffimage")
      #+ch-image-has-cl-jpeg
      (:cl-source-file "jpegimage")
      #+(and ch-image-has-zpng)
      (:cl-source-file "pngimage")
      (:cl-source-file "imageio"
-                      :depends-on (#+ch-image-has-tiff-ffi
+                      :depends-on (#+ch-image-has-retrospectiff
                                    "tiffimage"
                                    #+ch-image-has-cl-jpeg
                                    "jpegimage")))

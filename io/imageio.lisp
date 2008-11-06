@@ -8,7 +8,7 @@
 
 (defparameter *image-read-functions*
   (ch-util:make-hash-table-from-alist
-   (append #+ch-image-has-tiff-ffi
+   (append #+ch-image-has-retrospectiff
            `(("tiff" . read-tiff-file)
              ("tif" . read-tiff-file))
            #+ch-image-has-cl-jpeg
@@ -19,7 +19,7 @@
 
 (defparameter *image-write-functions*
   (ch-util:make-hash-table-from-alist
-   (append #+ch-image-has-tiff-ffi
+   (append #+ch-image-has-retrospectiff
            '(("tiff" . write-tiff-file)
              ("tif" . write-tiff-file))
            #+ch-image-has-cl-jpeg

@@ -98,6 +98,20 @@
                        :sampling *rgb-sampling*)
     (truename filename)))
 
+(defmethod write-jpeg-file (filename (img rgb-image))
+  (let ((jpegimg (make-array (* (image-width img) (image-height img) +ncomp-rgb+)))
+	(offset 0))
+    (map-pixels #'(lambda (img x y)
+		    (multiple-value-bind (r g b) (get-rgb-values img x y)
+		      (setf (svref jpegimg (ch-util:postincf offset)) b)
+		      (setf (svref jpegimg (ch-util:postincf offset)) g)
+		      (setf (svref jpegimg (ch-util:postincf offset)) r)))
+		img)
+    (jpeg:encode-image filename jpegimg +ncomp-rgb+
+                       (image-height img) (image-width img)
+                       :sampling *rgb-sampling*)
+    (truename filename)))
+
 (defmethod write-jpeg-stream (stream (img argb-image))
   (let ((jpegimg (make-array (* (image-width img) (image-height img) +ncomp-rgb+)))
 	(offset 0))
@@ -110,8 +124,20 @@
 		img)
     (jpeg::encode-image-stream stream jpegimg +ncomp-rgb+
                          (image-height img) (image-width img)
-                         :sampling *rgb-sampling*
-                         )))
+                         :sampling *rgb-sampling*)))
+
+(defmethod write-jpeg-stream (stream (img rgb-image))
+  (let ((jpegimg (make-array (* (image-width img) (image-height img) +ncomp-rgb+)))
+	(offset 0))
+    (map-pixels #'(lambda (img x y)
+		    (multiple-value-bind (r g b) (get-rgb-values img x y)
+		      (setf (svref jpegimg (ch-util:postincf offset)) b)
+		      (setf (svref jpegimg (ch-util:postincf offset)) g)
+		      (setf (svref jpegimg (ch-util:postincf offset)) r)))
+		img)
+    (jpeg::encode-image-stream stream jpegimg +ncomp-rgb+
+                               (image-height img) (image-width img)
+                               :sampling *rgb-sampling*)))
 
 (defun gray-image-matrix-to-jpeg-array (m width height)
   (let ((b 0)
