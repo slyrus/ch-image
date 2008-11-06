@@ -1,8 +1,8 @@
 ;;;
-;;; file: ch-image.cl
+;;; file: ch-image.lisp
 ;;; author: cyrus harmon
 ;;;
-;;; Copyright (c) 2007 Cyrus Harmon (ch-lisp@bobobeach.com)
+;;; Copyright (c) 2007-2008 Cyrus Harmon (ch-lisp@bobobeach.com)
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -83,8 +83,12 @@
   (declare (ignore slot-names initargs))
   (when (and (slot-boundp img 'width)
              (slot-boundp img 'height))
-    (setf (clip-region img) (make-instance 'clip-rect
-                                           :y1 0 :x1 0 :y2 (image-height img) :x2 (image-width img)))))
+    (setf (clip-region img)
+          (make-instance 'clip-rect
+                         :y1 0
+                         :x1 0
+                         :y2 (image-height img)
+                         :x2 (image-width img)))))
 
 (defmethod image ((width fixnum) (height fixnum))
   (let ((img (make-instance 'image)))
@@ -318,7 +322,8 @@
     (setf (mref m row col) v)))
 
 (defmethod set-image-data ((img image-channel) (m matrix))
-  "Sets the image-channel data to the matrix m and updates image-width and image-height"
+  "Sets the image-channel data to the matrix m and updates image-width
+and image-height"
   (destructuring-bind (h w) (dim m)
     (setf (image-height img) h)
     (setf (image-width img) w)
@@ -468,8 +473,12 @@
   (declare (ignore slot-names initargs)
            (optimize (debug 3)))
   (when (and (slot-boundp img 'clem::m))
-    (setf (clip-region img) (make-instance 'clip-rect
-                                           :y1 0 :x1 0 :y2 (clem:rows img) :x2 (clem:cols img)))))
+    (setf (clip-region img)
+          (make-instance 'clip-rect
+                         :y1 0
+                         :x1 0
+                         :y2 (clem:rows img)
+                         :x2 (clem:cols img)))))
 
 (defmethod image-data ((chan matrix-image-channel))
   chan)
@@ -505,8 +514,7 @@
 ;		     (val (pop alist)))
 ;		 (cond
 ;		   ((equal arg :width) (setf rows val))
-;		   ((equal arg :height) (setf cols val))
-;		   )
+;		   ((equal arg :height) (setf cols val)))
 ;		 (when alist (parse-init-args alist)))))
 ;      (parse-init-args initargs))
 ;    (if (not (getf initargs :width))
@@ -518,8 +526,7 @@
 ;						     (if rows (list :rows rows))
 ;						     (if cols (list :cols cols))
 ;						     (if width (list :width width))
-;						     (if height (list :height height))
-;						     ))))
+;						     (if height (list :height height))))))
 
 (defmethod shared-initialize :after
     ((img matrix-gray-image) slot-names &rest initargs &key &allow-other-keys)
