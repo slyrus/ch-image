@@ -5,15 +5,14 @@
    (:title "Image Processing in Common Lisp with ch-image")
    (:author "Cyrus L. Harmon")
    (:bibtex-database
-    "(\"asdf:/ch-bib/lisp\" \"asdf:/ch-bib/bio\" \"asdf:/ch-bib/vision\")")
+    "(\"asdf:/ch-image-doc/doc/ch-image-bib\")")
    (:bibtex-style "Science"))
-  (:html-metadata  (:hTMLCSS "simple.css") )
+  (:html-metadata  (:htmlcss "simple.css") )
 
   (:lisp-silent 
    "(asdf:operate 'asdf:load-op 'ch-image)
     (setf smarkup::*baseline-skip* \"14pt\")
-    (setf smarkup::*par-skip* \"0pt\")"
-   ))
+    (setf smarkup::*par-skip* \"0pt\")"))
 
  (:h1 "Abstract")
 
@@ -413,7 +412,7 @@ to "
  (:lisp 
   "(defparameter *shape-image-file* \"output-images/shapes.png\")
     (defparameter *shape-image*
-      (let ((img (make-instance 'ch-image::bit-matrix-image
+      (let ((img (make-instance 'ch-image::ub8-matrix-image
                                 :rows 128 :cols 128 :initial-element 0)))
         (ch-image::fill-rectangle img 4 4 10 10 1)
         (ch-image::fill-rectangle img 8 8 16 30 1)
@@ -422,8 +421,11 @@ to "
         (ch-image::write-image-file
          *shape-image-file*
          (ch-image::make-norm-ub8-image img))
-        img))"
+        img))")
+  
+ (:p (:image (:lisp-value "(enough-namestring *shape-image-file*)")))
 
+ (:lisp
   "(defparameter *connected-components*
           (ch-image::label-components *shape-image*
                                       :neighbor-function #'ch-image::8-neighbors))"
@@ -431,11 +433,9 @@ to "
   "(defparameter *cc-image-file*
       (ch-image:write-image-file
        \"output-images/connected-components.png\"
-       (ch-image::make-norm-ub8-image *connected-components*)))"
-  )
-
- (:p (:image (:lisp-value "(enough-namestring *shape-image-file*)"))
-     (:image (:lisp-value "(enough-namestring *cc-image-file*)")))
+       (ch-image::make-norm-ub8-image *connected-components*)))")
+  
+ (:p (:image (:lisp-value "(enough-namestring *cc-image-file*)")))
 
  (:h3 "Finding Boundaries")
 
@@ -454,28 +454,33 @@ to "
       (ch-image:write-image-file
        \"output-images/internal-boundary.png\"
        (ch-image::make-norm-ub8-image
-        *internal-boundary*)))"
+        *internal-boundary*)))")
 
+ (:p
+  (:image (:lisp-value "(enough-namestring *internal-boundary-file*)")))
+ 
+ (:lisp
   "(defparameter *external-boundary* (ch-image::component-external-boundary
                                       *connected-components* 3))
     (defparameter *external-boundary-file*
       (ch-image:write-image-file
        \"output-images/external-boundary.png\"
        (ch-image::make-norm-ub8-image
-        *external-boundary*)))"
+        *external-boundary*)))")
 
+ (:p
+  (:image (:lisp-value "(enough-namestring *external-boundary-file*)")))
+
+ (:lisp
   "(defparameter *boundary* (ch-image::component-boundary
                              *connected-components* 3))
     (defparameter *boundary-file*
       (ch-image:write-image-file
        \"output-images/boundary.png\"
        (ch-image::make-norm-ub8-image
-        *boundary*)))"
-  )
+        *boundary*)))")
 
  (:p
-  (:image (:lisp-value "(enough-namestring *internal-boundary-file*)"))
-  (:image (:lisp-value "(enough-namestring *external-boundary-file*)"))
   (:image (:lisp-value "(enough-namestring *boundary-file*)")))
  
  (:p "We see that the external boundary of the non-filled circle
@@ -534,7 +539,7 @@ to "
       (ch-image:read-image-file \"images/sanfran.jpg\"))"
   )
 
- (:p (:image (:lisp-value #q{(namestring (ch-asdf:asdf-lookup-path "asdf:/ch-image-doc/doc/images/sanfran"))})))
+ (:p (:image "images/sanfran.jpg"))
 
  (:h2 "Example 2 - Convert Image to Grayscale and Write PNG File")
 
