@@ -1,5 +1,5 @@
 ;;;
-;;; file: ch-image.cl
+;;; file: imageio.lisp
 ;;; author: cyrus harmon
 ;;; creation date: Mon Dec  5 12:22:59 2005
 ;;; 
