@@ -242,7 +242,7 @@
 
 (defgeneric posterize (image levels))
 
-(defmethod posterize ((img clem:ub8-matrix) (levels fixnum))
+(defmethod posterize ((img clem:ub8-matrix) levels)
   (let* ((max (clem::maxval (class-of img)))
          (level-inv (truncate (/ max levels)))
          (p (clem::mat-copy img)))

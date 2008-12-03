@@ -90,7 +90,7 @@
                          :y2 (image-height img)
                          :x2 (image-width img)))))
 
-(defmethod image ((width fixnum) (height fixnum))
+(defun image (width height)
   (let ((img (make-instance 'image)))
     (setf (image-height img) height)
     (setf (image-width img) width)
@@ -225,33 +225,21 @@
   (setf (image-height img) (cols (image-r img)))
   img)
   
-(defmethod set-argb-values ((img argb-image)
-			    (row fixnum)
-			    (col fixnum)
-			    (a fixnum)
-			    (r fixnum)
-			    (g fixnum)
-			    (b fixnum))
+(defmethod set-argb-values ((img argb-image) row col a r g b)
   "Sets the alpha, red, green and blue values at x, y"
   (setf (mref (image-a img) row col) a)
   (setf (mref (image-r img) row col) r)
   (setf (mref (image-g img) row col) g)
   (setf (mref (image-b img) row col) b))
 
-(defmethod set-argb-values ((img argb-8888-image)
-			    (row fixnum)
-			    (col fixnum)
-			    (a fixnum)
-			    (r fixnum)
-			    (g fixnum)
-			    (b fixnum))
+(defmethod set-argb-values ((img argb-8888-image) row col a r g b)
   "Sets the alpha, red, green and blue values at x, y"
   (setf (mref (image-a img) row col) a)
   (setf (mref (image-r img) row col) r)
   (setf (mref (image-g img) row col) g)
   (setf (mref (image-b img) row col) b))
 
-(defmethod get-argb-values ((img argb-image) (row fixnum) (col fixnum))
+(defmethod get-argb-values ((img argb-image) row col)
   "Gets the alpha, red, green and blue values at x, y"
   (values (val (image-a img) row col)
 	  (val (image-r img) row col)
@@ -260,29 +248,19 @@
 
 (defgeneric set-rgb-values (img row col r g b))
 
-(defmethod set-rgb-values ((img rgb-image)
-			    (row fixnum)
-			    (col fixnum)
-			    (r fixnum)
-			    (g fixnum)
-			    (b fixnum))
+(defmethod set-rgb-values ((img rgb-image) row col r g b)
   "Sets the red, green and blue values at x, y"
   (setf (mref (image-r img) row col) r)
   (setf (mref (image-g img) row col) g)
   (setf (mref (image-b img) row col) b))
 
-(defmethod set-rgb-values ((img rgb-888-image)
-			    (row fixnum)
-			    (col fixnum)
-			    (r fixnum)
-			    (g fixnum)
-			    (b fixnum))
+(defmethod set-rgb-values ((img rgb-888-image) row col r g b)
   "Sets the red, green and blue values at x, y"
   (setf (mref (image-r img) row col) r)
   (setf (mref (image-g img) row col) g)
   (setf (mref (image-b img) row col) b))
 
-(defmethod get-rgb-values ((img rgb-image) (row fixnum) (col fixnum))
+(defmethod get-rgb-values ((img rgb-image) row col)
   "Gets the red, green and blue values at x, y"
   (values (val (image-r img) row col)
 	  (val (image-g img) row col)
@@ -311,12 +289,12 @@
   (set-image-data img (pad-matrix (image-data img))))
 
 (defgeneric get-channel-value (img row col))
-(defmethod get-channel-value ((img image-channel) (row fixnum) (col fixnum))
+(defmethod get-channel-value ((img image-channel) row col)
   "Gets the value at row, col"
   (val (image-data img) row col))
 
 (defgeneric set-channel-value (img row col v))
-(defmethod set-channel-value ((img image-channel) (row fixnum) (col fixnum) v)
+(defmethod set-channel-value ((img image-channel) row col v)
   "Sets the value at row, col to v"
   (let ((m (image-data img)))
     (setf (mref m row col) v)))
@@ -442,10 +420,10 @@ and image-height"
 (defclass gray-image (image-channel) ()
   (:documentation "Grayscale 8-bit image class"))
 
-(defmethod set-gray-value ((img gray-image) (row fixnum) (col fixnum) value)
+(defmethod set-gray-value ((img gray-image) row col value)
   (set-channel-value img row col value))
 
-(defmethod get-gray-value ((img gray-image) (row fixnum) (col fixnum))
+(defmethod get-gray-value ((img gray-image) row col)
   (get-channel-value img row col))
 
 (defmethod get-pixel ((img gray-image) row col)
@@ -543,11 +521,11 @@ and image-height"
 (defmethod get-channels ((img ub8-matrix-image))
   (list img))
 
-(defmethod get-channel-value ((img image-channel) (row fixnum) (col fixnum))
+(defmethod get-channel-value ((img image-channel) row col)
   "Gets the value at row, col"
   (val img row col))
 
-(defmethod set-channel-value ((img ub8-matrix-image) (row fixnum) (col fixnum) (v fixnum))
+(defmethod set-channel-value ((img ub8-matrix-image) row col v)
   "Sets the grayscale value at row, col to v"
   (declare (type fixnum row col v))
   (let ((a (clem::matrix-vals img)))

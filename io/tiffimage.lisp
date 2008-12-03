@@ -56,8 +56,9 @@ grayscale image"
     image))
   
 (defmethod write-tiff-file (pathname image)
+  (declare (ignore pathname))
   (print image)
-  (error "Not yet! 7"))
+  (error "Not yet!"))
 
 (defmethod write-tiff-file (pathname (image argb-8888-image))
   (let ((tiff-image (make-instance 'tiff:tiff-image
