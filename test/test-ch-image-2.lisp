@@ -5,32 +5,32 @@
   (destructuring-bind (height width) (list 400 300)
     (let ((img (make-instance 'matrix-gray-image :width width :height height)))
       (dotimes (h height)
-	(dotimes (w width)
-	  (set-gray-value img h w (mod (* w 3) 255))))
+        (dotimes (w width)
+          (set-gray-value img h w (mod (* w 3) 255))))
       img)))
 
 (defun test-argb-image ()
   (destructuring-bind (height width) (list 400 300)
     (let ((img (make-instance 'argb-8888-image :width width :height height))
-	  (radfudge (* 6 pi .5)))
+          (radfudge (* 6 pi .5)))
       (declare (ignorable radfudge))
       (dotimes (h height)
-	(dotimes (w width)
-	  (set-argb-values img h w
-			   (floor (* 255 (/ w width)))
-			   25 150
-;			   (abs (floor (* 255 (sin (* radfudge (/ h height))))))
-;			   (abs (floor (* 200 (sin (* .2 radfudge (/ w width))))))
-			   (mod (* w h) 255))))
+        (dotimes (w width)
+          (set-argb-values img h w
+                           (floor (* 255 (/ w width)))
+                           25 150
+;                          (abs (floor (* 255 (sin (* radfudge (/ h height))))))
+;                          (abs (floor (* 200 (sin (* .2 radfudge (/ w width))))))
+                           (mod (* w h) 255))))
       img)))
 
 (defparameter *test-argb-image* (test-argb-image))
 
 (defun test-gray-image-write-tiff (destfile)
-  (write-tiff-file destfile (test-gray-image)))
+  (write-tiff-file destfile (test-gray-image) :if-exists :supersede))
 
 (defun test-argb-image-write-tiff (destfile)
-  (write-tiff-file destfile *test-argb-image*))
+  (write-tiff-file destfile *test-argb-image* :if-exists :supersede))
 
 (defun test-gray-image-write-jpeg (destfile)
   (write-jpeg-file destfile (test-gray-image)))
@@ -77,56 +77,72 @@
 ;;; RGB TIFF -> RGB TIFF
 (defun imageio-test5 ()
   (let ((srcfile (test-img "euc-tiff"))
-	(destfile (test-output-img "argbreadtest.tiff")))
+        (destfile (test-output-img "rgbreadtest.tiff")))
     (let ((img (read-tiff-file srcfile)))
       (when img
-	(write-tiff-file destfile img)
-	t))))
+        (write-tiff-file destfile img :if-exists :supersede)
+        t))))
 
 ;;; RGB TIFF -> GRAY TIFF
 (defun imageio-test6 ()
+  (let ((srcfile (test-img "euc-tiff"))
+        (destfile (test-output-img "grayreadtest.tiff")))
+    (let ((img (cadr (get-channels (read-tiff-file srcfile)))))
+      (when img
+        (write-tiff-file destfile img :if-exists :supersede)
+        t))))
+
+(defun imageio-test6b ()
+  (let ((srcfile (test-img "euc-jpeg"))
+        (destfile (test-output-img "grayreadtest2.tiff")))
+    (let ((img (cadddr (get-channels (read-jpeg-file srcfile)))))
+      (when img
+        (write-tiff-file destfile img :if-exists :supersede)
+        t))))
+
+(defun imageio-test6c ()
   (let ((srcfile (test-img "eucgray-tiff"))
-	(destfile (test-output-img "grayreadtest.tiff")))
+        (destfile (test-output-img "grayreadtest3.tiff")))
     (let ((img (read-tiff-file srcfile)))
       (when img
-	(write-tiff-file destfile img)
-	t))))
+        (write-tiff-file destfile img :if-exists :supersede)
+        t))))
 
 ;;; RGB JPEG -> RGB JPEG
 (defun imageio-test7 ()
   (let ((srcfile (test-img "euc-jpeg"))
-	(destfile (test-output-img "argbreadtest.jpeg")))
+        (destfile (test-output-img "argbreadtest.jpeg")))
     (let ((img (read-jpeg-file srcfile)))
       (when img
-	(write-jpeg-file destfile img)
-	t))))
+        (write-jpeg-file destfile img)
+        t))))
 
 ;;; GRAY JPEG -> GRAY JPEG
 (defun imageio-test8 ()
   (let ((srcfile (test-img "eucgray-jpeg"))
-	(destfile (test-output-img "grayreadtest.jpeg")))
+        (destfile (test-output-img "grayreadtest.jpeg")))
     (let ((img (read-jpeg-file srcfile)))
       (when img
-	(write-jpeg-file destfile img)
-	t))))
+        (write-jpeg-file destfile img)
+        t))))
 
 ;;; RGB TIFF -> RGB JPEG
 (defun imageio-test9 ()
   (let ((srcfile (test-img "euc-tiff"))
-	(destfile (test-output-img "tiffreadtest.jpeg")))
+        (destfile (test-output-img "tiffreadtest.jpeg")))
     (let ((img (read-tiff-file srcfile)))
       (when img
-	(write-jpeg-file destfile img)
-	t))))
+        (write-jpeg-file destfile img)
+        t))))
 
 ;;; RGB JPEG -> RGB TIFF
 (defun imageio-test10 ()
   (let ((srcfile (test-img "euc-jpeg"))
-	(destfile (test-output-img "jpegreadtest.tiff")))
+        (destfile (test-output-img "jpegreadtest.tiff")))
     (let ((img (read-jpeg-file srcfile)))
       (when img
-	(write-tiff-file destfile img)
-	t))))
+        (write-tiff-file destfile img)
+        t))))
 
 
 (defun run-tests-2 ()
@@ -157,22 +173,22 @@
           (imagedir (asdf:component-pathname images-component)))
       (ensure-directories-exist imagedir)
       (let ((img (read-tiff-file inputfile)))
-	(time
-	 (progn
-	   (setf (ch-image:image-a img)
-		 (clem:gaussian-blur (ch-image:image-a img) :k 2))
+        (time
+         (progn
+           (setf (ch-image:image-a img)
+                 (clem:gaussian-blur (ch-image:image-a img) :k 2))
            
-	   (setf (ch-image:image-r img)
-		 (clem:gaussian-blur (ch-image:image-r img) :k 2))
+           (setf (ch-image:image-r img)
+                 (clem:gaussian-blur (ch-image:image-r img) :k 2))
            
            (setf (ch-image:image-g img)
                  (clem:gaussian-blur (ch-image:image-g img) :k 2))
-	   
-	   (setf (ch-image:image-b img)
-		 (clem:gaussian-blur (ch-image:image-b img) :k 2))))
+           
+           (setf (ch-image:image-b img)
+                 (clem:gaussian-blur (ch-image:image-b img) :k 2))))
         (setf (image-height img) (clem:rows (ch-image:image-r img)))
         (setf (image-width img) (clem:cols (ch-image:image-r img)))
-	(write-tiff-file
+        (write-tiff-file
          (test-output-img
           (merge-pathnames (make-pathname :name "blur-sunset" :type "tiff")
                            imagedir))
@@ -192,7 +208,7 @@
           (imagedir (asdf:component-pathname images-component)))
       (ensure-directories-exist imagedir)
       (let ((img (read-tiff-file inputfile)))
-	(time
+        (time
          (ch-image:gaussian-blur-image img :k 2))
         (write-tiff-file
          (test-output-img
@@ -295,4 +311,5 @@
             :u '(-200 . 200) :v '(-200 . 200) :x '(-200 . 200) :y '(-200 . 200))))
       (ch-image:write-tiff-file 
        (test-output-img (make-pathname :name "xfrm-euc-3" :type "tiff")) ximg))))
+
 
