@@ -26,7 +26,18 @@ grayscale image"
                      (samples-per-pixel tiff:tiff-image-samples-per-pixel) 
                      (image-data tiff:tiff-image-data))
         tiff-image
-      (cond ((= samples-per-pixel 3) ;; RGB
+      (cond ((= samples-per-pixel 1) ;; Grayscale
+             (setf image (make-instance 'matrix-gray-image
+                                        :width image-width
+                                        :height image-length))
+             (loop for i below image-length
+                do 
+                  (loop for j below image-width
+                     do 
+                       (let ((pixoff (+ (* i image-width) j)))
+                         (set-gray-value image i j
+                                         (aref image-data pixoff))))))
+            ((= samples-per-pixel 3) ;; RGB
              (setf image (make-instance 'rgb-888-image
                                         :width image-width
                                         :height image-length))
@@ -55,12 +66,52 @@ grayscale image"
                                           (aref image-data (incf pixoff)))))))))
     image))
   
-(defmethod write-tiff-file (pathname image)
-  (declare (ignore pathname))
-  (print image)
-  (error "Not yet!"))
+(defgeneric make-tiff-image (image)
+  (:documentation "Makes a tiff:tiff-image from a ch-image:image"))
 
-(defmethod write-tiff-file (pathname (image argb-8888-image))
+(defmethod make-tiff-image ((image ub8-matrix))
+  (let ((tiff-image (make-instance 'tiff:tiff-image
+                                   :width (cols image)
+                                   :length (rows image)
+                                   :bits-per-sample 8
+                                   :samples-per-pixel 1
+                                   :data (make-array (* (cols image)
+                                                        (rows image))))))
+    (with-accessors ((image-length tiff:tiff-image-length)
+                     (image-width tiff:tiff-image-width)
+                     (samples-per-pixel tiff:tiff-image-samples-per-pixel) 
+                     (image-data tiff:tiff-image-data))
+        tiff-image
+      (loop for i below image-length
+         do 
+           (loop for j below image-width
+              do 
+                (let ((pixoff (+ (* i image-width) j)))
+                  (setf (aref image-data pixoff) (mref image i j))))))
+    tiff-image))
+
+(defmethod make-tiff-image ((image matrix-gray-image))
+  (let ((tiff-image (make-instance 'tiff:tiff-image
+                                   :width (image-width image)
+                                   :length (image-height image)
+                                   :bits-per-sample 8
+                                   :samples-per-pixel 1
+                                   :data (make-array (* (image-width image)
+                                                        (image-height image))))))
+    (with-accessors ((image-length tiff:tiff-image-length)
+                     (image-width tiff:tiff-image-width)
+                     (samples-per-pixel tiff:tiff-image-samples-per-pixel) 
+                     (image-data tiff:tiff-image-data))
+        tiff-image
+      (loop for i below image-length
+         do 
+           (loop for j below image-width
+              do 
+                (let ((pixoff (+ (* i image-width) j)))
+                  (setf (aref image-data pixoff) (get-gray-value image i j))))))
+    tiff-image))
+
+(defmethod make-tiff-image ((image argb-8888-image))
   (let ((tiff-image (make-instance 'tiff:tiff-image
                                    :width (image-width image)
                                    :length (image-height image)
@@ -86,5 +137,36 @@ grayscale image"
                           (aref image-data (incf pixoff)) g
                           (aref image-data (incf pixoff)) b
                           (aref image-data (incf pixoff)) a))))))
-    (tiff::write-tiff-file pathname tiff-image)))
+    tiff-image))
 
+(defmethod make-tiff-image ((image rgb-888-image))
+  (let ((tiff-image (make-instance 'tiff:tiff-image
+                                   :width (image-width image)
+                                   :length (image-height image)
+                                   :bits-per-sample '(8 8 8)
+                                   :samples-per-pixel 3
+                                   :data (make-array (* (image-width image)
+                                                        (image-height image)
+                                                        3)))))
+    (with-accessors ((image-length tiff:tiff-image-length)
+                     (image-width tiff:tiff-image-width)
+                     (samples-per-pixel tiff:tiff-image-samples-per-pixel) 
+                     (image-data tiff:tiff-image-data))
+        tiff-image
+      (loop for i below image-length
+         do 
+           (loop for j below image-width
+              do 
+                (let ((pixoff (* 3 (+ (* i image-width) j))))
+                  (multiple-value-bind
+                        (r g b)
+                      (get-rgb-values image i j)
+                    (setf (aref image-data pixoff) r
+                          (aref image-data (incf pixoff)) g
+                          (aref image-data (incf pixoff)) b))))))
+    tiff-image))
+
+(defmacro write-tiff-file (pathname image &rest args)
+  (let ((tiff-image (gensym "write-tiff-file")))
+    `(let ((,tiff-image (make-tiff-image ,image)))
+       (tiff::write-tiff-file ,pathname ,tiff-image ,@args))))
