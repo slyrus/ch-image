@@ -22,6 +22,8 @@
 	   #:rgb-image
 	   #:rgb-888-image
 	   #:rgb-hhh-image
+	   #:get-rgb-values
+	   #:set-rgb-values
 
 	   #:argb-image
 	   #:argb-8888-image

@@ -40,6 +40,8 @@
 
 (defparameter *gray-q-tabs* (vector jpeg::*q-luminance*))
 
+(defgeneric write-jpeg-file (filename img))
+
 (defmethod write-jpeg-file (filename (img gray-image))
   (let ((jpegimg (make-array (* (image-width img) (image-height img))))
 	(offset 0))
@@ -59,44 +61,22 @@
     (jpeg::encode-image-stream stream jpegimg +ncomp-gray+
 		  (image-height img) (image-width img) :q-tabs *gray-q-tabs*)))
 
-(defparameter *argb-q-tabs*
-  (vector jpeg::*q-luminance-hi* jpeg::*q-chrominance-hi*
-	  jpeg::*q-luminance-hi* jpeg::*q-chrominance-hi*))
-
-(defparameter *argb-sampling* '((1 1)(1 1)(1 1)(1 1)))
-
-(defmethod write-jpeg-file-with-alpha (filename (img argb-image))
-  (let ((jpegimg (make-array (* (image-width img) (image-height img) +ncomp-argb+)))
-	(offset 0))
-    (map-pixels #'(lambda (img x y)
-		    (multiple-value-bind (a r g b) (get-argb-values img x y)
-		      (setf (svref jpegimg (ch-util:postincf offset)) a)
-		      (setf (svref jpegimg (ch-util:postincf offset)) b)
-		      (setf (svref jpegimg (ch-util:postincf offset)) g)
-		      (setf (svref jpegimg (ch-util:postincf offset)) r)))
-		img)
-    (jpeg:encode-image filename jpegimg +ncomp-argb+ 
-		  (image-height img) (image-width img)
-		  :q-tabs *argb-q-tabs*
-		  :sampling *argb-sampling*)
-    (truename filename)))
-
 (defparameter *rgb-sampling* '((1 1)(1 1)(1 1)))
 
 (defmethod write-jpeg-file (filename (img argb-image))
   (let ((jpegimg (make-array (* (image-width img) (image-height img) +ncomp-rgb+)))
-	(offset 0))
+        (offset 0))
     (map-pixels #'(lambda (img x y)
-		    (multiple-value-bind (a r g b) (get-argb-values img x y)
-		      (declare (ignore a))
-		      (setf (svref jpegimg (ch-util:postincf offset)) b)
-		      (setf (svref jpegimg (ch-util:postincf offset)) g)
-		      (setf (svref jpegimg (ch-util:postincf offset)) r)))
-		img)
+                    (multiple-value-bind (a r g b) (get-argb-values img x y)
+                      (declare (ignore a))
+                      (setf (svref jpegimg (ch-util:postincf offset)) b)
+                      (setf (svref jpegimg (ch-util:postincf offset)) g)
+                      (setf (svref jpegimg (ch-util:postincf offset)) r)))
+                img)
     (jpeg:encode-image filename jpegimg +ncomp-rgb+
                        (image-height img) (image-width img)
-                       :sampling *rgb-sampling*)
-    (truename filename)))
+                       :sampling *rgb-sampling*))
+  (truename filename))
 
 (defmethod write-jpeg-file (filename (img rgb-image))
   (let ((jpegimg (make-array (* (image-width img) (image-height img) +ncomp-rgb+)))

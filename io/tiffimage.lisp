@@ -166,7 +166,6 @@ grayscale image"
                           (aref image-data (incf pixoff)) b))))))
     tiff-image))
 
-(defmacro write-tiff-file (pathname image &rest args)
-  (let ((tiff-image (gensym "write-tiff-file")))
-    `(let ((,tiff-image (make-tiff-image ,image)))
-       (tiff::write-tiff-file ,pathname ,tiff-image ,@args))))
+(defun write-tiff-file (pathname image)
+  (let ((tiff-image (make-tiff-image image)))
+    (tiff::write-tiff-file pathname tiff-image)))
