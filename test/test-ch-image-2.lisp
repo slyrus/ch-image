@@ -9,6 +9,19 @@
           (set-gray-value img h w (mod (* w 3) 255))))
       img)))
 
+(defun test-rgb-image ()
+  (destructuring-bind (height width) (list 400 300)
+    (let ((img (make-instance 'rgb-888-image :width width :height height))
+          (radfudge (* 6 pi .5)))
+      (declare (ignorable radfudge))
+      (dotimes (h height)
+        (dotimes (w width)
+          (set-rgb-values img h w
+                          (abs (floor (* 255 (sin (* radfudge (/ h height))))))
+                          (abs (floor (* 200 (cos (* .2 radfudge (/ w width))))))
+                          (mod (* w h) 255)) ))
+      img)))
+
 (defun test-argb-image ()
   (destructuring-bind (height width) (list 400 300)
     (let ((img (make-instance 'argb-8888-image :width width :height height))
@@ -17,26 +30,15 @@
       (dotimes (h height)
         (dotimes (w width)
           (set-argb-values img h w
-                           (floor (* 255 (/ w width)))
-                           25 150
-;                          (abs (floor (* 255 (sin (* radfudge (/ h height))))))
-;                          (abs (floor (* 200 (sin (* .2 radfudge (/ w width))))))
-                           (mod (* w h) 255))))
+                           (abs (floor (+ 191 (* 64 (cos (* 2 radfudge (/ w width)))))))
+                           (abs (floor (* 255 (sin (* radfudge (/ h height))))))
+                           (abs (floor (* 200 (cos (* .2 radfudge (/ w width))))))
+                           (mod (* w h) 255)) ))
       img)))
 
+(defparameter *test-gray-image* (test-gray-image))
+(defparameter *test-rgb-image* (test-rgb-image))
 (defparameter *test-argb-image* (test-argb-image))
-
-(defun test-gray-image-write-tiff (destfile)
-  (write-tiff-file destfile (test-gray-image) :if-exists :supersede))
-
-(defun test-argb-image-write-tiff (destfile)
-  (write-tiff-file destfile *test-argb-image* :if-exists :supersede))
-
-(defun test-gray-image-write-jpeg (destfile)
-  (write-jpeg-file destfile (test-gray-image)))
-
-(defun test-argb-image-write-jpeg (destfile)
-  (write-jpeg-file destfile *test-argb-image*))
 
 (defun test-img (file)
   (asdf:component-pathname
@@ -49,116 +51,140 @@
     file)))
 
 (defparameter *output-image-path*
-  (let ((eucpath (test-img "euc-tiff")))
-    (merge-pathnames
-     (make-pathname :directory (list :relative :up "output-images"))
-     (make-pathname :directory (pathname-directory eucpath)))))
+  (truename
+   (merge-pathnames
+    (make-pathname :directory (list :relative :up "output-images"))
+    (make-pathname :directory 
+                   (pathname-directory
+                    (asdf:component-pathname
+                     (asdf:find-component
+                      (asdf:find-component
+                       (asdf:find-system "ch-image-test")
+                       "test")
+                      "images")))))))
 
 (ensure-directories-exist *output-image-path*)
 
 (defun test-output-img (file) (merge-pathnames *output-image-path* file))
 
-(defun imageio-test1 ()
-  (test-gray-image-write-tiff (test-output-img "grayimgtest.tiff"))
-  t)
+(defun test/write-grayscale-image-tiff-1 ()
+  (write-tiff-file 
+   (merge-pathnames *output-image-path* "grayimgtest.tiff")
+   (test-gray-image)))
 
-(defun imageio-test2 ()
-  (test-argb-image-write-tiff (test-output-img "argbimgtest.tiff"))
-  t)
+(defun test/write-rgb-image-tiff-1 ()
+  (write-tiff-file 
+   (merge-pathnames *output-image-path* "rgbimgtest.tiff")
+   *test-rgb-image*))
 
-(defun imageio-test3 ()
-  (test-gray-image-write-jpeg (test-output-img "grayimgtest.jpeg"))
-  t)
+(defun test/write-argb-image-tiff-1 ()
+  (write-tiff-file
+   (merge-pathnames *output-image-path* "argbimgtest.tiff")
+   *test-argb-image*))
 
-(defun imageio-test4 ()
-  (test-argb-image-write-jpeg (test-output-img "argbimgtest.jpeg"))
-  t)
+(defun test/write-grayscale-image-jpeg-1 ()
+  (write-jpeg-file
+   (merge-pathnames *output-image-path* "grayimgtest.jpeg")
+   (test-gray-image)))
+
+(defun test/write-rgb-image-jpeg-1 ()
+  (write-jpeg-file
+   (merge-pathnames *output-image-path* "rgbimgtest.jpeg")
+   *test-rgb-image*))
+
+(defun test/write-argb-image-jpeg-1 ()
+  (write-jpeg-file 
+   (merge-pathnames *output-image-path* "argbimgtest.jpeg")
+   *test-argb-image*))
 
 ;;; RGB TIFF -> RGB TIFF
-(defun imageio-test5 ()
+(defun test/read-rbg-tiff-write-rgb-tiff-1 ()
   (let ((srcfile (test-img "euc-tiff"))
         (destfile (test-output-img "rgbreadtest.tiff")))
     (let ((img (read-tiff-file srcfile)))
       (when img
-        (write-tiff-file destfile img :if-exists :supersede)
-        t))))
+        (write-tiff-file destfile img)))))
 
 ;;; RGB TIFF -> GRAY TIFF
-(defun imageio-test6 ()
+(defun test/read-rgb-tiff-write-grayscale-tiff-1 ()
   (let ((srcfile (test-img "euc-tiff"))
         (destfile (test-output-img "grayreadtest.tiff")))
     (let ((img (cadr (get-channels (read-tiff-file srcfile)))))
       (when img
-        (write-tiff-file destfile img :if-exists :supersede)
-        t))))
+        (write-tiff-file destfile img)))))
 
-(defun imageio-test6b ()
-  (let ((srcfile (test-img "euc-jpeg"))
-        (destfile (test-output-img "grayreadtest2.tiff")))
-    (let ((img (cadddr (get-channels (read-jpeg-file srcfile)))))
-      (when img
-        (write-tiff-file destfile img :if-exists :supersede)
-        t))))
-
-(defun imageio-test6c ()
+;;; GRAY TIFF -> GRAY TIFF
+(defun test/read-grayscale-tiff-write-grayscale-tiff-1 ()
   (let ((srcfile (test-img "eucgray-tiff"))
         (destfile (test-output-img "grayreadtest3.tiff")))
     (let ((img (read-tiff-file srcfile)))
       (when img
-        (write-tiff-file destfile img :if-exists :supersede)
-        t))))
+        (write-tiff-file destfile img)))))
+
+(defun test/read-rgb-jpeg-write-grayscale-tiff-1 ()
+  (let ((srcfile (test-img "euc-jpeg"))
+        (destfile (test-output-img "grayreadtest2.tiff")))
+    (let ((img (cadr (get-channels (read-jpeg-file srcfile)))))
+      (when img
+        (write-tiff-file destfile img)))))
 
 ;;; RGB JPEG -> RGB JPEG
-(defun imageio-test7 ()
+(defun test/read-rgb-jpeg-write-rgb-jpeg-1 ()
   (let ((srcfile (test-img "euc-jpeg"))
         (destfile (test-output-img "argbreadtest.jpeg")))
     (let ((img (read-jpeg-file srcfile)))
       (when img
-        (write-jpeg-file destfile img)
-        t))))
+        (write-jpeg-file destfile img)))))
 
 ;;; GRAY JPEG -> GRAY JPEG
-(defun imageio-test8 ()
+(defun test/read-grayscale-jpeg-write-grayscale-jpeg-1 ()
   (let ((srcfile (test-img "eucgray-jpeg"))
         (destfile (test-output-img "grayreadtest.jpeg")))
     (let ((img (read-jpeg-file srcfile)))
       (when img
-        (write-jpeg-file destfile img)
-        t))))
+        (write-jpeg-file destfile img)))))
 
 ;;; RGB TIFF -> RGB JPEG
-(defun imageio-test9 ()
+(defun test/read-rgb-tiff-write-rgb-jpeg-1 ()
   (let ((srcfile (test-img "euc-tiff"))
         (destfile (test-output-img "tiffreadtest.jpeg")))
     (let ((img (read-tiff-file srcfile)))
       (when img
-        (write-jpeg-file destfile img)
-        t))))
+        (write-jpeg-file destfile img)))))
 
 ;;; RGB JPEG -> RGB TIFF
-(defun imageio-test10 ()
+(defun test/read-rgb-jpeg-write-rgb-tiff-1 ()
   (let ((srcfile (test-img "euc-jpeg"))
         (destfile (test-output-img "jpegreadtest.tiff")))
     (let ((img (read-jpeg-file srcfile)))
       (when img
-        (write-tiff-file destfile img)
-        t))))
+        (write-tiff-file destfile img)))))
 
 
 (defun run-tests-2 ()
-  (let ((run (ch-util:make-test-run)))
+  (flet ((run-it (test-name)
+           (funcall test-name)))
+    (mapcar #'run-it
+            '(test/write-grayscale-image-tiff-1
+              test/write-rgb-image-tiff-1
+              test/write-argb-image-tiff-1
+                
+              test/write-grayscale-image-jpeg-1
+              test/write-rgb-image-jpeg-1
+              test/write-argb-image-jpeg-1
+                
+              test/read-rbg-tiff-write-rgb-tiff-1
+              test/read-rgb-tiff-write-grayscale-tiff-1
+              test/read-grayscale-tiff-write-grayscale-tiff-1
+                
+              test/read-rgb-jpeg-write-grayscale-tiff-1
+                
+              test/read-rgb-jpeg-write-rgb-jpeg-1
+              test/read-grayscale-jpeg-write-grayscale-jpeg-1
+              test/read-rgb-tiff-write-rgb-jpeg-1
+              test/read-rgb-jpeg-write-rgb-tiff-1
 
-    (ch-util:run-test #'imageio-test1 "imageio-test1" run)
-    (ch-util:run-test #'imageio-test2 "imageio-test2" run)
-    (ch-util:run-test #'imageio-test3 "imageio-test3" run)
-    (ch-util:run-test #'imageio-test4 "imageio-test4" run)
-    (ch-util:run-test #'imageio-test5 "imageio-test5" run)
-    (ch-util:run-test #'imageio-test6 "imageio-test6" run)
-    (ch-util:run-test #'imageio-test7 "imageio-test7" run)
-    (ch-util:run-test #'imageio-test8 "imageio-test8" run)
-    (ch-util:run-test #'imageio-test9 "imageio-test9" run)
-    (ch-util:run-test #'imageio-test10 "imageio-test10" run)
-    ))
+              ))))
 
 (defun test-gaussian-blur ()
   (let ((images-component
