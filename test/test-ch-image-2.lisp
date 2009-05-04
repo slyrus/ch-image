@@ -65,8 +65,6 @@
 
 (ensure-directories-exist *output-image-path*)
 
-(defun test-output-img (file) (merge-pathnames *output-image-path* file))
-
 (defun test/write-grayscale-image-tiff-1 ()
   (write-tiff-file 
    (merge-pathnames *output-image-path* "grayimgtest.tiff")
@@ -100,7 +98,7 @@
 ;;; RGB TIFF -> RGB TIFF
 (defun test/read-rbg-tiff-write-rgb-tiff-1 ()
   (let ((srcfile (test-img "euc-tiff"))
-        (destfile (test-output-img "rgbreadtest.tiff")))
+        (destfile (merge-pathnames *output-image-path* "rgbreadtest.tiff")))
     (let ((img (read-tiff-file srcfile)))
       (when img
         (write-tiff-file destfile img)))))
@@ -108,7 +106,7 @@
 ;;; RGB TIFF -> GRAY TIFF
 (defun test/read-rgb-tiff-write-grayscale-tiff-1 ()
   (let ((srcfile (test-img "euc-tiff"))
-        (destfile (test-output-img "grayreadtest.tiff")))
+        (destfile (merge-pathnames *output-image-path* "grayreadtest.tiff")))
     (let ((img (cadr (get-channels (read-tiff-file srcfile)))))
       (when img
         (write-tiff-file destfile img)))))
@@ -116,14 +114,14 @@
 ;;; GRAY TIFF -> GRAY TIFF
 (defun test/read-grayscale-tiff-write-grayscale-tiff-1 ()
   (let ((srcfile (test-img "eucgray-tiff"))
-        (destfile (test-output-img "grayreadtest3.tiff")))
+        (destfile (merge-pathnames *output-image-path* "grayreadtest3.tiff")))
     (let ((img (read-tiff-file srcfile)))
       (when img
         (write-tiff-file destfile img)))))
 
 (defun test/read-rgb-jpeg-write-grayscale-tiff-1 ()
   (let ((srcfile (test-img "euc-jpeg"))
-        (destfile (test-output-img "grayreadtest2.tiff")))
+        (destfile (merge-pathnames *output-image-path* "grayreadtest2.tiff")))
     (let ((img (cadr (get-channels (read-jpeg-file srcfile)))))
       (when img
         (write-tiff-file destfile img)))))
@@ -131,7 +129,7 @@
 ;;; RGB JPEG -> RGB JPEG
 (defun test/read-rgb-jpeg-write-rgb-jpeg-1 ()
   (let ((srcfile (test-img "euc-jpeg"))
-        (destfile (test-output-img "argbreadtest.jpeg")))
+        (destfile (merge-pathnames *output-image-path* "argbreadtest.jpeg")))
     (let ((img (read-jpeg-file srcfile)))
       (when img
         (write-jpeg-file destfile img)))))
@@ -139,7 +137,7 @@
 ;;; GRAY JPEG -> GRAY JPEG
 (defun test/read-grayscale-jpeg-write-grayscale-jpeg-1 ()
   (let ((srcfile (test-img "eucgray-jpeg"))
-        (destfile (test-output-img "grayreadtest.jpeg")))
+        (destfile (merge-pathnames *output-image-path* "grayreadtest.jpeg")))
     (let ((img (read-jpeg-file srcfile)))
       (when img
         (write-jpeg-file destfile img)))))
@@ -147,7 +145,7 @@
 ;;; RGB TIFF -> RGB JPEG
 (defun test/read-rgb-tiff-write-rgb-jpeg-1 ()
   (let ((srcfile (test-img "euc-tiff"))
-        (destfile (test-output-img "tiffreadtest.jpeg")))
+        (destfile (merge-pathnames *output-image-path* "tiffreadtest.jpeg")))
     (let ((img (read-tiff-file srcfile)))
       (when img
         (write-jpeg-file destfile img)))))
@@ -155,7 +153,7 @@
 ;;; RGB JPEG -> RGB TIFF
 (defun test/read-rgb-jpeg-write-rgb-tiff-1 ()
   (let ((srcfile (test-img "euc-jpeg"))
-        (destfile (test-output-img "jpegreadtest.tiff")))
+        (destfile (merge-pathnames *output-image-path* "jpegreadtest.tiff")))
     (let ((img (read-jpeg-file srcfile)))
       (when img
         (write-tiff-file destfile img)))))
@@ -215,7 +213,7 @@
         (setf (image-height img) (clem:rows (ch-image:image-r img)))
         (setf (image-width img) (clem:cols (ch-image:image-r img)))
         (write-tiff-file
-         (test-output-img
+         (merge-pathnames *output-image-path*
           (merge-pathnames (make-pathname :name "blur-sunset" :type "tiff")
                            imagedir))
          img)
@@ -237,7 +235,7 @@
         (time
          (ch-image:gaussian-blur-image img :k 2))
         (write-tiff-file
-         (test-output-img
+         (merge-pathnames *output-image-path*
           (merge-pathnames (make-pathname :name "blur-sunset" :type "tiff")
                            imagedir))
          img)
@@ -272,7 +270,7 @@
                   :x '(-100 . 100)
                   :y '(-100 . 100))))
             (ch-image:write-tiff-file 
-             (test-output-img path) ximg)))))))
+             (merge-pathnames *output-image-path* path) ximg)))))))
 
 (defun test-affine-transform-2 ()
   (let ((images-component
@@ -308,7 +306,7 @@
                       :u (cons u1 u2)
                       :v (cons v1 v2))))
                 (ch-image:write-tiff-file 
-                 (test-output-img path) ximg)))))))))
+                 (merge-pathnames *output-image-path* path) ximg)))))))))
 
 (defun load-euclid-image ()
   (let* ((images-component
@@ -336,6 +334,6 @@
             :interpolation :bilinear
             :u '(-200 . 200) :v '(-200 . 200) :x '(-200 . 200) :y '(-200 . 200))))
       (ch-image:write-tiff-file 
-       (test-output-img (make-pathname :name "xfrm-euc-3" :type "tiff")) ximg))))
+       (merge-pathnames *output-image-path* (make-pathname :name "xfrm-euc-3" :type "tiff")) ximg))))
 
 
