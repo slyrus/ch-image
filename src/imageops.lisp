@@ -66,7 +66,8 @@
     (dotimes (i 256)
       (declare (dynamic-extent i) (fixnum i))
       (when (> (aref l i) 0)
-	(setf (aref o i) (postincf v))
+	(setf (aref o i) v)
+        (incf v)
 	(push i k)))
     (values o (reverse k))))
 

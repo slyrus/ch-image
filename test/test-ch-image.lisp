@@ -70,6 +70,7 @@
     (ch-image::draw-line img 420 200 60 10 (list 255 128 255 255))
     (ch-image::draw-line img 60 20 420 210 (list 255 255 255 128))
     
+    #+ch-image-has-retrospectiff
     (ch-image:write-tiff-file "argb-image.tiff" img)))
 
 (defun image-test-6 ()
@@ -103,17 +104,18 @@
     (ch-image:write-png-file "circles-gray.png" img)))
 
 (defun run-tests ()
-  (let ((run (ch-util:make-test-run)))
-    (time (ch-util:run-test #'image-test-1 "image-test-1" run))
-    (time (ch-util:run-test #'image-test-2 "image-test-2" run))
-    (time (ch-util:run-test #'image-test-3 "image-test-3" run)))
+  (let ((run (make-test-run)))
+    (time (run-test #'image-test-1 "image-test-1" run))
+    (time (run-test #'image-test-2 "image-test-2" run))
+    (time (run-test #'image-test-3 "image-test-3" run)))
   (print 'done))
 
 
 (defun make-shapes-test-image ()
   (let ((path
-         (merge-pathnames #p"shapes.png"
-                          (ch-asdf::asdf-lookup-path "asdf:/ch-image-test/test/images"))))
+         (asdf:component-pathname
+          (reduce #'asdf:find-component
+                  (list nil "ch-image-test" "test" "images" "shapes.png")))))
     (let ((img (make-instance 'ch-image::bit-matrix-image :rows 128 :cols 128 :initial-element 0)))
       (ch-image::fill-rectangle img 4 4 10 10 1)
       (ch-image::fill-rectangle img 20 20 40 40 1)
@@ -124,8 +126,9 @@
 
 (defun make-argb-shapes-test-image ()
   (let ((path
-         (merge-pathnames #p"argb-shapes.png"
-                          (ch-asdf::asdf-lookup-path "asdf:/ch-image-test/test/images"))))
+         (asdf:component-pathname
+          (reduce #'asdf:find-component
+                  (list nil "ch-image-test" "test" "images" "argb-shapes.png")))))
     (let ((img (make-instance 'ch-image::argb-8888-image :height 128 :width 128)))
       (ch-image::fill-rectangle img 4 4 10 10 '(255 255 0 0))
       (ch-image::fill-rectangle img 20 20 40 40 '(255 0 255 255))
@@ -135,8 +138,9 @@
 
 (defun make-rgb-shapes-test-image ()
   (let ((path
-         (merge-pathnames #p"rgb-shapes.png"
-                          (ch-asdf::asdf-lookup-path "asdf:/ch-image-test/test/images"))))
+         (asdf:component-pathname
+          (reduce #'asdf:find-component
+                  (list nil "ch-image-test" "test" "images" "rgb-shapes.png")))))
     (let ((img (make-instance 'ch-image::rgb-888-image :height 128 :width 128)))
       (ch-image::fill-rectangle img 4 4 10 10 '(255 0 0))
       (ch-image::fill-rectangle img 20 20 40 40 '(0 255 255))

@@ -6,8 +6,14 @@
 
 (in-package :ch-image)
 
+(defun make-hash-table-from-alist (alist &key (test #'eql))
+  (let ((h (make-hash-table :test test)))
+    (loop for (x . y) in alist
+       do (setf (gethash x h) y))
+    h))
+
 (defparameter *image-read-functions*
-  (ch-util:make-hash-table-from-alist
+  (make-hash-table-from-alist
    (append #+ch-image-has-retrospectiff
            `(("tiff" . read-tiff-file)
              ("tif" . read-tiff-file))
@@ -18,7 +24,7 @@
    :test #'equalp))
 
 (defparameter *image-write-functions*
-  (ch-util:make-hash-table-from-alist
+  (make-hash-table-from-alist
    (append #+ch-image-has-retrospectiff
            '(("tiff" . write-tiff-file)
              ("tif" . write-tiff-file))

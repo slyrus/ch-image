@@ -33,9 +33,7 @@
 (defsystem :ch-image-doc
   :name "ch-image-doc"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
-  :version #.(with-open-file
-                 (vers (merge-pathnames "version.lisp-expr" *load-truename*))
-               (read vers))
+  :version "0.4.3"
   :licence "BSD"
   :depends-on (ch-asdf ch-util ch-image smarkup)
   :components

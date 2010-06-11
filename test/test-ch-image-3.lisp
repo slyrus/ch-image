@@ -1,6 +1,8 @@
 
 (in-package :ch-image-test)
 
+
+#+ch-image-has-freetype-ffi
 (defun test-argb-image-text ()
   (destructuring-bind (height width) (list 300 600)
     (let ((img (make-instance 'argb-8888-image :width width :height height)))
@@ -28,6 +30,7 @@
     
       img)))
 
+#+ch-image-has-freetype-ffi
 (defun test-gray-image-text ()
   (destructuring-bind (height width) (list 300 600)
     (let ((img (make-instance 'ub8-matrix-image :width width :height height)))

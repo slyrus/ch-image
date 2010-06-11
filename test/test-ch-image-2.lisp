@@ -51,30 +51,27 @@
     file)))
 
 (defparameter *output-image-path*
-  (truename
-   (merge-pathnames
-    (make-pathname :directory (list :relative :up "output-images"))
-    (make-pathname :directory 
-                   (pathname-directory
-                    (asdf:component-pathname
-                     (asdf:find-component
-                      (asdf:find-component
-                       (asdf:find-system "ch-image-test")
-                       "test")
-                      "images")))))))
+  (merge-pathnames
+   (make-pathname :directory (list :relative :up "output-images"))
+   (asdf:component-pathname
+    (reduce #'asdf:find-component
+            (list nil "ch-image-test" "test" "images")))))
 
 (ensure-directories-exist *output-image-path*)
 
+#+ch-image-has-retrospectiff
 (defun test/write-grayscale-image-tiff-1 ()
   (write-tiff-file 
    (merge-pathnames *output-image-path* "grayimgtest.tiff")
    (test-gray-image)))
 
+#+ch-image-has-retrospectiff
 (defun test/write-rgb-image-tiff-1 ()
   (write-tiff-file 
    (merge-pathnames *output-image-path* "rgbimgtest.tiff")
    *test-rgb-image*))
 
+#+ch-image-has-retrospectiff
 (defun test/write-argb-image-tiff-1 ()
   (write-tiff-file
    (merge-pathnames *output-image-path* "argbimgtest.tiff")
@@ -96,6 +93,7 @@
    *test-argb-image*))
 
 ;;; RGB TIFF -> RGB TIFF
+#+ch-image-has-retrospectiff
 (defun test/read-rbg-tiff-write-rgb-tiff-1 ()
   (let ((srcfile (test-img "euc-tiff"))
         (destfile (merge-pathnames *output-image-path* "rgbreadtest.tiff")))
@@ -104,6 +102,7 @@
         (write-tiff-file destfile img)))))
 
 ;;; RGB TIFF -> GRAY TIFF
+#+ch-image-has-retrospectiff
 (defun test/read-rgb-tiff-write-grayscale-tiff-1 ()
   (let ((srcfile (test-img "euc-tiff"))
         (destfile (merge-pathnames *output-image-path* "grayreadtest.tiff")))
@@ -112,6 +111,7 @@
         (write-tiff-file destfile img)))))
 
 ;;; GRAY TIFF -> GRAY TIFF
+#+ch-image-has-retrospectiff
 (defun test/read-grayscale-tiff-write-grayscale-tiff-1 ()
   (let ((srcfile (test-img "eucgray-tiff"))
         (destfile (merge-pathnames *output-image-path* "grayreadtest3.tiff")))
@@ -119,6 +119,7 @@
       (when img
         (write-tiff-file destfile img)))))
 
+#+ch-image-has-retrospectiff
 (defun test/read-rgb-jpeg-write-grayscale-tiff-1 ()
   (let ((srcfile (test-img "euc-jpeg"))
         (destfile (merge-pathnames *output-image-path* "grayreadtest2.tiff")))
@@ -143,6 +144,7 @@
         (write-jpeg-file destfile img)))))
 
 ;;; RGB TIFF -> RGB JPEG
+#+ch-image-has-retrospectiff
 (defun test/read-rgb-tiff-write-rgb-jpeg-1 ()
   (let ((srcfile (test-img "euc-tiff"))
         (destfile (merge-pathnames *output-image-path* "tiffreadtest.jpeg")))
@@ -151,6 +153,7 @@
         (write-jpeg-file destfile img)))))
 
 ;;; RGB JPEG -> RGB TIFF
+#+ch-image-has-retrospectiff
 (defun test/read-rgb-jpeg-write-rgb-tiff-1 ()
   (let ((srcfile (test-img "euc-jpeg"))
         (destfile (merge-pathnames *output-image-path* "jpegreadtest.tiff")))
@@ -184,6 +187,7 @@
 
               ))))
 
+#+ch-image-has-retrospectiff
 (defun test-gaussian-blur ()
   (let ((images-component
          (asdf:find-component
@@ -219,6 +223,7 @@
          img)
         img))))
 
+#+ch-image-has-retrospectiff
 (defun test-gaussian-blur-2 ()
   (let ((images-component
          (asdf:find-component
@@ -241,6 +246,7 @@
          img)
         img))))
 
+#+ch-image-has-retrospectiff
 (defun test-affine-transform ()
   (let ((images-component
          (asdf:find-component
@@ -272,6 +278,7 @@
             (ch-image:write-tiff-file 
              (merge-pathnames *output-image-path* path) ximg)))))))
 
+#+ch-image-has-retrospectiff
 (defun test-affine-transform-2 ()
   (let ((images-component
          (asdf:find-component
@@ -308,6 +315,7 @@
                 (ch-image:write-tiff-file 
                  (merge-pathnames *output-image-path* path) ximg)))))))))
 
+#+ch-image-has-retrospectiff
 (defun load-euclid-image ()
   (let* ((images-component
          (asdf:find-component
@@ -321,6 +329,7 @@
          (img (ch-image:read-tiff-file inputfile)))
     img))
 
+#+ch-image-has-retrospectiff
 (defun test-affine-transform-3 (&optional (img (load-euclid-image)))
   (let ((xfrm (clem:make-affine-transformation :x-shift 0d0 :y-shift 0d0
                                                 :theta (* (/ 14 180) pi)

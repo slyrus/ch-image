@@ -2,7 +2,7 @@
 (in-package #:cl-user)
 
 (defpackage #:ch-image
-  (:use #:cl #:ch-util #:clem)
+  (:use #:cl #:clem)
   (:export #:image
 	   #:image-data
 	   #:image-width
@@ -158,7 +158,7 @@
            ))
 
 (defpackage #:ch-image-drawing
-  (:use #:cl #:ch-image #:ch-util #:clem))
+  (:use #:cl #:ch-image #:clem))
 
 (defpackage #:ch-image-user
-    (:use #:cl #:ch-image #:clem))
+  (:use #:cl #:ch-image #:clem))

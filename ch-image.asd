@@ -29,14 +29,11 @@
   :name "ch-image"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
   :licence "BSD"
-  :version #.(with-open-file
-                 (vers (merge-pathnames "version.lisp-expr" *load-truename*))
-               (read vers))
+  :version "0.4.3"
   :description "image representation and processing"
-  :depends-on (ch-util clem zpng)
+  :depends-on (clem)
   :components
-  ((:static-file "version" :pathname #p"version.lisp-expr")
-   (:module
+  ((:module
     :src
     :components
     ((:cl-source-file "defpackage")
