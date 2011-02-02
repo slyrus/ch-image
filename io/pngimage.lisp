@@ -113,12 +113,37 @@
 
             ((and (eq colour-type :truecolor)
                   (eql bit-depth 8))
-             (let ((img (make-instance 'rgb-8888-image :width width :height height)))
+             (let ((img (make-instance 'rgb-888-image :width width :height height)))
                (map-pixels #'(lambda (img y x)
                                (let ((r (aref image-data x y 0))
                                      (g (aref image-data x y 1))
                                      (b (aref image-data x y 2)))
                                  (set-pixel img y x (list r g b))))
+                           img)))
+
+            ((and (eq colour-type :indexed-colour)
+                  (eql bit-depth 8))
+             (let ((img (make-instance 'rgb-888-image :width width :height height)))
+               (map-pixels #'(lambda (img y x)
+                               (let ((r (aref image-data x y 0))
+                                     (g (aref image-data x y 1))
+                                     (b (aref image-data x y 2)))
+                                 (set-pixel img y x (list r g b))))
+                           img)))
+
+            ;;; the README says the colors are indexed -- but then on
+            ;;; the next line says they're decoded. looks like decoded
+            ;;; wins.
+            #+nil
+            ((and (eq colour-type :indexed-colour)
+                  (eql bit-depth 8))
+             (let ((img (make-instance 'rgb-888-image :width width :height height)))
+               (map-pixels #'(lambda (img y x)
+                               (let ((index (aref image-data x y)))
+                                 (let ((r (aref index 0))
+                                       (g (aref index 1))
+                                       (b (aref index 2)))
+                                   (set-pixel img y x (list r g b)))))
                            img)))
             
             ((and (eq colour-type :greyscale)
@@ -128,7 +153,8 @@
                                (let ((k (aref image-data x y)))
                                  (set-pixel img y x k)))
                            img)))
-            (t (error "unable to read PNG image -- fix read-png-stream!"))))))
+            (t
+             (error "unable to read PNG image -- fix read-png-stream!"))))))
 
 (defun read-png-file (file)
   (let ((png (png-read:read-png-file file)))
