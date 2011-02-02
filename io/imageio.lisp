@@ -14,25 +14,21 @@
 
 (defparameter *image-read-functions*
   (make-hash-table-from-alist
-   (append #+ch-image-has-retrospectiff
-           `(("tiff" . read-tiff-file)
+   (append '(("tiff" . read-tiff-file)
              ("tif" . read-tiff-file))
-           #+ch-image-has-cl-jpeg
            '(("jpeg" . read-jpeg-file)
              ("jpg" . read-jpeg-file)
-             ("jpe" . read-jpeg-file)))
+             ("jpe" . read-jpeg-file))
+           '(("png" . read-png-file)))
    :test #'equalp))
 
 (defparameter *image-write-functions*
   (make-hash-table-from-alist
-   (append #+ch-image-has-retrospectiff
-           '(("tiff" . write-tiff-file)
+   (append '(("tiff" . write-tiff-file)
              ("tif" . write-tiff-file))
-           #+ch-image-has-cl-jpeg
            '(("jpeg" . write-jpeg-file)
              ("jpg" . write-jpeg-file)
              ("jpe" . write-jpeg-file))
-           #+ch-image-has-zpng
            '(("png" . write-png-file)))
    :test #'equalp))
 
