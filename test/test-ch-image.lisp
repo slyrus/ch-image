@@ -34,23 +34,23 @@
   (let* ((width 600)
          (height 400)
          (img (make-instance 'argb-8888-image :width width :height height)))
-    (ch-image::fill-rectangle img 0 0 399 599 (list 255 5 50 15))
-    (ch-image::draw-circle img 200 200 100 (list 255 0 0 255))
-    (ch-image::fill-circle img 300 300 75 (list 255 255 0 50))
-    (ch-image::horiz-line img 75 100 300 (list 255 0 255 0))
-    (ch-image::vert-line img 100 300 400 (list 255 255 255 255))
-    (ch-image::vert-line img 100 300 370 (list 255 255 255 255))
-    (ch-image::draw-rectangle img 120 140 220 180 (list 255 127 127 127))
-    (ch-image::fill-rectangle img 320 70 340 130 (list 255 0 100 100))
-    (ch-image::draw-line img 10 10 50 200 (list 255 128 128 255))
-    (ch-image::draw-line img 50 10 10 200 (list 255 255 128 255))
-    (ch-image::draw-line img 10 200 50 10 (list 255 128 128 255))
-    (ch-image::draw-triangle img 10 300 50 280 60 330 (list 255 255 0 0))
-    (ch-image::draw-polygon img '((200 . 100) (190 . 110) (200 . 120) (210 . 110) (200 . 100))
+    (fill-rectangle img 0 0 399 599 (list 255 5 50 15))
+    (draw-circle img 200 200 100 (list 255 0 0 255))
+    (fill-circle img 300 300 75 (list 255 255 0 50))
+    (horiz-line img 75 100 300 (list 255 0 255 0))
+    (vert-line img 100 300 400 (list 255 255 255 255))
+    (vert-line img 100 300 370 (list 255 255 255 255))
+    (draw-rectangle img 120 140 220 180 (list 255 127 127 127))
+    (fill-rectangle img 320 70 340 130 (list 255 0 100 100))
+    (draw-line img 10 10 50 200 (list 255 128 128 255))
+    (draw-line img 50 10 10 200 (list 255 255 128 255))
+    (draw-line img 10 200 50 10 (list 255 128 128 255))
+    (draw-triangle img 10 300 50 280 60 330 (list 255 255 0 0))
+    (draw-polygon img '((200 . 100) (190 . 110) (200 . 120) (210 . 110) (200 . 100))
                             (list 255 128 255 128))
-    (ch-image::fill-rectangle img 200 300 210 310 (list 255 255 255 25))
-    (ch-image::fill-rectangle img 220 300 230 310 (list 255 255 255 25))
-    (ch-image::fill-rectangle img 240 300 250 310 (list 255 255 255 25))
+    (fill-rectangle img 200 300 210 310 (list 255 255 255 25))
+    (fill-rectangle img 220 300 230 310 (list 255 255 255 25))
+    (fill-rectangle img 240 300 250 310 (list 255 255 255 25))
     img))
 
 (defun image-test-4 ()
@@ -68,11 +68,11 @@
          (height 500)
          (img (make-instance 'argb-8888-image :width width :height height)))
 
-    (ch-image::draw-line img 10 10 50 200 (list 255 255 128 128))
-    (ch-image::draw-line img 50 10 10 200 (list 255 128 255 128))
-    (ch-image::draw-line img 20 200 60 10 (list 255 128 128 255))
-    (ch-image::draw-line img 420 200 60 10 (list 255 128 255 255))
-    (ch-image::draw-line img 60 20 420 210 (list 255 255 255 128))
+    (draw-line img 10 10 50 200 (list 255 255 128 128))
+    (draw-line img 50 10 10 200 (list 255 128 255 128))
+    (draw-line img 20 200 60 10 (list 255 128 128 255))
+    (draw-line img 420 200 60 10 (list 255 128 255 255))
+    (draw-line img 60 20 420 210 (list 255 255 255 128))
     
     #+ch-image-has-retrospectiff
     (ch-image:write-tiff-file "argb-image.tiff" img)))
@@ -87,8 +87,8 @@
             (x (+ 50 (random 500)))
             (color (list 255 (random 255) (random 255) (random 255))))
         (if (> (random 2) 0)
-            (ch-image::draw-circle img y x radius color)
-            (ch-image::fill-circle img y x radius color))))
+            (draw-circle img y x radius color)
+            (fill-circle img y x radius color))))
     (ch-image:write-jpeg-file "circles.jpg" img)
     (ch-image:write-png-file "circles.png" img)))
 
@@ -102,8 +102,8 @@
             (x (+ 50 (random 500)))
             (color (random 255)))
         (if (> (random 2) 0)
-            (ch-image::draw-circle img y x radius color)
-            (ch-image::fill-circle img y x radius color))))
+            (draw-circle img y x radius color)
+            (fill-circle img y x radius color))))
     (ch-image:write-jpeg-file "circles-gray.jpg" img)
     (ch-image:write-png-file "circles-gray.png" img)))
 
@@ -120,11 +120,11 @@
          (asdf:component-pathname
           (reduce #'asdf:find-component
                   (list nil "ch-image-test" "test" "images" "shapes.png")))))
-    (let ((img (make-instance 'ch-image::bit-matrix-image :rows 128 :cols 128 :initial-element 0)))
-      (ch-image::fill-rectangle img 4 4 10 10 1)
-      (ch-image::fill-rectangle img 20 20 40 40 1)
-      (ch-image::draw-circle img 75 20 10 1)
-      (ch-image::write-image-file path (ch-image::make-norm-ub8-image img))
+    (let ((img (make-instance 'bit-matrix-image :rows 128 :cols 128 :initial-element 0)))
+      (fill-rectangle img 4 4 10 10 1)
+      (fill-rectangle img 20 20 40 40 1)
+      (draw-circle img 75 20 10 1)
+      (write-image-file path (ch-image::make-norm-ub8-image img))
       (values path img))))
 
 
@@ -133,11 +133,11 @@
          (asdf:component-pathname
           (reduce #'asdf:find-component
                   (list nil "ch-image-test" "test" "images" "argb-shapes.png")))))
-    (let ((img (make-instance 'ch-image::argb-8888-image :height 128 :width 128)))
-      (ch-image::fill-rectangle img 4 4 10 10 '(255 255 0 0))
-      (ch-image::fill-rectangle img 20 20 40 40 '(255 0 255 255))
-      (ch-image::draw-circle img 75 20 10 '(255 0 0 255))
-      (ch-image::write-image-file path img)
+    (let ((img (make-instance 'argb-8888-image :height 128 :width 128)))
+      (fill-rectangle img 4 4 10 10 '(255 255 0 0))
+      (fill-rectangle img 20 20 40 40 '(255 0 255 255))
+      (draw-circle img 75 20 10 '(255 0 0 255))
+      (write-image-file path img)
       (values path img))))
 
 (defun make-rgb-shapes-test-image ()
@@ -145,11 +145,11 @@
          (asdf:component-pathname
           (reduce #'asdf:find-component
                   (list nil "ch-image-test" "test" "images" "rgb-shapes.png")))))
-    (let ((img (make-instance 'ch-image::rgb-888-image :height 128 :width 128)))
-      (ch-image::fill-rectangle img 4 4 10 10 '(255 0 0))
-      (ch-image::fill-rectangle img 20 20 40 40 '(0 255 255))
-      (ch-image::draw-circle img 75 20 10 '(0 0 255))
-      (ch-image::write-image-file path img)
+    (let ((img (make-instance 'rgb-888-image :height 128 :width 128)))
+      (fill-rectangle img 4 4 10 10 '(255 0 0))
+      (fill-rectangle img 20 20 40 40 '(0 255 255))
+      (draw-circle img 75 20 10 '(0 0 255))
+      (write-image-file path img)
       (values path img))))
 
 
@@ -195,7 +195,7 @@
   (let ((srcfile (test-img "euc-png"))
         (destfile (merge-pathnames *output-image-path* "output-read-png-image-from-stream.jpeg")))
     (with-open-file (stream srcfile :direction :input :element-type 'unsigned-byte)
-      (let ((img (ch-image::read-png-stream stream)))
+      (let ((img (read-png-stream stream)))
         (when img
           (write-jpeg-file destfile img))))))
 

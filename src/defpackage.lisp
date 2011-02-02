@@ -117,6 +117,8 @@
 	   #:jpeg-gray-to-gray-image
 	   #:jpeg-rgb-to-argb-image
 
+           #:read-png-file
+           #:read-png-stream
            #:write-png-file
            #:write-png-stream
 
