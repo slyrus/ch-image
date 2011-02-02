@@ -3,7 +3,7 @@
   :name "ch-image"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
   :licence "BSD"
-  :version "0.4.4"
+  :version "0.4.5"
   :description "image representation and processing"
   :depends-on (clem retrospectiff zpng png-read cl-jpeg)
   :components
