@@ -190,3 +190,12 @@
                                 :element-type 'unsigned-byte
                                 :if-exists :supersede)
           (write-tiff-stream stream img))))))
+
+(defun test/read-png-image-from-stream ()
+  (let ((srcfile (test-img "euc-png"))
+        (destfile (merge-pathnames *output-image-path* "output-read-png-image-from-stream.jpeg")))
+    (with-open-file (stream srcfile :direction :input :element-type 'unsigned-byte)
+      (let ((img (ch-image::read-png-stream stream)))
+        (when img
+          (write-jpeg-file destfile img))))))
+
