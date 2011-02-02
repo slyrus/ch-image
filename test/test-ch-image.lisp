@@ -30,11 +30,10 @@
 	(set-gray-value img i j 63))))
   t)
 
-(defun image-test-4 ()
+(defun make-test-argb-8888-image ()
   (let* ((width 600)
          (height 400)
          (img (make-instance 'argb-8888-image :width width :height height)))
-
     (ch-image::fill-rectangle img 0 0 399 599 (list 255 5 50 15))
     (ch-image::draw-circle img 200 200 100 (list 255 0 0 255))
     (ch-image::fill-circle img 300 300 75 (list 255 255 0 50))
@@ -43,21 +42,26 @@
     (ch-image::vert-line img 100 300 370 (list 255 255 255 255))
     (ch-image::draw-rectangle img 120 140 220 180 (list 255 127 127 127))
     (ch-image::fill-rectangle img 320 70 340 130 (list 255 0 100 100))
-
     (ch-image::draw-line img 10 10 50 200 (list 255 128 128 255))
     (ch-image::draw-line img 50 10 10 200 (list 255 255 128 255))
     (ch-image::draw-line img 10 200 50 10 (list 255 128 128 255))
-
     (ch-image::draw-triangle img 10 300 50 280 60 330 (list 255 255 0 0))
-
     (ch-image::draw-polygon img '((200 . 100) (190 . 110) (200 . 120) (210 . 110) (200 . 100))
                             (list 255 128 255 128))
-
     (ch-image::fill-rectangle img 200 300 210 310 (list 255 255 255 25))
     (ch-image::fill-rectangle img 220 300 230 310 (list 255 255 255 25))
     (ch-image::fill-rectangle img 240 300 250 310 (list 255 255 255 25))
+    img))
 
+(defun image-test-4 ()
+  (let ((img (make-test-argb-8888-image)))
     (ch-image:write-jpeg-file "argb-image.jpeg" img)))
+
+(defun image-test-4-stream ()
+  (let ((img (make-test-argb-8888-image)))
+    (with-open-file (stream "argb-image-from-stream.jpeg"
+                            :direction :output :element-type 'unsigned-byte :if-exists :supersede)
+      (ch-image:write-jpeg-stream stream  img))))
 
 (defun image-test-5 ()
   (let* ((width 600)
@@ -147,3 +151,42 @@
       (ch-image::draw-circle img 75 20 10 '(0 0 255))
       (ch-image::write-image-file path img)
       (values path img))))
+
+
+(defun test/read-jpeg-image-from-stream ()
+  (let ((srcfile (test-img "euc-jpeg"))
+        (destfile (merge-pathnames *output-image-path* "output-read-jpeg-image-from-stream.jpeg")))
+    (with-open-file (stream srcfile :direction :input :element-type 'unsigned-byte)
+      (let ((img (read-jpeg-stream stream)))
+        (when img
+          (write-jpeg-file destfile img))))))
+
+(defun test/write-jpeg-image-to-stream ()
+  (let ((srcfile (test-img "euc-jpeg"))
+        (destfile (merge-pathnames *output-image-path* "output-write-jpeg-image-to-stream.jpeg")))
+    (let ((img (read-jpeg-file srcfile)))
+      (when img
+        (with-open-file (stream destfile
+                                :direction :output 
+                                :element-type 'unsigned-byte
+                                :if-exists :supersede)
+          (write-jpeg-stream stream img))))))
+
+(defun test/read-tiff-image-from-stream ()
+  (let ((srcfile (test-img "euc-tiff"))
+        (destfile (merge-pathnames *output-image-path* "output-read-tiff-image-from-stream.jpeg")))
+    (with-open-file (stream srcfile :direction :input :element-type 'unsigned-byte)
+      (let ((img (read-tiff-stream stream)))
+        (when img
+          (write-jpeg-file destfile img))))))
+
+(defun test/write-tiff-image-to-stream ()
+  (let ((srcfile (test-img "euc-jpeg"))
+        (destfile (merge-pathnames *output-image-path* "output-write-tiff-image-to-stream.tiff")))
+    (let ((img (read-jpeg-file srcfile)))
+      (when img
+        (with-open-file (stream destfile
+                                :direction :output 
+                                :element-type 'unsigned-byte
+                                :if-exists :supersede)
+          (write-tiff-stream stream img))))))

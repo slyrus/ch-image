@@ -102,18 +102,23 @@
 
            #:resize-images-in-directory
 
+           #:read-tiff-stream
            #:read-tiff-file
+	   #:write-tiff-stream
 	   #:write-tiff-file
 	   #:write-argb-image-tiff-file
 	   #:tiff-rgba-to-gray-image
 	   
+           #:read-jpeg-stream
 	   #:read-jpeg-file
+	   #:write-jpeg-stream
 	   #:write-jpeg-file
 	   #:jpeg-rgb-to-gray-image
 	   #:jpeg-gray-to-gray-image
 	   #:jpeg-rgb-to-argb-image
 
            #:write-png-file
+           #:write-png-stream
 
            ;; text rendering stuff
            #:text-context

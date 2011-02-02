@@ -15,11 +15,10 @@
 
 (in-package :ch-image)
 
-(defun read-tiff-file (pathname)
-  "reads a TIFF file and returns either a 32-bit ARGB image or an 8-bit
-grayscale image"
-  (declare (optimize (debug 2)))
-  (let ((tiff-image (tiff:read-tiff-file pathname))
+(defun read-tiff-stream (stream)
+  "reads a TIFF image from a stream and returns either a 32-bit ARGB
+image or an 8-bit grayscale image"
+  (let ((tiff-image (tiff:read-tiff-stream stream))
         image)
     (with-accessors ((image-length tiff:tiff-image-length)
                      (image-width tiff:tiff-image-width)
@@ -65,6 +64,10 @@ grayscale image"
                                           (aref image-data (incf pixoff))
                                           (aref image-data (incf pixoff)))))))))
     image))
+
+(defun read-tiff-file (pathname)
+  (with-open-file (stream pathname :direction :input :element-type '(unsigned-byte 8))
+    (read-tiff-stream stream)))
   
 (defgeneric make-tiff-image (image)
   (:documentation "Makes a tiff:tiff-image from a ch-image:image"))
@@ -165,6 +168,10 @@ grayscale image"
                           (aref image-data (incf pixoff)) g
                           (aref image-data (incf pixoff)) b))))))
     tiff-image))
+
+(defun write-tiff-stream (stream image)
+  (let ((tiff-image (make-tiff-image image)))
+    (tiff::write-tiff-stream stream tiff-image)))
 
 (defun write-tiff-file (pathname image)
   (let ((tiff-image (make-tiff-image image)))

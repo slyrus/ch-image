@@ -1,37 +1,11 @@
 
-(defpackage #:ch-image-system (:use #:asdf #:cl))
-(in-package #:ch-image-system)
-
-;;;; we need to test for the presence of various packages and only
-;;;; load IO routines when the appropriate packages are present
-
-(defmacro safe-load-io-library (lib)
-  `(handler-case
-       (progn
-         (asdf:operate 'asdf:load-op ,lib)
-         (pushnew (intern 
-                   (concatenate 'string
-                                (string-upcase "ch-image-has-")
-                                (symbol-name ,lib))
-                   :keyword)
-                  *features*))
-     (missing-component (x)
-       (declare (ignore x))
-       (format *error-output* "~%ch-image: ~A disabled~&" ,lib))))
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (safe-load-io-library :cl-jpeg)
-  (safe-load-io-library :retrospectiff)
-  (safe-load-io-library :zpng)
-  #+nil (safe-load-io-library :freetype-ffi))
-
-(defsystem :ch-image
+(asdf:defsystem :ch-image
   :name "ch-image"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
   :licence "BSD"
-  :version "0.4.3"
+  :version "0.4.4"
   :description "image representation and processing"
-  :depends-on (clem)
+  :depends-on (clem retrospectiff zpng png-read cl-jpeg)
   :components
   ((:module
     :src
@@ -45,28 +19,21 @@
      (:cl-source-file "distance"  :depends-on ("defpackage" "ch-image"))
      (:cl-source-file "shapes"  :depends-on ("defpackage" "ch-image"))
      (:cl-source-file "text"  :depends-on ("defpackage" "ch-image"))
-     #+ch-image-has-freetype-ffi
-     (:cl-source-file "freetype-text"  :depends-on ("text"))
      (:cl-source-file "gamma"  :depends-on ("defpackage" "ch-image"))))
    (:module
     :io
     :components
-    (#+ch-image-has-retrospectiff
-     (:cl-source-file "tiffimage")
-     #+ch-image-has-cl-jpeg
+    ((:cl-source-file "tiffimage")
      (:cl-source-file "jpegimage")
-     #+(and ch-image-has-zpng)
      (:cl-source-file "pngimage")
      (:cl-source-file "imageio"
-                      :depends-on (#+ch-image-has-retrospectiff
-                                   "tiffimage"
-                                   #+ch-image-has-cl-jpeg
-                                   "jpegimage")))
+                      :depends-on ("tiffimage"
+                                   "jpegimage"
+                                   "pngimage")))
     :depends-on (:src))
    (:static-file "README")
    (:static-file "LICENSE")
    (:static-file "NEWS")
    (:static-file "TODO")
    (:static-file "ChangeLog")))
-
 

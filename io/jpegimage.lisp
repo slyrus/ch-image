@@ -35,14 +35,18 @@
 		      (set-pixel img x y (list 255 r g b))))
 		img)))
 
-(defun read-jpeg-file (srcfile)
+(defun read-jpeg-stream (stream)
   (multiple-value-bind (buffer height width ncomp)
-      (jpeg:decode-image srcfile)
+      (jpeg:decode-stream stream)
     (cond
       ((= ncomp 3)
        (jpeg-rgb-to-argb-image buffer width height))
       ((= ncomp 1)
        (jpeg-gray-to-gray-image buffer width height)))))
+
+(defun read-jpeg-file (filename)
+  (with-open-file (stream filename :direction :input :element-type 'unsigned-byte)
+    (read-jpeg-stream stream)))
 
 (defparameter *gray-q-tabs* (vector jpeg::*q-luminance*))
 
