@@ -110,6 +110,7 @@
                                      (a (aref image-data x y 3)))
                                  (set-pixel img y x (list a r g b))))
                            img)))
+
             ((and (eq colour-type :truecolor)
                   (eql bit-depth 8))
              (let ((img (make-instance 'rgb-8888-image :width width :height height)))
@@ -118,6 +119,14 @@
                                      (g (aref image-data x y 1))
                                      (b (aref image-data x y 2)))
                                  (set-pixel img y x (list r g b))))
+                           img)))
+            
+            ((and (eq colour-type :greyscale)
+                  (eql bit-depth 8))
+             (let ((img (make-instance 'ub8-matrix-image :width width :height height)))
+               (map-pixels #'(lambda (img y x)
+                               (let ((k (aref image-data x y)))
+                                 (set-pixel img y x k)))
                            img)))
             (t (error "unable to read PNG image -- fix read-png-stream!"))))))
 

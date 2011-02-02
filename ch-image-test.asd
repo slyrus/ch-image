@@ -13,7 +13,6 @@
              (:cl-source-file "testharness")
              (:cl-source-file "test-ch-image")
              (:cl-source-file "test-ch-image-2")
-             (:cl-source-file "test-ch-image-3")
              (:cl-source-file "examples")
              (:module
               :images
