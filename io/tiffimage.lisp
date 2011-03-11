@@ -171,8 +171,8 @@ image or an 8-bit grayscale image"
 
 (defun write-tiff-stream (stream image)
   (let ((tiff-image (make-tiff-image image)))
-    (tiff::write-tiff-stream stream tiff-image)))
+    (tiff:write-tiff-stream stream tiff-image)))
 
 (defun write-tiff-file (pathname image)
   (let ((tiff-image (make-tiff-image image)))
-    (tiff::write-tiff-file pathname tiff-image)))
+    (tiff:write-tiff-file pathname tiff-image)))
