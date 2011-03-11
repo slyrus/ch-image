@@ -108,9 +108,9 @@
   (list (image-r img) (image-g img) (image-b img)))
 
 (defmethod set-channels ((img rgb-image) channels)
-  (setf (image-r img) (second channels))
-  (setf (image-g img) (third channels))
-  (setf (image-b img) (fourth channels)))
+  (setf (image-r img) (first channels))
+  (setf (image-g img) (second channels))
+  (setf (image-b img) (third channels)))
 
 
 (defclass rgb-888-image (rgb-image) ())
