@@ -1,11 +1,9 @@
 
-(asdf:operate 'asdf:load-op :ch-asdf)
+(asdf:operate 'asdf:load-op :asdf-objects)
 (asdf:operate 'asdf:load-op :smarkup)
 
-(defpackage #:ch-image-doc-system (:use #:cl #:asdf #:ch-asdf #:smarkup))
+(defpackage #:ch-image-doc-system (:use #:cl #:asdf #:asdf-objects #:smarkup))
 (in-package #:ch-image-doc-system)
-
-#.(smarkup::enable-quote-reader-macro)
 
 (defclass ch-image-mixin () ())
 
@@ -19,7 +17,7 @@
          (component-pathname (component-parent c))))
     (call-next-method)))
 
-(defmethod perform ((op ch-asdf::generate-op) (c ch-image-mixin))
+(defmethod perform ((op asdf-objects:generate-op) (c ch-image-mixin))
   (let ((*default-pathname-defaults*
          (component-pathname (component-parent c))))
     (call-next-method)))
@@ -35,13 +33,13 @@
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
   :version "0.4.3"
   :licence "BSD"
-  :depends-on (ch-asdf ch-util ch-image smarkup)
+  :depends-on (asdf-objects ch-image smarkup)
   :components
   ((:static-file "make-tinaa-docs" :pathname #p"make-tinaa-docs.lisp")
    (:module
     :doc
     :components
-    ((:object-from-file :ch-image-sexp :pathname #p"ch-image.sexp")
+    ((:smarkup-object-from-file :ch-image-sexp :pathname #p"ch-image.sexp")
      (:my-filtered-object :ch-image-filtered-sexp
                           :filters (:lisp :smarkup-metadata :ref)
                           :depends-on (:ch-image-sexp)
@@ -81,5 +79,5 @@
                            ))
      (:static-file "simple" :pathname #p"simple.css")
      (:static-file "ch-image-bib" :pathname #p"ch-image.bib")
-     (:tinaa-directory :tinaa)))))
+     (:module :tinaa)))))
 

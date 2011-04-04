@@ -5,7 +5,9 @@
    (:title "Image Processing in Common Lisp with ch-image")
    (:author "Cyrus L. Harmon")
    (:bibtex-database
-    "(\"asdf:/ch-image-doc/doc/ch-image-bib\")")
+    (#.(asdf:component-pathname 
+        (reduce #'asdf:find-component
+                '("ch-image-doc" "doc" "ch-image-bib")))))
    (:bibtex-style "Science"))
   (:html-metadata  (:htmlcss "simple.css") )
 
@@ -14,6 +16,13 @@
     (setf smarkup::*baseline-skip* \"14pt\")
     (setf smarkup::*par-skip* \"0pt\")"))
 
+ (:lisp-silent
+  #q{
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (cl:defpackage :ch-image-doc-pkg (:use #:cl))
+    (cl:in-package :ch-image-doc-pkg))
+  })
+ 
  (:h1 "Abstract")
 
  (:p "ch-image is an open-source Common Lisp library for image
@@ -54,7 +63,7 @@ common-lisp.net"
      which provides for efficient representation and access to
      typed common lisp arrays and for basic matrix operations
      such as matrix arithmetic and affine transformations.")
-
+ 
  (:p "ch-image is designed to be a portable library that can run
  an any standards-compliant common lisp implementation. It has
  been developed entirely using the SBCL"
@@ -216,12 +225,13 @@ of the image. For a multichannel image, "
              (image-pathname \"output-images/example1.png\"))
         (ch-image::fill-image img *dark-blue*)
         (ch-image::draw-triangle img 10 100 50 250 160 70 (list 255 255 20))
+        (print image-pathname)
         (ensure-directories-exist image-pathname)
         (ch-image:write-image-file image-pathname img)))")
 
  (:p "This gives us the following image:")
 
- (:p (:image (:lisp-value "(enough-namestring *example-image-1*)")))
+ (:p (:image (:lisp-value "(enough-namestring *example-image-1* \"\")")))
 
  (:h1 "ch-image I/O")
 
@@ -257,7 +267,8 @@ of the image. For a multichannel image, "
    "output-images/salad-cropped.jpg" 
    *cropped-salad*)})
 
- (:p (:image "output-images/salad-cropped.jpg"))
+ (:p (:image (:lisp-value
+              "(enough-namestring (probe-file #p\"output-images/salad-cropped.jpg\") \"\")")))
 
  (:h2 "Affine Transformation")
 
@@ -291,7 +302,8 @@ to "
          bigimg)))"
   )
 
- (:p (:image "output-images/salad-big.jpg"))
+ (:p (:image (:lisp-value 
+              "(enough-namestring (probe-file #p\"output-images/salad-big.jpg\") \"\")")))
 
  (:lisp 
   "(let ((transform
@@ -311,7 +323,8 @@ to "
      \"output-images/salad-trans.jpg\"
      transimg))) ")
 
- (:p (:image "output-images/salad-trans.jpg"))
+ (:p (:image (:lisp-value
+              "(enough-namestring (probe-file #p\"output-images/salad-trans.jpg\") \"\")")))
 
  (:p "Notice that the transformed part of the old image fits in
  the new image. The default behavior is to define the extent of
@@ -344,7 +357,8 @@ to "
          transimg)))"
   )
 
- (:p (:image "output-images/salad-trans2.jpg"))
+ (:p (:image (:lisp-value
+              "(enough-namestring (probe-file #p\"output-images/salad-trans2.jpg\") \"\")")))
 
  (:p "In this example, we scale by a factor of .5")
 
@@ -362,8 +376,9 @@ to "
      transimg)))"
   )
 
- (:p (:image "output-images/salad-trans3.jpg"))
-
+ (:p (:image (:lisp-value
+              "(enough-namestring (probe-file #p\"output-images/salad-trans3.jpg\") \"\")")))
+ 
  (:h3 "Resizing Images")
 
  (:p "Since affine-transformations are commonly used to resize
@@ -411,7 +426,7 @@ to "
 
  (:lisp 
   "(defparameter *shape-image-file* \"output-images/shapes.png\")
-    (defparameter *shape-image*
+   (defparameter *shape-image*
       (let ((img (make-instance 'ch-image::ub8-matrix-image
                                 :rows 128 :cols 128 :initial-element 0)))
         (ch-image::fill-rectangle img 4 4 10 10 1)
@@ -423,7 +438,7 @@ to "
          (ch-image::make-norm-ub8-image img))
         img))")
   
- (:p (:image (:lisp-value "(enough-namestring *shape-image-file*)")))
+ (:p (:image (:lisp-value "(enough-namestring (probe-file *shape-image-file*) \"\")")))
 
  (:lisp
   "(defparameter *connected-components*
@@ -435,7 +450,7 @@ to "
        \"output-images/connected-components.png\"
        (ch-image::make-norm-ub8-image *connected-components*)))")
   
- (:p (:image (:lisp-value "(enough-namestring *cc-image-file*)")))
+ (:p (:image (:lisp-value "(enough-namestring *cc-image-file* \"\")")))
 
  (:h3 "Finding Boundaries")
 
@@ -457,7 +472,7 @@ to "
         *internal-boundary*)))")
 
  (:p
-  (:image (:lisp-value "(enough-namestring *internal-boundary-file*)")))
+  (:image (:lisp-value "(enough-namestring *internal-boundary-file* \"\"))")))
  
  (:lisp
   "(defparameter *external-boundary* (ch-image::component-external-boundary
@@ -469,7 +484,7 @@ to "
         *external-boundary*)))")
 
  (:p
-  (:image (:lisp-value "(enough-namestring *external-boundary-file*)")))
+  (:image (:lisp-value "(enough-namestring *external-boundary-file* \"\"))")))
 
  (:lisp
   "(defparameter *boundary* (ch-image::component-boundary
@@ -481,7 +496,7 @@ to "
         *boundary*)))")
 
  (:p
-  (:image (:lisp-value "(enough-namestring *boundary-file*)")))
+  (:image (:lisp-value "(enough-namestring *boundary-file* \"\"))")))
  
  (:p "We see that the external boundary of the non-filled circle
  is in fact a double-ring around the circle. If we only wanted
@@ -539,7 +554,7 @@ to "
       (ch-image:read-image-file \"images/sanfran.jpg\"))"
   )
 
- (:p (:image "images/sanfran.jpg"))
+ (:p (:image (:lisp-value "(enough-namestring (probe-file \"images/sanfran.jpg\") \"\")")))
 
  (:h2 "Example 2 - Convert Image to Grayscale and Write PNG File")
 
@@ -553,7 +568,7 @@ to "
        (ch-image:argb-image-to-gray-image *sanfran*)))"
   )
 
- (:p (:image (:lisp-value "(enough-namestring *sanfran-png-file*)")))
+ (:p (:image (:lisp-value "(enough-namestring *sanfran-png-file* \"\"))")))
 
  (:h2 "Example 3 - Applying a gamma curve")
 
@@ -566,7 +581,7 @@ to "
        *sanfran-lighter-image*))"
   )
 
- (:p (:image (:lisp-value "(enough-namestring *sanfran-lighter-file*)")))
+ (:p (:image (:lisp-value "(enough-namestring *sanfran-lighter-file* \"\"))")))
 
  (:h2 "Example 4 - Circles")
 
@@ -588,7 +603,7 @@ to "
          img)))"
   )
 
- (:p (:image (:lisp-value "(enough-namestring *circles*)")))
+ (:p (:image (:lisp-value "(enough-namestring *circles* \"\"))")))
 
  (:h1 "ch-image API reference")
 
