@@ -199,3 +199,35 @@
         (when img
           (write-jpeg-file destfile img))))))
 
+(defun test/read-gray-png-image-from-stream ()
+  (let ((srcfile "test/images/bluesky-gray.png")
+        (destfile (merge-pathnames *output-image-path* "output-read-gray-png-image-from-stream.jpeg")))
+    (with-open-file (stream srcfile :direction :input :element-type 'unsigned-byte)
+      (let ((img (read-png-stream stream)))
+        (when img
+          (write-jpeg-file destfile img))))))
+
+(defun test/read-bw-png-image-from-stream ()
+  (let ((srcfile "test/images/bluesky-gray.png")
+        (destfile (merge-pathnames *output-image-path* "output-read-bw-png-image-from-stream.jpeg")))
+    (with-open-file (stream srcfile :direction :input :element-type 'unsigned-byte)
+      (let ((img (read-png-stream stream)))
+        (when img
+          (write-jpeg-file destfile img))))))
+
+(defun test/read-indexed-png-image-from-stream ()
+  (let ((srcfile "test/images/bluesky-indexed.png")
+        (destfile (merge-pathnames *output-image-path* "output-read-indexed-png-image-from-stream.jpeg")))
+    (with-open-file (stream srcfile :direction :input :element-type 'unsigned-byte)
+      (let ((img (read-png-stream stream)))
+        (when img
+          (write-jpeg-file destfile img))))))
+
+(defun test/write-gray-tiff-image ()
+  (let ((srcfile "test/images/eucgray.tiff")
+        (destfile (merge-pathnames *output-image-path* "output-write-gray-tiff-image.tiff")))
+    (with-open-file (stream srcfile :direction :input :element-type 'unsigned-byte)
+      (let ((img (read-tiff-stream stream)))
+        (when img
+          (write-tiff-file destfile img))))))
+
