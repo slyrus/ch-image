@@ -48,7 +48,7 @@
   (with-open-file (stream filename :direction :input :element-type 'unsigned-byte)
     (read-jpeg-stream stream)))
 
-(defparameter *gray-q-tabs* (vector jpeg::*q-luminance*))
+(defparameter *gray-q-tabs* (vector jpeg::+q-luminance+))
 
 (defgeneric write-jpeg-file (filename img))
 
@@ -141,10 +141,10 @@
 (defmethod gray-matrix-write-jpeg (filename (m clem:matrix) width height)
   (jpeg:encode-image filename
 		      (gray-image-matrix-to-jpeg-array m width height)
-		      1 height width :q-tabs (vector jpeg::*q-luminance*)))
+		      1 height width :q-tabs (vector jpeg::+q-luminance+)))
 
 (defmethod gray-matrix-write-jpeg-stream (img-stream (m clem:matrix) width height)
   (jpeg::encode-image-stream img-stream
 		      (gray-image-matrix-to-jpeg-array m width height)
-		      1 height width :q-tabs (vector jpeg::*q-luminance*)))
+		      1 height width :q-tabs (vector jpeg::+q-luminance+)))
 
